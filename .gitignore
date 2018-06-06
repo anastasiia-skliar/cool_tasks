@@ -1,0 +1,31 @@
+### Go template
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+src/src
+
+# Arhives
+*.tar
+*.zip
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+src/static-analysis.xml
+
+# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
+.glide/
+glide.lock
+
+vendor/
+
+# IDEs:
+.idea/
+
+# logs:
+*.log
+*.log.*
