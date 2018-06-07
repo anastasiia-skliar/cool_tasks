@@ -1,4 +1,4 @@
-LINTERCOMMAND=gometalinter --vendor --tests --skip=mock --disable=errcheck --disable=gas --deadline=1500s
+LINTERCOMMAND=gometalinter --vendor --tests --skip=mock --deadline=1500s
 
 packages = \
 	./config \
