@@ -16,10 +16,10 @@ type getWelcomePageTestCase struct {
 	want int
 }
 
-func TestGetAllAvailableSitesHandler(t *testing.T) {
+func TestGetWelcomeHandler(t *testing.T) {
 	tests := []getWelcomePageTestCase{
 		{
-			name: "Get_All_Available_Sites_Status_200",
+			name: "Get_Welcome_200",
 			url:  "/v1/hello-world",
 			want: 200,
 		},
