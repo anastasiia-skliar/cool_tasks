@@ -5,9 +5,9 @@ import "database/sql"
 var db *sql.DB
 
 type User struct {
-	Id int
-	Name string
-	Login string
+	ID       int
+	Name     string
+	Login    string
 	Password string
 }
 
@@ -20,7 +20,17 @@ func createUser(user User) error {
 
 func getUser(id int) (*User, error)  {
 	user := &User{}
-	err := db.QueryRow("SELECT name, login from User WHERE id = $1", user.Id).Scan(user.Name, user.Login)
+	err := db.QueryRow("SELECT name, login from User WHERE id = $1", user.ID).Scan(user.Name, user.Login)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func getUserForAdmin(id int) (*User, error)  {
+	user := &User{}
+	err := db.QueryRow("SELECT name, login, password from User WHERE id = $1", user.ID).Scan(user.Name, user.Login, user.Password)
 	if err != nil {
 		return user, err
 	}
@@ -41,7 +51,6 @@ func deleteUser(id int) error {
 	return nil
 }
 
-//Метод котрий вертатиме всю інформацію юзерів для Адміа
 func getUsersForAdmin() (*[]User, error) {
 
 	rows, err := db.Query("SELECT * FROM user")
@@ -53,7 +62,7 @@ func getUsersForAdmin() (*[]User, error) {
 
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(u.Id, u.Name, u.Login, u.Password); err != nil {
+		if err := rows.Scan(u.ID, u.Name, u.Login, u.Password); err != nil {
 			return &[]User{}, err
 		}
 		users = append(users, u	)
@@ -61,7 +70,6 @@ func getUsersForAdmin() (*[]User, error) {
 	return &users, nil
 }
 
-//Метод котрий вертатиме лише імя та логін юзерів
 func getUsers() (*[]User, error) {
 
 	rows, err := db.Query("SELECT name, login FROM user")
