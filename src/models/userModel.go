@@ -1,59 +1,54 @@
 package models
 
-import "database/sql"
-
-var db *sql.DB
+import (
+	"github.com/satori/go.uuid"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+)
 
 type User struct {
-	ID       int
+	ID       uuid.UUID
 	Name     string
 	Login    string
 	Password string
 }
 
-func createUser(user User) error {
+var DB, Mock, Err = sqlmock.New()
 
-	_, err := db.Exec("INSERT INTO user (name, login, password) VALUES ($1, $2, $3)", user.Name, user.Login, user.Password)
+func CreateUser(user User) error {
+	_, err := DB.Exec("INSERT INTO User (name, login, password) VALUES ($1, $1, $3)", user.Name, user.Login, user.Password)
 
-	return err
-}
-
-func getUser(id int) (*User, error)  {
-	user := &User{}
-	err := db.QueryRow("SELECT name, login from User WHERE id = $1", user.ID).Scan(user.Name, user.Login)
 	if err != nil {
-		return user, err
-	}
-
-	return user, nil
-}
-
-func getUserForAdmin(id int) (*User, error)  {
-	user := &User{}
-	err := db.QueryRow("SELECT name, login, password from User WHERE id = $1", user.ID).Scan(user.Name, user.Login, user.Password)
-	if err != nil {
-		return user, err
-	}
-
-	return user, nil
-}
-
-//func updateUser()  {
-//
-//}
-
-func deleteUser(id int) error {
-	_, err := db.Exec("DELETE FROM user WHERE id = $1", id)
-
-	if err != nil{
 		return err
 	}
 	return nil
 }
 
-func getUsersForAdmin() (*[]User, error) {
+func GetUser(id uuid.UUID) (*User, error) {
+	user := &User{}
+	err := DB.QueryRow("SELECT * FROM User WHERE id = $1", id).Scan(&user.Name, &user.Login, &user.Password)
 
-	rows, err := db.Query("SELECT * FROM user")
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func UpdateUser() {
+
+}
+
+func DeleteUser(id uuid.UUID) error {
+	_, err := DB.Exec("DELETE FROM User WHERE id = $1", id)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetUsers() ([]User, error) {
+
+	rows, err := DB.Query("SELECT * FROM User")
 	if err != nil {
 
 	}
@@ -62,30 +57,10 @@ func getUsersForAdmin() (*[]User, error) {
 
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(u.ID, u.Name, u.Login, u.Password); err != nil {
-			return &[]User{}, err
+		if err := rows.Scan(&u.Name, &u.Login, &u.Password); err != nil {
+			return []User{}, err
 		}
-		users = append(users, u	)
+		users = append(users, u)
 	}
-	return &users, nil
+	return users, nil
 }
-
-func getUsers() (*[]User, error) {
-
-	rows, err := db.Query("SELECT name, login FROM user")
-	if err != nil {
-
-	}
-
-	users := make([]User, 0)
-
-	for rows.Next() {
-		var u User
-		if err := rows.Scan(u.Name, u.Login); err != nil {
-			return &[]User{}, err
-		}
-		users = append(users, u	)
-	}
-	return &users, nil
-}
-
