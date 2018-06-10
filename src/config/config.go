@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 // Config is variable for config
@@ -18,6 +19,7 @@ var (
 type Configuration struct {
 	ListenURL   string `json:"ListenURL"`
 	LogFilePath string `json:"LogFilePath"`
+	Database  database.Info   `json:"Database"`
 }
 
 // Load loads config once

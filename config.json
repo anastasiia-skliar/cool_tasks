@@ -1,5 +1,15 @@
 {
   "ListenURL": ":8080",
   "APIVersion": "/v1",
-  "LogFilePath": "log_file.log"
+  "LogFilePath": "log_file.log",
+  "Database": {
+    "Type": "PostgreSQL",
+    "PostgreSQL": {
+      "Username": "postgres",
+      "Password": "postgres",
+      "DatabaseName": "test",
+      "Hostname": "172.17.0.2",
+      "Port": 5432
+    }
+  }
 }
