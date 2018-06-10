@@ -66,6 +66,7 @@ func Connect(d Info){
 			log.Println("Database Error", err)
 		}
 		log.Println("Connected to PostgreSQL")
+		defer SQL.Close()
 	default:
 		log.Println("No registered database in config")
 	}
