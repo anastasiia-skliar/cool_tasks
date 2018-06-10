@@ -5,9 +5,11 @@ import (
 	"log"
 	_ "github.com/lib/pq" //PostgreSQL driver
 	"database/sql"
+	"github.com/garyburd/redigo/redis"
 )
 
 var (
+	RedisPool *redis.Pool // creating redis pool enables us to reuse redigo connections
 	SQL *sql.DB
 	databases Info
 )
@@ -17,7 +19,7 @@ type Type string
 
 const (
 	TypePostgreSQL Type = "PostgreSQL"
-	//TODO: add REDIS support
+	TypeRedis Type = "Redis"
 )
 
 type Info struct {
@@ -25,7 +27,7 @@ type Info struct {
 	Type Type
 	// Postgres info if used
 	PostgreSQL PostgreSQLInfo
-	//TODO: add REDIS support
+	Redis RedisInfo
 
 }
 
@@ -37,6 +39,10 @@ type PostgreSQLInfo struct {
 	Username string
 	Password string
 }
+type RedisInfo struct {
+	URL string
+	Port int
+}
 
 
 // DSN returns the Data Source Name
@@ -45,6 +51,11 @@ func DSN(ci PostgreSQLInfo) string {
 		"password=%s dbname=%s sslmode=disable",
 		ci.Hostname, ci.Port, ci.Username, ci.Password, ci.DatabaseName)
 }
+func DSN_Redis(ci RedisInfo) string {
+	return fmt.Sprintf("%s"+":"+"%d",ci.URL,ci.Port)
+
+}
+
 
 // Connect to the database
 func Connect(d Info){
@@ -67,6 +78,18 @@ func Connect(d Info){
 		}
 		log.Println("Connected to PostgreSQL")
 		defer SQL.Close()
+
+	case TypeRedis:{
+		//redisAddr :=  DSN_Redis(d.Redis)
+		RedisPool = &redis.Pool{
+			Dial: func() (redis.Conn, error) {
+				conn, err := redis.Dial("tcp", DSN_Redis(d.Redis))
+				return conn, err
+			},
+		}
+		log.Println("Connected to Redis")
+	}
+
 	default:
 		log.Println("No registered database in config")
 	}
