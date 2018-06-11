@@ -4,12 +4,16 @@ import (
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
+	"fmt"
 )
+
+var mock sqlmock.Sqlmock
+var err error
 
 func TestCreateUser(t *testing.T) {
 
 	originalDB := db
-	db, mock, err := sqlmock.New()
+	db, mock, err = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -26,7 +30,7 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO user").WithArgs(
-		"John", "john", "1111").WillReturnResult(nil)
+		"John", "john", "1111").WillReturnResult(sqlmock.NewResult(0, 0))
 
 	if err := CreateUser(user); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
@@ -40,7 +44,7 @@ func TestCreateUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
 
 	originalDB := db
-	db, mock, err := sqlmock.New()
+	db, mock, err = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -57,10 +61,11 @@ func TestGetUser(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-		AddRow( UserId, "John", "john", "1111")
+		AddRow(UserId, "John", "john", "1111")
 
 
-	mock.ExpectQuery("SELECT name, login, password FROM user").WithArgs(UserId).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM user").WithArgs(UserId).WillReturnRows(rows)
+
 	result, err := GetUser(UserId)
 
 	if err != nil {
@@ -72,6 +77,8 @@ func TestGetUser(t *testing.T) {
 
 	if result != expected {
 		t.Error("Expected:", expected, "Was:", result)
+	} else {
+		fmt.Println(result)
 	}
 
 }
@@ -79,7 +86,7 @@ func TestGetUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 
 	originalDB := db
-	db, mock, err := sqlmock.New()
+	db, mock, err = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -102,24 +109,28 @@ func TestDeleteUser(t *testing.T) {
 func TestGetUsers(t *testing.T) {
 
 	originalDB := db
-	db, mock, _ := sqlmock.New()
+	db, mock, err = sqlmock.New()
 	defer func() { db = originalDB }()
+
+	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	var expects = []User{
 		{
+			ID:       UserId,
 			Name:     "John",
 			Login:    "john_doe",
 			Password: "1111",
 		},
 		{
+			ID:       UserId,
 			Name:     "Tom",
 			Login:    "hate_jerry",
 			Password: "2222",
 		},
 	}
 
-	rows := sqlmock.NewRows([]string{"Name", "Login", "Password"}).
-		AddRow("John", "john_doe", "1111").AddRow("Tom", "hate_jerry", "2222")
+	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
+		AddRow(UserId, "John", "john_doe", "1111").AddRow(UserId, "Tom", "hate_jerry", "2222")
 
 	mock.ExpectQuery("SELECT (.+) FROM user").WillReturnRows(rows)
 

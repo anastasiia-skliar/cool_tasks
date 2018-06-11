@@ -5,19 +5,26 @@ import (
 	"time"
 )
 
+const (
+	createTask = "INSERT INTO task (user_id, name, time, created_at, updated_at, desc) VALUES ($1, $1, $3, $4, $5, $6)"
+	getTask = "SELECT * FROM task WHERE id = $1"
+	deleteTask = "DELETE FROM task WHERE id = $1"
+	getTasks = "SELECT * FROM task"
+)
+
+
 type Task struct {
-	ID         uuid.UUID
-	User_ID    uuid.UUID
-	Name       string
-	Time       time.Time
-	Created_at time.Time
-	Updated_at time.Time
-	Desc       string
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	Name      string
+	Time      time.Time
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Desc      string
 }
 
 func CreateTask(task Task) error {
-	_, err := db.Exec("INSERT INTO task (user_id, name, time, created_at, updated_at, desc) VALUES " +
-		"($1, $1, $3, $4, $5, $6)", task.User_ID, task.Name, task.Time, task.Created_at, task.Updated_at, task.Desc)
+	_, err := db.Exec(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc)
 
 	if err != nil {
 		return err
@@ -27,8 +34,7 @@ func CreateTask(task Task) error {
 
 func GetTask(id uuid.UUID) (Task, error) {
 	task := Task{}
-	err := db.QueryRow("SELECT user_id, name, time, created_at, updated_at, desc FROM task WHERE id = $1",
-		id).Scan(&task.User_ID, &task.Name, &task.Time, &task.Created_at, &task.Updated_at, &task.Desc)
+	err := db.QueryRow(getTask, id).Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
 
 	if err != nil {
 		return task, err
@@ -42,7 +48,7 @@ func UpdateTask() {
 }
 
 func DeleteTask(id uuid.UUID) error {
-	_, err := db.Exec("DELETE FROM task WHERE id = $1", id)
+	_, err := db.Exec(deleteTask, id)
 
 	if err != nil {
 		return err
@@ -51,16 +57,16 @@ func DeleteTask(id uuid.UUID) error {
 }
 
 func GetTasks() ([]Task, error) {
-	rows, err := db.Query("SELECT user_id, name, time, created_at, updated_at, desc FROM task")
+	rows, err := db.Query(getTasks)
 	if err != nil {
-
+		return []Task{}, err
 	}
 
 	tasks := make([]Task, 0)
 
 	for rows.Next() {
 		var t Task
-		if err := rows.Scan(&t.User_ID, &t.Name, &t.Time, &t.Created_at, &t.Updated_at, &t.Desc); err != nil {
+		if err := rows.Scan(&t.ID, &t.UserID, &t.Name, &t.Time, &t.CreatedAt, &t.UpdatedAt, &t.Desc); err != nil {
 			return []Task{}, err
 		}
 		tasks = append(tasks, t)
