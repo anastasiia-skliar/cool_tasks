@@ -4,7 +4,6 @@ import (
 	"github.com/satori/go.uuid"
 	"database/sql"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"log"
 )
 
 type User struct {
@@ -15,20 +14,15 @@ type User struct {
 }
 
 //will be deleteted!
-var (
-	db *sql.DB
-	err error
-)
+var db *sql.DB
 
-func init()  {
-	db, _, err = sqlmock.New()
-	if err != nil {
-		log.Fatal(err)
-	}
+func init() {
+	db, _, _ = sqlmock.New()
 }
 
 func CreateUser(user User) error {
-	_, err := db.Exec("INSERT INTO User (name, login, password) VALUES ($1, $1, $3)", user.Name, user.Login, user.Password)
+	_, err := db.Exec("INSERT INTO user (name, login, password)" +
+		" VALUES ($1, $2, $3)", user.Name, user.Login, user.Password)
 
 	if err != nil {
 		return err
@@ -38,7 +32,7 @@ func CreateUser(user User) error {
 
 func GetUser(id uuid.UUID) (User, error) {
 	user := User{}
-	err := db.QueryRow("SELECT name, login, password FROM User WHERE id = $1", id).Scan(&user.Name, &user.Login, &user.Password)
+	err := db.QueryRow("SELECT name, login, password FROM user WHERE id = $1", id).Scan(&user.Name, &user.Login, &user.Password)
 
 	if err != nil {
 		return user, err
@@ -51,7 +45,7 @@ func UpdateUser() {
 }
 
 func DeleteUser(id uuid.UUID) error {
-	_, err := db.Exec("DELETE FROM User WHERE id = $1", id)
+	_, err := db.Exec("DELETE FROM user WHERE id = $1", id)
 
 	if err != nil {
 		return err
@@ -61,7 +55,7 @@ func DeleteUser(id uuid.UUID) error {
 
 func GetUsers() ([]User, error) {
 
-	rows, err := db.Query("SELECT * FROM User")
+	rows, err := db.Query("SELECT * FROM user")
 	if err != nil {
 
 	}

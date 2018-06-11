@@ -4,75 +4,69 @@ import (
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
-	"log"
 )
-
-var UUID uuid.UUID
-
-var (
- 	errUserMock error
-	userMock   sqlmock.Sqlmock
- )
-
-func init()  {
-	_, userMock, errUserMock = sqlmock.New()
-	if errUserMock != nil {
-		log.Fatal(errUserMock)
-	}
-}
 
 func TestCreateUser(t *testing.T) {
 
+	originalDB := db
+	db, mock, err := sqlmock.New()
+	defer func() { db = originalDB }()
+
+	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+
 	user := User{
-		UUID,
+		UserId,
 		"John",
 		"john",
 		"1111",
 	}
 
-	if errUserMock != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", errUserMock)
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	userMock.ExpectExec("INSERT INTO User").WithArgs(
-		"John", "john", "1111").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO user").WithArgs(
+		"John", "john", "1111").WillReturnResult(nil)
 
 	if err := CreateUser(user); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
-	if err := userMock.ExpectationsWereMet(); err != nil {
+	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
 
 func TestGetUser(t *testing.T) {
 
-	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	originalDB := db
+	db, mock, err := sqlmock.New()
+	defer func() { db = originalDB }()
+
+	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	expected := User{
-		ID: id,
+		ID: 	  UserId,
 		Name:     "John",
 		Login:    "john",
 		Password: "1111",
 	}
 
-	if errUserMock != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", errUserMock)
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-		AddRow( id, "John", "john", "1111")
+		AddRow( UserId, "John", "john", "1111")
 
 
-	userMock.ExpectQuery("SELECT name, login, password FROM User").WithArgs(UUID).WillReturnRows(rows)
-	result, err := GetUser(id)
+	mock.ExpectQuery("SELECT name, login, password FROM user").WithArgs(UserId).WillReturnRows(rows)
+	result, err := GetUser(UserId)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
-	if err := userMock.ExpectationsWereMet(); err != nil {
+	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 
@@ -84,24 +78,33 @@ func TestGetUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 
+	originalDB := db
+	db, mock, err := sqlmock.New()
+	defer func() { db = originalDB }()
+
 	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	if errUserMock != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", errUserMock)
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	userMock.ExpectExec("DELETE FROM User WHERE").WithArgs(
+	mock.ExpectExec("DELETE FROM user WHERE").WithArgs(
 		id).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	if err := DeleteUser(id); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
-	if err := userMock.ExpectationsWereMet(); err != nil {
+	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
 
 func TestGetUsers(t *testing.T) {
+
+	originalDB := db
+	db, mock, _ := sqlmock.New()
+	defer func() { db = originalDB }()
+
 	var expects = []User{
 		{
 			Name:     "John",
@@ -118,14 +121,14 @@ func TestGetUsers(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"Name", "Login", "Password"}).
 		AddRow("John", "john_doe", "1111").AddRow("Tom", "hate_jerry", "2222")
 
-	userMock.ExpectQuery("SELECT (.+) FROM User").WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM user").WillReturnRows(rows)
 
 	result, err := GetUsers()
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
-	if err := userMock.ExpectationsWereMet(); err != nil {
+	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 
