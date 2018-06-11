@@ -3,8 +3,10 @@ package services
 import (
 	"net/http"
 
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
+
 	"github.com/gorilla/mux"
 )
 
@@ -17,6 +19,10 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/hello-world", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(welcome.GetWelcomeHandler),
 	}))
+	apiV1.Handle("/login", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandleFunc(auth.Login),
+	}))
 
 	return router
 }
+
