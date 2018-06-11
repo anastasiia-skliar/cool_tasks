@@ -10,7 +10,6 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"github.com/urfave/negroni"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
 
 func main() {
@@ -24,6 +23,7 @@ func main() {
 	err := config.Load()
 
 	database.Connect(config.Config.Database)
+
 
 	if err != nil {
 		log.Fatalf("error while reading config: %s", err)

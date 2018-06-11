@@ -3,7 +3,7 @@
   "APIVersion": "/v1",
   "LogFilePath": "log_file.log",
   "Database": {
-    "Type": "PostgreSQL",
+    "Type": ["PostgreSQL","Redis"],
     "PostgreSQL": {
       "Username": "postgres",
       "Password": "postgres",

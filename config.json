@@ -3,13 +3,17 @@
   "APIVersion": "/v1",
   "LogFilePath": "log_file.log",
   "Database": {
-    "Type": "PostgreSQL",
+    "Type": ["PostgreSQL","Redis"],
     "PostgreSQL": {
       "Username": "postgres",
       "Password": "postgres",
       "DatabaseName": "test",
       "Hostname": "172.17.0.2",
       "Port": 5432
+    },
+    "Redis":{
+      "URL":"172.17.0.3",
+      "Port":6379
     }
   }
 }

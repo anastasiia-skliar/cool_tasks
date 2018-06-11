@@ -24,7 +24,7 @@ const (
 
 type Info struct {
 	// Database type
-	Type Type
+	Type[] Type
 	// Postgres info if used
 	PostgreSQL PostgreSQLInfo
 	Redis RedisInfo
@@ -64,34 +64,35 @@ func Connect(d Info){
 	// Store the config
 	databases = d
 
-	switch d.Type {
-
-	case TypePostgreSQL:
-		// Connect to PostgreSQL
-		SQL, err = sql.Open("postgres", DSN(d.PostgreSQL));
-		if  err != nil {
-			log.Println("SQL Driver Error", err)
+	for index,_:= range d.Type[:]{
+		switch d.Type[index] {
+		case TypePostgreSQL:
+			// Connect to PostgreSQL
+			SQL, err = sql.Open("postgres", DSN(d.PostgreSQL));
+			if err != nil {
+				log.Println("SQL Driver Error", err)
+			}
+			// Check if is alive
+			if err = SQL.Ping(); err != nil {
+				log.Println("Database Error", err)
+			} else {
+				log.Println("Connected to Postgres")
+			}
+		case TypeRedis:{
+			//redisAddr :=  DSN_Redis(d.Redis)
+			RedisPool = &redis.Pool{
+				Dial: func() (redis.Conn, error) {
+					conn, err := redis.Dial("tcp", DSN_Redis(d.Redis))
+					if err==nil{
+						log.Println("Connected to Redis")
+					}
+					return conn, err
+				},
+			}
 		}
-		// Check if is alive
-		if err = SQL.Ping(); err != nil {
-			log.Println("Database Error", err)
+		default:
+			log.Println("No registered database in config")
 		}
-		log.Println("Connected to PostgreSQL")
-		defer SQL.Close()
-
-	case TypeRedis:{
-		//redisAddr :=  DSN_Redis(d.Redis)
-		RedisPool = &redis.Pool{
-			Dial: func() (redis.Conn, error) {
-				conn, err := redis.Dial("tcp", DSN_Redis(d.Redis))
-				return conn, err
-			},
-		}
-		log.Println("Connected to Redis")
-	}
-
-	default:
-		log.Println("No registered database in config")
 	}
 }
 
