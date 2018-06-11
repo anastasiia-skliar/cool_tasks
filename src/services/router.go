@@ -2,7 +2,7 @@ package services
 
 import (
 	"net/http"
-
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
@@ -17,6 +17,17 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/hello-world", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(welcome.GetWelcomeHandler),
 	}))
-
+	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(usersCRUD.GetUsers),
+	}))
+	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(usersCRUD.GetUserByID),
+	}))
+	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandlerFunc(usersCRUD.AddUser),
+	}))
+	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUser),
+	}))
 	return router
 }
