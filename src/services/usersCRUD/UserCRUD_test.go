@@ -37,5 +37,70 @@ func TestGetUsers(t *testing.T) {
 	}
 }
 
+func TestGetUserByID(t *testing.T) {
+	tests := []getUsersTestCase{
+		{
+			name: "Get_Users_200",
+			url:  "/v1/users/1",
+			want: 200,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
+
+			router.ServeHTTP(rec, req)
+
+			if rec.Code != tc.want {
+				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
+			}
+		})
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+	tests := []getUsersTestCase{
+		{
+			name: "Delete_Users_200",
+			url:  "/v1/users/1",
+			want: 200,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
+
+			router.ServeHTTP(rec, req)
+
+			if rec.Code != tc.want {
+				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
+			}
+		})
+	}
+}
+
+func TestAddUser(t *testing.T) {
+	tests := []getUsersTestCase{
+		{
+			name: "Add_Users_200",
+			url:  "/v1/users",
+			want: 200,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
+
+			router.ServeHTTP(rec, req)
+
+			if rec.Code != tc.want {
+				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
+			}
+		})
+	}
+}
 
 
