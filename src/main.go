@@ -6,17 +6,19 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/urfave/negroni"
 	"database/sql"
-	"github.com/garyburd/redigo/redis"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/garyburd/redigo/redis"
+	"github.com/urfave/negroni"
 )
+
 var (
-	DB *sql.DB
+	DB    *sql.DB
 	Cache redis.Conn
 )
+
 func main() {
 	configFile := flag.String("config", "./config.json", "Configuration file in JSON-format")
 	flag.Parse()
@@ -35,22 +37,19 @@ func main() {
 		log.Fatalf("error opening file: %v", err)
 	}
 
-	DB,err = database.SetupPostgres(config.Config.Database)
-	if err!=nil{
-		log.Fatalf("eror while loading postgreSQL: %s:",err)
+	DB, err = database.SetupPostgres(config.Config.Database)
+	if err != nil {
+		log.Fatalf("eror while loading postgreSQL: %s:", err)
 	}
 
-	Cache,err = database.SetupRedis(config.Config.Database)
-	if err!=nil{
-		log.Fatalf("eror while loading redis: %s:",err)
+	Cache, err = database.SetupRedis(config.Config.Database)
+	if err != nil {
+		log.Fatalf("eror while loading redis: %s:", err)
 	}
-
 
 	defer f.Close()
 
 	log.SetOutput(f)
-
-
 
 	// setting up web server middlewares
 	middlewareManager := negroni.New()

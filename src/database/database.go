@@ -1,10 +1,10 @@
 package database
 
 import (
-	"fmt"
-	_ "github.com/lib/pq" //PostgreSQL driver
 	"database/sql"
+	"fmt"
 	"github.com/garyburd/redigo/redis"
+	_ "github.com/lib/pq" //PostgreSQL driver
 )
 
 var (
@@ -16,27 +16,25 @@ type Type string
 
 type Info struct {
 	// Database type
-	Type[] Type
+	Type []Type
 	// Postgres info if used
 	PostgreSQL PostgreSQLInfo
 	//Redis info
 	Redis RedisInfo
-
 }
 
 // PostgreSQLInfo is the details for the database connection
 type PostgreSQLInfo struct {
-	Hostname  string
-	Port  int
+	Hostname     string
+	Port         int
 	DatabaseName string
-	Username string
-	Password string
+	Username     string
+	Password     string
 }
 type RedisInfo struct {
-	URL string
+	URL  string
 	Port int
 }
-
 
 // DSN returns the Data Source Name
 func DSN(ci PostgreSQLInfo) string {
@@ -45,25 +43,25 @@ func DSN(ci PostgreSQLInfo) string {
 		ci.Hostname, ci.Port, ci.Username, ci.Password, ci.DatabaseName)
 }
 func DSN_Redis(ci RedisInfo) string {
-	return fmt.Sprintf("%s:%d",ci.URL,ci.Port)
+	return fmt.Sprintf("%s:%d", ci.URL, ci.Port)
 }
 
 func SetupPostgres(d Info) (*sql.DB, error) {
 	db, err := sql.Open("postgres", DSN(d.PostgreSQL))
 	//check if is alive
-	err=db.Ping()
-	return db,err
+	err = db.Ping()
+	return db, err
 }
 
-func SetupRedis(d Info)(redis.Conn,error){
-	var err,pool = newPool(d)
+func SetupRedis(d Info) (redis.Conn, error) {
+	var err, pool = newPool(d)
 	connection := pool.Get()
-	return connection,err
+	return connection, err
 }
 
-func newPool(d Info) (error,*redis.Pool) {
-	c,err:=redis.Dial("tcp", DSN_Redis(d.Redis))
-	return err,&redis.Pool{
+func newPool(d Info) (error, *redis.Pool) {
+	c, err := redis.Dial("tcp", DSN_Redis(d.Redis))
+	return err, &redis.Pool{
 		MaxIdle:   80,
 		MaxActive: 12000, // max number of connections
 		Dial: func() (redis.Conn, error) {

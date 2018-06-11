@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"io/ioutil"
 	"log"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 // Config is variable for config
