@@ -17,9 +17,9 @@ var (
 
 // Configuration is a singleton object for application config
 type Configuration struct {
-	ListenURL   string `json:"ListenURL"`
-	LogFilePath string `json:"LogFilePath"`
-	Database  database.Info   `json:"Database"`
+	ListenURL   string        `json:"ListenURL"`
+	LogFilePath string        `json:"LogFilePath"`
+	Database    database.Info `json:"Database"`
 }
 
 // Load loads config once
