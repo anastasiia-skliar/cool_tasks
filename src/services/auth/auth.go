@@ -3,6 +3,10 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"database/sql"
+	"github.com/satori/go.uuid"
+	"github.com/alicebob/miniredis"
 )
 
 type login struct {
@@ -10,6 +14,19 @@ type login struct {
 	login     string
 	pass      string
 	sessionID string
+}
+
+type User struct {
+	ID       uuid.UUID
+	Name     string
+	Login    string
+	Password string
+}
+var redis *miniredis.Miniredis
+var db *sql.DB
+func init() {
+    redis, _ = miniredis.Run()
+	db, _, _ = sqlmock.New()
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -30,11 +47,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func tryLogin(loginUser login) string {
-	usersInDB, err := db.Query("SELECT * FROM users WHERE login = $1", loginUser.login)
-	if err != nil {
-		return ""
-	}
-	if loginUser.pass == usersInDB.pass {
+	userPass := db.QueryRow("SELECT ID, password FROM users WHERE login = $1", loginUser.login)
+	var usersInDB User
+	userPass.Scan(&usersInDB.ID, &usersInDB.Password)
+	if loginUser.pass == usersInDB.Password {
+		if redis.Exists(  usersInDB.ID.String()){
+			redis.Del()
+		}
 		redis.CreateSession(userInDB.id)
 		return userInDB.id
 	}
