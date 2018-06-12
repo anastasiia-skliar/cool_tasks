@@ -17,3 +17,5 @@ code-quality:
 .PHONY: code-quality-print
 code-quality-print:
 	$(LINTERCOMMAND) ./...
+create-table:
+psql -h 127.0.0.1 -p 5432 -U postgres -a -f cool_tasks.sql
