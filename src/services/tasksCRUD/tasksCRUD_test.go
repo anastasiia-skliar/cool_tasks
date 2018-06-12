@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"net/url"
 	"bytes"
@@ -79,7 +78,7 @@ func TestDeleteTasks(t *testing.T) {
 		{
 			name: "Delete_Task_415",
 			url:  "/v1/tasks/wrongID",
-			want: 415,
+			want: 400,
 		},
 		{
 			name: "Delete_Task_404",

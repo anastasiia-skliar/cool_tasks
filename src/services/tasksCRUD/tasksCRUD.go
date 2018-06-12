@@ -20,6 +20,10 @@ type Task struct {
 	Desc      string
 }
 
+type successMessage struct {
+	Status string `json:"message"`
+}
+
 // Start model functions for test
 
 var testID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -42,6 +46,13 @@ func testGetTasks() (tasks []Task, err error) {
 	return tasks, err
 }
 func testDeleteTasks(ID uuid.UUID) (err error) {
+
+	if ID == tasksidArr.ID {
+		return nil
+	} else {
+		err = errors.New("Error")
+	}
+
 	return err
 }
 func testAddTask(task Task) (t Task, err error) {
@@ -133,6 +144,7 @@ func AddTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//common.RenderJSON(w, r, successMessage{Status: "Success"})
 	common.RenderJSON(w, r, task)
 }
 
@@ -154,4 +166,6 @@ func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, 404, "ERROR: Can't delete this task", err)
 		return
 	}
+
+	common.RenderJSON(w, r, successMessage{Status: "Success"})
 }

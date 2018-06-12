@@ -2,7 +2,7 @@ package services
 
 import (
 	"net/http"
-
+	"github.com/gorilla/mux"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
@@ -18,17 +18,12 @@ func NewRouter() *mux.Router {
 		http.MethodGet: http.HandlerFunc(welcome.GetWelcomeHandler),
 	}))
 
-
 	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(tasksCRUD.GetTasks),
-	}))
-	apiV1.Handle("/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(tasksCRUD.GetTasksByID),
-	}))
-	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
 		http.MethodPost: http.HandlerFunc(tasksCRUD.AddTasks),
 	}))
 	apiV1.Handle("/tasks/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
 
