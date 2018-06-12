@@ -9,6 +9,8 @@ import (
 
 var (
 	databases Info
+	DB        *sql.DB
+	Cache     redis.Conn
 )
 
 // Type is the type of database from a Type* constant
