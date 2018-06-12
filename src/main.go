@@ -2,14 +2,20 @@ package main
 
 import (
 	"flag"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	_ "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
+	"database/sql"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/garyburd/redigo/redis"
+	"github.com/urfave/negroni"
+)
+
+var (
+	DB    *sql.DB
+	Cache redis.Conn
 )
 
 func main() {
@@ -30,12 +36,12 @@ func main() {
 		log.Fatalf("error opening file: %v", err)
 	}
 
-	database.DB, err = database.SetupPostgres(config.Config.Database)
+	DB, err = database.SetupPostgres(config.Config.Database)
 	if err != nil {
 		log.Fatalf("eror while loading postgreSQL: %s:", err)
 	}
 
-	database.Cache, err = database.SetupRedis(config.Config.Database)
+	Cache, err = database.SetupRedis(config.Config.Database)
 	if err != nil {
 		log.Fatalf("eror while loading redis: %s:", err)
 	}

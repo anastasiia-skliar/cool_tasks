@@ -8,8 +8,6 @@ import (
 )
 
 var (
-	DB        *sql.DB
-	Cache     redis.Conn
 	databases Info
 )
 
