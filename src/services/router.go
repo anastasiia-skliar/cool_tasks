@@ -20,9 +20,11 @@ func NewRouter() *mux.Router {
 		http.MethodGet: http.HandlerFunc(welcome.GetWelcomeHandler),
 	}))
 	apiV1.Handle("/login", common.MethodHandler(map[string]http.Handler{
-		http.MethodPost: http.HandleFunc(auth.Login),
+		http.MethodPost: http.HandlerFunc(auth.Login),
 	}))
-
+	apiV1.Handle("/logout", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandlerFunc(auth.Logout),
+	}))
 	return router
 }
 
