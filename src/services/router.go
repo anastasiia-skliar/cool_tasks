@@ -18,15 +18,11 @@ func NewRouter() *mux.Router {
 		http.MethodGet: http.HandlerFunc(welcome.GetWelcomeHandler),
 	}))
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(usersCRUD.GetUsers),
-	}))
-	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(usersCRUD.GetUserByID),
-	}))
-	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsers),
 		http.MethodPost: http.HandlerFunc(usersCRUD.AddUser),
 	}))
 	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:    http.HandlerFunc(usersCRUD.GetUserByID),
 		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUser),
 	}))
 	return router

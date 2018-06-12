@@ -16,6 +16,10 @@ type Users struct {
 	Name     string
 }
 
+type succesMessage struct {
+	Status string `json:"status"`
+}
+
 var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
 var users = []Users{{tempID, "Karim", "1234qwer", "Karim"}}
 var user = Users{tempID, "Karim", "1234qwer", "Karim"}
@@ -86,6 +90,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, 400, "ERROR: Can't add this user", err)
 		return
 	}
+	common.RenderJSON(w, r, succesMessage{Status: "success"})
 }
 
 func IsValid(user Users) (bool, string) {
@@ -126,4 +131,5 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, 404, "ERROR: Can't delete this user", err)
 		return
 	}
+	common.RenderJSON(w, r, succesMessage{Status: "success"})
 }
