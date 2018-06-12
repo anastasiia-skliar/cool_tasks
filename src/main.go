@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"database/sql"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
@@ -55,6 +54,7 @@ func main() {
 	middlewareManager := negroni.New()
 	middlewareManager.Use(negroni.NewRecovery())
 	middlewareManager.UseHandler(services.NewRouter())
+
 	log.Println("Starting HTTP listener...")
 	err = http.ListenAndServe(config.Config.ListenURL, middlewareManager)
 	if err != nil {
