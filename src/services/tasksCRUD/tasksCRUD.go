@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"github.com/gorilla/mux"
 	"time"
-	"strconv"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"log"
 	"errors"
+	"github.com/satori/go.uuid"
 )
 
 type Task struct {
-	ID        int
-	UserID    int
+	ID        uuid.UUID
+	UserID    uuid.UUID
 	Name      string
 	Time      time.Time
 	CreatedAt time.Time
@@ -22,10 +22,12 @@ type Task struct {
 
 // Start model functions for test
 
-var tasksArr = []Task{{1, 1, "Simple Task", time.Now(), time.Now(), time.Now(), "do something"}}
-var tasksidArr = Task{1, 1, "Simple Task", time.Now(), time.Now(), time.Now(), "do something"}
+var testID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-func testGetTaskByID(ID int) (tasksid Task, err error) {
+var tasksArr = []Task{{testID, testID, "Simple Task", time.Now(), time.Now(), time.Now(), "do something"}}
+var tasksidArr = Task{testID, testID, "Simple Task", time.Now(), time.Now(), time.Now(), "do something"}
+
+func testGetTaskByID(ID uuid.UUID) (tasksid Task, err error) {
 
 	if ID == tasksidArr.ID {
 		tasksid = tasksidArr
@@ -39,7 +41,7 @@ func testGetTasks() (tasks []Task, err error) {
 	tasks = tasksArr
 	return tasks, err
 }
-func testDeleteTasks(ID int) (err error) {
+func testDeleteTasks(ID uuid.UUID) (err error) {
 	return err
 }
 func testAddTask(task Task) (t Task, err error) {
@@ -65,14 +67,15 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	taskID, atoiErr := strconv.Atoi(params["id"])
-	task, err := testGetTaskByID(taskID)
+	taskID, err := uuid.FromString(params["id"])
 
-	if atoiErr != nil {
-		log.Print(atoiErr, " ERROR: Wrong task ID (can't convert string to int)")
-		common.SendError(w, r, 400, "ERROR: Wrong task ID (can't convert string to int)", atoiErr)
+	if err != nil {
+		log.Print(err, " ERROR: Wrong task ID (can't convert string to uuid)")
+		common.SendError(w, r, 400, "ERROR: Wrong task ID (can't convert string to uuid)", err)
 		return
 	}
+
+	task, err := testGetTaskByID(taskID)
 
 	if err != nil {
 		log.Print(err, " ERROR: Can't get task by ID")
@@ -88,20 +91,20 @@ func AddTasks(w http.ResponseWriter, r *http.Request) {
 
 	var newTask Task
 
-	parseFormErr := r.ParseForm()
+	err := r.ParseForm()
 
-	if parseFormErr != nil {
-		log.Print(parseFormErr, " ERROR: Can't parse POST Body")
-		common.SendError(w, r, 400, "ERROR: Can't parse POST Body", parseFormErr)
+	if err != nil {
+		log.Print(err, " ERROR: Can't parse POST Body")
+		common.SendError(w, r, 400, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
 	timeNow := time.Now()
-	userID, atoiErr := strconv.Atoi(r.Form.Get("user_id"))
+	userID, err := uuid.FromString(r.Form.Get("user_id"))
 
-	if atoiErr != nil {
-		log.Print(atoiErr, " ERROR: Wrong user ID (can't convert string to int)")
-		common.SendError(w, r, 400, "ERROR: Wrong user ID (can't convert string to int)", atoiErr)
+	if err != nil {
+		log.Print(err, " ERROR: Wrong user ID (can't convert string to uuid)")
+		common.SendError(w, r, 400, "ERROR: Wrong user ID (can't convert string to uuid)", err)
 		return
 	}
 
@@ -112,21 +115,21 @@ func AddTasks(w http.ResponseWriter, r *http.Request) {
 	newTask.UpdatedAt = timeNow //When we create new task, updated time = created time
 	newTask.Desc = r.Form.Get("desc")
 
-	parsedTime, parsedErr := time.Parse(time.UnixDate, newTime) //parse time from string to time type
+	parsedTime, err := time.Parse(time.UnixDate, newTime) //parse time from string to time type
 
-	if parsedErr != nil {
-		log.Print(parsedErr, " ERROR: Wrong date (can't convert string to int)")
-		common.SendError(w, r, 415, "ERROR: Wrong date(can't convert string to int)", parsedErr)
+	if err != nil {
+		log.Print(err, " ERROR: Wrong date (can't convert string to int)")
+		common.SendError(w, r, 415, "ERROR: Wrong date(can't convert string to int)", err)
 		return
 	}
 
 	newTask.Time = parsedTime
 
-	task, taskErr := testAddTask(newTask)
+	task, err := testAddTask(newTask)
 
-	if taskErr != nil {
-		log.Print(taskErr, " ERROR: Can't add new task")
-		common.SendError(w, r, 400, "ERROR: Can't add new task", taskErr)
+	if err != nil {
+		log.Print(err, " ERROR: Can't add new task")
+		common.SendError(w, r, 400, "ERROR: Can't add new task", err)
 		return
 	}
 
@@ -136,19 +139,19 @@ func AddTasks(w http.ResponseWriter, r *http.Request) {
 func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	taskID, err := strconv.Atoi(params["id"])
+	taskID, err := uuid.FromString(params["id"])
 
 	if err != nil {
-		log.Print(err, " ERROR: Wrong task ID (can't convert string to int)")
-		common.SendError(w, r, 400, "ERROR: Wrong task ID (can't convert string to int)", err)
+		log.Print(err, " ERROR: Wrong task ID (can't convert string to uuid)")
+		common.SendError(w, r, 400, "ERROR: Wrong task ID (can't convert string to uuid)", err)
 		return
 	}
 
-	deleteErr := testDeleteTasks(taskID)
+	err = testDeleteTasks(taskID)
 
-	if deleteErr != nil {
-		log.Print(deleteErr, " ERROR: Can't delete this task")
-		common.SendError(w, r, 404, "ERROR: Can't delete this task", deleteErr)
+	if err != nil {
+		log.Print(err, " ERROR: Can't delete this task")
+		common.SendError(w, r, 404, "ERROR: Can't delete this task", err)
 		return
 	}
 }

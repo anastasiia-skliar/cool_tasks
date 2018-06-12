@@ -11,6 +11,8 @@ import (
 )
 
 var router = services.NewRouter()
+var testUUID = "00000000-0000-0000-0000-000000000001"
+var testUUIDbad = "00000000-0000-0000-0000-000000000002"
 
 type tasksCRUDTestCase struct {
 	name string
@@ -49,12 +51,12 @@ func TestGetTasksByID(t *testing.T) {
 		},
 		{
 			name: "Get_TaskById_404",
-			url:  "/v1/tasks/-1",
+			url:  "/v1/tasks/" + testUUIDbad,
 			want: 404,
 		},
 		{
 			name: "Get_TaskById_200",
-			url:  "/v1/tasks/1",
+			url:  "/v1/tasks/"+ testUUID,
 			want: 200,
 		},
 	}
@@ -81,7 +83,7 @@ func TestDeleteTasks(t *testing.T) {
 		},
 		{
 			name: "Delete_Task_404",
-			url:  "/v1/tasks/-1",
+			url:  "/v1/tasks/" + testUUIDbad,
 			want: 404,
 		},
 	}
