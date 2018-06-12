@@ -17,3 +17,5 @@ code-quality:
 .PHONY: code-quality-print
 code-quality-print:
 	$(LINTERCOMMAND) ./...
+create-table:
+psql -h docker -U postgres -d cool_tasks -a -f cool_tasks.sql
