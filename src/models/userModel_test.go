@@ -1,10 +1,10 @@
 package models
 
 import (
+	"fmt"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
-	"fmt"
 )
 
 var mock sqlmock.Sqlmock
@@ -29,10 +29,10 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	mock.ExpectExec("INSERT INTO user").WithArgs(
-		"John", "john", "1111").WillReturnResult(sqlmock.NewResult(0, 0))
+	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserId)
 
-	if err := CreateUser(user); err != nil {
+	mock.ExpectQuery("INSERT INTO user").WithArgs("John", "john", "1111").WillReturnRows(rows)
+	if _, err := CreateUser(user); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -50,7 +50,7 @@ func TestGetUser(t *testing.T) {
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	expected := User{
-		ID: 	  UserId,
+		ID:       UserId,
 		Name:     "John",
 		Login:    "john",
 		Password: "1111",
@@ -62,7 +62,6 @@ func TestGetUser(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
 		AddRow(UserId, "John", "john", "1111")
-
 
 	mock.ExpectQuery("SELECT (.+) FROM user").WithArgs(UserId).WillReturnRows(rows)
 
@@ -80,7 +79,6 @@ func TestGetUser(t *testing.T) {
 	} else {
 		fmt.Println(result)
 	}
-
 }
 
 func TestDeleteUser(t *testing.T) {
@@ -144,7 +142,7 @@ func TestGetUsers(t *testing.T) {
 	}
 
 	for i := 0; i < len(result); i++ {
-		if expects[i] != result[i]{
+		if expects[i] != result[i] {
 			t.Error("Expected:", expects[i], "Was:", result[i])
 		}
 	}

@@ -1,18 +1,19 @@
 package models
 
 import (
-	"github.com/satori/go.uuid"
 	"database/sql"
+	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
 const (
-	createUser = "INSERT INTO user (name, login, password) VALUES ($1, $2, $3)"
-	getUser = "SELECT * FROM user WHERE id = $1"
+	createUser = "INSERT INTO user (name, login, password) VALUES ($1, $2, $3) RETURNING id"
+	getUser    = "SELECT * FROM user WHERE id = $1"
 	deleteUser = "DELETE FROM user WHERE id = $1"
-	getUsers = "SELECT * FROM user"
+	getUsers   = "SELECT * FROM user"
 )
 
+//User representation in DB
 type User struct {
 	ID       uuid.UUID
 	Name     string
@@ -27,38 +28,35 @@ func init() {
 	db, _, _ = sqlmock.New()
 }
 
-func CreateUser(user User) error {
-	_, err := db.Exec(createUser, user.Name, user.Login, user.Password)
+//CreateUser used for creation user in DB
+func CreateUser(user User) (uuid.UUID, error) {
+	var id uuid.UUID
+	err := db.QueryRow(createUser, user.Name, user.Login, user.Password).Scan(&id)
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return id, err
 }
 
+//GetUser used for getting user from DB
 func GetUser(id uuid.UUID) (User, error) {
-	user := User{}
+	var user User
 	err := db.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 
-	if err != nil {
-		return user, err
-	}
-	return user, nil
+	return user, err
 }
 
+//UpdateUser is used for updating user in DB
 func UpdateUser() {
 
 }
 
+//DeleteUser used for deleting user from DB
 func DeleteUser(id uuid.UUID) error {
 	_, err := db.Exec(deleteUser, id)
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
+//GetUsers used for getting users from DB
 func GetUsers() ([]User, error) {
 
 	rows, err := db.Query(getUsers)

@@ -1,10 +1,10 @@
 package models
 
 import (
+	"github.com/satori/go.uuid"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"time"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"github.com/satori/go.uuid"
 )
 
 func TestCreateTask(t *testing.T) {
@@ -19,7 +19,7 @@ func TestCreateTask(t *testing.T) {
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
 
-	task :=Task{
+	task := Task{
 		ID,
 		UserID,
 		"TaskOne",
@@ -164,7 +164,7 @@ func TestGetTasks(t *testing.T) {
 	}
 
 	for i := 0; i < len(result); i++ {
-		if expects[i] != result[i]{
+		if expects[i] != result[i] {
 			t.Error("Expected:", expects[i], "Was:", result[i])
 		}
 	}
