@@ -1,16 +1,17 @@
 package auth
 
 import (
-	"encoding/json"
 	"net/http"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"database/sql"
 	"github.com/satori/go.uuid"
 	"github.com/alicebob/miniredis"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"errors"
 )
 
 type login struct {
-	id        string
+	id        uuid.UUID
 	login     string
 	pass      string
 	sessionID string
@@ -37,33 +38,38 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newLogin.login = r.Form.Get("Login")
 	newLogin.pass = r.Form.Get("Pass")
 
-	newLogin.sessionID = tryLogin(newLogin)
+	newLogin.sessionID = tryLogin(w, r, newLogin)
 	if newLogin.sessionID != "" {
-		w.Header().Set("Content-Type", "application/json")
-		jsonResp, _ := json.Marshal(newLogin.sessionID)
-		w.Write(jsonResp)
+		redis.Push(newLogin.sessionID, newLogin.login)
+
+		common.RenderJSON(w, r, newLogin.sessionID)
+
 	}
+	common.SendError(w, r, 418, "ERROR: ", errors.New("no result"))
 
 }
 
-func tryLogin(loginUser login) string {
+func tryLogin(w http.ResponseWriter, r *http.Request, loginUser login) string{
 	userPass := db.QueryRow("SELECT ID, password FROM users WHERE login = $1", loginUser.login)
 	var usersInDB User
 	userPass.Scan(&usersInDB.ID, &usersInDB.Password)
 	if loginUser.pass == usersInDB.Password {
-		if redis.Exists(  usersInDB.ID.String()){
-			redis.Del()
+		sessionUUID, err:= uuid.FromString(usersInDB.Login)
+		if err!=nil {
+
+			common.SendError(w, r, 418, "ERROR: ", err)
+			return ""
 		}
-		redis.CreateSession(userInDB.id)
-		return userInDB.id
+		loginUser.sessionID = sessionUUID.String()
+		return loginUser.sessionID
 	}
 	return ""
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	var newLogout login
-
 	r.ParseForm()
 	newLogout.sessionID = r.Form.Get("sessionID")
-	redis.FinishSession(newLogout.sessionID)
+	redis.Del(newLogout.sessionID)
+	common.RenderJSON(w, r, "")
 }
