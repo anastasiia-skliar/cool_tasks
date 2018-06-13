@@ -1,6 +1,10 @@
 package: github.com/Nastya-Kruglikova/cool_tasks/src
 import:
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis
 - package: github.com/gorilla/mux
+- package: github.com/lib/pq
 - package: github.com/satori/go.uuid
 - package: github.com/urfave/negroni
 - package: gopkg.in/DATA-DOG/go-sqlmock.v1
