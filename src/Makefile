@@ -3,6 +3,7 @@ LINTERCOMMAND=gometalinter --vendor --tests --skip=mock --deadline=1500s
 packages = \
 	./config \
 	./services/welcome
+	./models
 
 .PHONY: test
 test:
