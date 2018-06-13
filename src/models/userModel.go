@@ -3,7 +3,7 @@ package models
 import (
 	"database/sql"
 	"github.com/satori/go.uuid"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 const (
@@ -21,11 +21,20 @@ type User struct {
 	Password string
 }
 
+var PostgeSQLInfo = database.PostgreSQLInfo{
+	"127.0.0.1",
+5432,
+"cool_tasks",
+"postgres",
+"12345678"}
+var Info = database.Info{PostgreSQL:PostgeSQLInfo}
+
 //will be deleteted!
 var db *sql.DB
+var err error
 
-func init() {
-	db, _, _ = sqlmock.New()
+func init()  {
+	db, err = database.SetupPostgres(Info)
 }
 
 //CreateUser used for creation user in DB

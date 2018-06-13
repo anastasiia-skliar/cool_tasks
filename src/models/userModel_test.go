@@ -8,12 +8,12 @@ import (
 )
 
 var mock sqlmock.Sqlmock
-var err error
+var testingErr error
 
 func TestCreateUser(t *testing.T) {
 
 	originalDB := db
-	db, mock, err = sqlmock.New()
+	db, mock, testingErr = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -25,8 +25,8 @@ func TestCreateUser(t *testing.T) {
 		"1111",
 	}
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if testingErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", testingErr)
 	}
 
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserId)
@@ -44,7 +44,7 @@ func TestCreateUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
 
 	originalDB := db
-	db, mock, err = sqlmock.New()
+	db, mock, testingErr = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -56,8 +56,8 @@ func TestGetUser(t *testing.T) {
 		Password: "1111",
 	}
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if testingErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", testingErr)
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
@@ -84,13 +84,13 @@ func TestGetUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 
 	originalDB := db
-	db, mock, err = sqlmock.New()
+	db, mock, testingErr = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if testingErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", testingErr)
 	}
 
 	mock.ExpectExec("DELETE FROM user WHERE").WithArgs(
@@ -107,7 +107,7 @@ func TestDeleteUser(t *testing.T) {
 func TestGetUsers(t *testing.T) {
 
 	originalDB := db
-	db, mock, err = sqlmock.New()
+	db, mock, testingErr = sqlmock.New()
 	defer func() { db = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
