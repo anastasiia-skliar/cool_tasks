@@ -1,6 +1,6 @@
 package: github.com/Nastya-Kruglikova/cool_tasks/src
 import:
 - package: github.com/gorilla/mux
-  version: ^1.6.2
+- package: github.com/satori/go.uuid
 - package: github.com/urfave/negroni
-  version: ^0.3.0
+- package: gopkg.in/DATA-DOG/go-sqlmock.v1
