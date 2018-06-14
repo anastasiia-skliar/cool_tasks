@@ -6,64 +6,18 @@ import (
 	"time"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"log"
-	"errors"
 	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
 
-type Task struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	Name      string
-	Time      time.Time
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Desc      string
-}
 
 type successMessage struct {
 	Status string `json:"message"`
 }
 
-// Start model functions for test
-
-var testID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
-
-var tasksArr = []Task{{testID, testID, "Simple Task", time.Now(), time.Now(), time.Now(), "do something"}}
-var tasksidArr = Task{testID, testID, "Simple Task", time.Now(), time.Now(), time.Now(), "do something"}
-
-func testGetTaskByID(ID uuid.UUID) (tasksid Task, err error) {
-
-	if ID == tasksidArr.ID {
-		tasksid = tasksidArr
-	} else {
-		err = errors.New("Error")
-	}
-
-	return tasksid, err
-}
-func testGetTasks() (tasks []Task, err error) {
-	tasks = tasksArr
-	return tasks, err
-}
-func testDeleteTasks(ID uuid.UUID) (err error) {
-
-	if ID == tasksidArr.ID {
-		return nil
-	} else {
-		err = errors.New("Error")
-	}
-
-	return err
-}
-func testAddTask(task Task) (t Task, err error) {
-	return task, err
-}
-
-// End model functions for test
-
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 
-	tasks, err := testGetTasks()
+	tasks, err := models.GetTasks()
 
 	if err != nil {
 		log.Print(err, " ERROR: Can't get tasks")
@@ -86,7 +40,7 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task, err := testGetTaskByID(taskID)
+	task, err := models.GetTask(taskID)
 
 	if err != nil {
 		log.Print(err, " ERROR: Can't get task by ID")
@@ -100,7 +54,7 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 
 func AddTasks(w http.ResponseWriter, r *http.Request) {
 
-	var newTask Task
+	var newTask models.Task
 
 	err := r.ParseForm()
 
@@ -136,7 +90,7 @@ func AddTasks(w http.ResponseWriter, r *http.Request) {
 
 	newTask.Time = parsedTime
 
-	task, err := testAddTask(newTask)
+	err = models.CreateTask(newTask)
 
 	if err != nil {
 		log.Print(err, " ERROR: Can't add new task")
@@ -144,8 +98,8 @@ func AddTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//common.RenderJSON(w, r, successMessage{Status: "Success"})
-	common.RenderJSON(w, r, task)
+	common.RenderJSON(w, r, successMessage{Status: "Success"})
+	//common.RenderJSON(w, r, task)
 }
 
 func DeleteTasks(w http.ResponseWriter, r *http.Request) {
@@ -159,7 +113,7 @@ func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = testDeleteTasks(taskID)
+	err = models.DeleteTask(taskID)
 
 	if err != nil {
 		log.Print(err, " ERROR: Can't delete this task")

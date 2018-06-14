@@ -1,12 +1,12 @@
 package usersCRUD_test
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"testing"
 	"net/http/httptest"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"bytes"
 	"net/url"
+	"bytes"
 )
 
 var router = services.NewRouter()
@@ -43,7 +43,7 @@ func TestGetUserByID(t *testing.T) {
 	tests := []getUsersTestCase{
 		{
 			name: "Get_Users_200",
-			url:  "/v1/users/00000000-0000-0000-0000-000000000001",
+			url:  "/v1/users/a7264252-6ef4-11e8-9982-0242ac110002",
 			want: 200,
 		},
 	}

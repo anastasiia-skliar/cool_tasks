@@ -7,11 +7,13 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"net/url"
 	"bytes"
+	"github.com/satori/go.uuid"
 )
 
 var router = services.NewRouter()
 var testUUID = "00000000-0000-0000-0000-000000000001"
 var testUUIDbad = "00000000-0000-0000-0000-000000000002"
+var testID, _ = uuid.FromString("00000000-0000-0000-0000-000000000011")
 
 type tasksCRUDTestCase struct {
 	name string
@@ -20,6 +22,7 @@ type tasksCRUDTestCase struct {
 }
 
 func TestGetTasks(t *testing.T) {
+
 	tests := []tasksCRUDTestCase{
 		{
 			name: "Get_Tasks_200",
@@ -41,6 +44,7 @@ func TestGetTasks(t *testing.T) {
 		})
 	}
 }
+
 func TestGetTasksByID(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{

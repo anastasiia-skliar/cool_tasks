@@ -7,42 +7,17 @@ import (
 	"log"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
-
-type Users struct {
-	ID       uuid.UUID
-	Login    string
-	Password string
-	Name     string
-}
 
 type succesMessage struct {
 	Status string `json:"status"`
 }
 
 var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
-var users = []Users{{tempID, "Karim", "1234qwer", "Karim"}}
-var user = Users{tempID, "Karim", "1234qwer", "Karim"}
-
-func SendUsers() ([]Users, error) {
-	return users, nil
-}
-
-func ByID(id uuid.UUID) (user Users, err error) {
-	user = Users{tempID, "Karim", "1234qwer", "Karim"}
-	return user, err
-}
-
-func Add(user Users) error {
-	return nil
-}
-
-func Delete(id uuid.UUID) error {
-	return nil
-}
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := SendUsers()
+	users, err := models.GetUsers()
 	if err != nil {
 		log.Print(err, " ERROR: Can't get users")
 		common.SendError(w, r, 404, "ERROR: Can't get users", err)
@@ -59,7 +34,7 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, 400, "ERROR: Converting ID from URL", err)
 		return
 	}
-	user, err := ByID(idUser)
+	user, err := models.GetUser(idUser)
 	if err != nil {
 		log.Print(err, "ERROR: Can't find user with such ID")
 		common.SendError(w, r, 404, "ERROR: Can't find user with such ID", err)
@@ -75,7 +50,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, 400, "ERROR: Can't parse POST Body", err)
 		return
 	}
-	var newUser Users
+	var newUser models.User
 	newUser.ID = tempID
 	newUser.Login = r.Form.Get("login")
 	newUser.Name = r.Form.Get("name")
@@ -84,7 +59,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	if !valid {
 		log.Print(errMessage)
 	}
-	err = Add(newUser)
+	_, err = models.CreateUser(newUser)
 	if err != nil {
 		log.Print(err, " ERROR: Can't add this user")
 		common.SendError(w, r, 400, "ERROR: Can't add this user", err)
@@ -93,7 +68,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, succesMessage{Status: "success"})
 }
 
-func IsValid(user Users) (bool, string) {
+func IsValid(user models.User) (bool, string) {
 	errMessage := ""
 	var checkPass = regexp.MustCompile(`^[[:graph:]]*$`)
 	var checkName = regexp.MustCompile(`^[A-Z]{1}[a-z]+$`)
@@ -125,7 +100,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, 400, "ERROR: Wrong user ID (can't convert string to int)", err)
 		return
 	}
-	err = Delete(idUser)
+	err = models.DeleteUser(idUser)
 	if err != nil {
 		log.Print(err, " ERROR: Can't delete this user")
 		common.SendError(w, r, 404, "ERROR: Can't delete this user", err)
