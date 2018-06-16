@@ -8,31 +8,40 @@ import (
 	"net/url"
 	"bytes"
 	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
 
 var router = services.NewRouter()
 var testUUID = "00000000-0000-0000-0000-000000000001"
-var testUUIDbad = "00000000-0000-0000-0000-000000000002"
+//var testUUIDbad = "00000000-0000-0000-0000-000000000002"
 var testID, _ = uuid.FromString("00000000-0000-0000-0000-000000000011")
 
 type tasksCRUDTestCase struct {
-	name string
-	url  string
-	want int
+	name             string
+	url              string
+	want             int
+	mockedGetTask    models.Task
+	mockedGetTasks   []models.Task
+	mockedDeleteTask uuid.UUID
+	mockedCreateTask models.Task
+	mockedTasksError error
 }
 
 func TestGetTasks(t *testing.T) {
 
 	tests := []tasksCRUDTestCase{
 		{
-			name: "Get_Tasks_200",
-			url:  "/v1/tasks",
-			want: 200,
+			name:             "Get_Tasks_200",
+			url:              "/v1/tasks",
+			want:             200,
+			mockedGetTasks:   []models.Task{},
+			mockedTasksError: nil,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			models.MockedGetTasks(tc.mockedGetTasks, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -48,16 +57,6 @@ func TestGetTasks(t *testing.T) {
 func TestGetTasksByID(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
-			name: "Get_TaskById_400",
-			url:  "/v1/tasks/wrongID",
-			want: 400,
-		},
-		{
-			name: "Get_TaskById_404",
-			url:  "/v1/tasks/" + testUUIDbad,
-			want: 404,
-		},
-		{
 			name: "Get_TaskById_200",
 			url:  "/v1/tasks/"+ testUUID,
 			want: 200,
@@ -66,6 +65,7 @@ func TestGetTasksByID(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			models.MockedGetTask(tc.mockedGetTask, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -77,22 +77,19 @@ func TestGetTasksByID(t *testing.T) {
 		})
 	}
 }
+
 func TestDeleteTasks(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
-			name: "Delete_Task_415",
-			url:  "/v1/tasks/wrongID",
-			want: 400,
-		},
-		{
-			name: "Delete_Task_404",
-			url:  "/v1/tasks/" + testUUIDbad,
-			want: 404,
+			name: "Delete_Task_200",
+			url:  "/v1/tasks/" + testUUID,
+			want: 200,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			models.MockedDeleteTask(tc.mockedDeleteTask, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodDelete, tc.url, nil)
 
@@ -104,23 +101,25 @@ func TestDeleteTasks(t *testing.T) {
 		})
 	}
 }
+
 func TestAddTasks(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
-			name: "Add_Task_400",
+			name: "Add_Task_200",
 			url:  "/v1/tasks",
-			want: 400,
+			want: 200,
 		},
 	}
 
 	data := url.Values{}
-	data.Add("user_id", "error") //bad value
+	data.Add("user_id", "00000000-0000-0000-0000-000000000011") //bad value
 	data.Add("name", "JustUser")
 	data.Add("time", "Mon Jan 2 15:04:05 MST 2006")
 	data.Add("desc", "Desc of my task")
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			models.MockedCreateTask(tc.mockedCreateTask, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
