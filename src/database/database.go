@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/lib/pq" //PostgreSQL driver
-	"log"
 )
 
 var (
@@ -54,28 +53,26 @@ func DSN_Redis(ci RedisInfo) string {
 
 //Setup Postgres Connection
 func SetupPostgres(d Info) (*sql.DB, error) {
-	if IsPostgresConnected == false {
-		db, err := sql.Open("postgres", DSN(d.PostgreSQL))
-		//check if is alive
-		err = db.Ping()
-		SetPostgresConnected()
-		log.Println("new connection to postgres")
-		return db, err
+	if IsPostgresConnected == true {
+		var err error
+		return DB, err
 	}
-	var err error
-	log.Println("reusing connection postgres connection ")
-	return DB, err
+	db, err := sql.Open("postgres", DSN(d.PostgreSQL))
+	//check if is alive
+	err = db.Ping()
+	SetPostgresConnected()
+	return db, err
 }
 
 func SetupRedis(d Info) (redis.Conn, error) {
-	if IsRedisConnected == false {
-		var err, pool = newPool(d)
-		connection := pool.Get()
-		SetRedisConnected()
-		return connection, err
+	if IsRedisConnected == true {
+		var err error
+		return Cache, err
 	}
-	var err error
-	return Cache, err
+	var err, pool = newPool(d)
+	connection := pool.Get()
+	SetRedisConnected()
+	return connection, err
 }
 
 //New redis connection pool
@@ -89,7 +86,6 @@ func newPool(d Info) (error, *redis.Pool) {
 		},
 	}
 }
-
 
 //Sets boolean isPostgresConnected to true
 func SetPostgresConnected() {

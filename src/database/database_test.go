@@ -13,10 +13,9 @@ func TestSetupPostgres(t *testing.T) {
 	db, _, _ := sqlmock.NewWithDSN(database.DSN(config.Config.Database.PostgreSQL))
 	database.DB = db
 	if database.IsPostgresConnected == true {
-
-		db2, _ := database.SetupPostgres(config.Config.Database)
+		db2, err := database.SetupPostgres(config.Config.Database)
 		if db2 != database.DB {
-			t.Fatal("Incorrect")
+			t.Fatal(err)
 		}
 	}
 
@@ -27,9 +26,9 @@ func TestSetupRedis(t *testing.T) {
 	conn := redigomock.NewConn()
 	database.Cache = conn
 	if database.IsRedisConnected == true {
-		conn, _ := database.SetupRedis(config.Config.Database)
+		conn, err := database.SetupRedis(config.Config.Database)
 		if conn != database.Cache {
-			t.Fatal("Incorrect")
+			t.Fatal(err)
 		}
 	}
 }
