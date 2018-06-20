@@ -2,13 +2,14 @@ package main
 
 import (
 	"flag"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/urfave/negroni"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/auth"
 )
 
 func main() {
@@ -28,12 +29,25 @@ func main() {
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
+
+	database.DB, err = database.SetupPostgres(config.Config.Database)
+	if err != nil {
+		log.Fatalf("eror while loading postgreSQL: %s:", err)
+	}
+
+	database.Cache, err = database.SetupRedis(config.Config.Database)
+	if err != nil {
+		log.Fatalf("eror while loading redis: %s:", err)
+	}
+
 	defer f.Close()
 
 	log.SetOutput(f)
 
 	// setting up web server middlewares
-	middlewareManager := negroni.New()
+	middlewareManager := negroni.New(
+		negroni.HandlerFunc(auth.IsAuthorized),
+	)
 	middlewareManager.Use(negroni.NewRecovery())
 	middlewareManager.UseHandler(services.NewRouter())
 

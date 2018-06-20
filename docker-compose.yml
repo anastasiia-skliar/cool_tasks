@@ -6,7 +6,9 @@ services:
     image: "redis:latest"
   postgres:
     container_name: postgres_cool_tasks
-    image: "postgres:latest"    
+    image: "postgres:latest"  
+    ports:
+     -"5432:5432"
   cool_tasks:
     container_name: cool_tasks
     image: cool_tasks:latest
@@ -16,4 +18,4 @@ services:
       - postgres
     ports:
       - "8080:8080"
-
+      
