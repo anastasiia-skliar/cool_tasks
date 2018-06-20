@@ -1,5 +1,6 @@
 package: github.com/Nastya-Kruglikova/cool_tasks/src
 import:
+- package: github.com/alicebob/miniredis
 - package: github.com/garyburd/redigo
   subpackages:
   - redis
