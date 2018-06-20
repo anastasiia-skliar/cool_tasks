@@ -3,12 +3,14 @@ package auth
 import (
 	"bytes"
 	"github.com/alicebob/miniredis"
-	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"fmt"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/satori/go.uuid"
 )
 
 var mock sqlmock.Sqlmock
@@ -28,18 +30,33 @@ func TestLogin(t *testing.T) {
 			want: 200,
 		},
 	}
+
+	expetedLogin:="admin"
+	expetedPass:="admin"
+
 	data := url.Values{}
-	data.Add("login", "admin")
-	data.Add("password", "admin")
+	data.Add("login", expetedLogin)
+	data.Add("password", expetedPass)
 	originalDB := db
 	defer func() { db = originalDB }()
+	var err error
 	db, mock, err = sqlmock.New()
-	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	rows := sqlmock.NewRows([]string{"ID", "Password"}).
-		AddRow(UserId.Bytes(), "admin")
+	if err !=nil{
+		fmt.Println("######", err)
+		return
+	}
+	GetUserByLogin= func(login string) (models.User, error) {
+		UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	mock.ExpectQuery("SELECT ID, Password FROM Users WHERE Login = \\$1").WithArgs("admin").WillReturnRows(rows)
+		expected := models.User{
+			ID:       UserId,
+			Name:     "John",
+			Login:    expetedLogin,
+			Password: expetedPass,
+		}
 
+		return expected, nil
+	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			rec := httptest.NewRecorder()

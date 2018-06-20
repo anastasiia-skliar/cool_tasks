@@ -100,13 +100,27 @@ paths:
         description: User added
         shema:
           required:
+          - user ID
           - user name
-          - user login
-          - user password
+          - time
+          - creation time
+          - update time
+          - description
        404:
-        description: Can't add this user
+        description: Can't add this task
   /tasks{id}:
     get:
+    summary: Get Task by ID
+      tags:
+      - tasks
+      responses:
+       200:
+        description: Send task by it's ID
+        shema:
+          required:
+          - Task ID
+       404:
+        description: Can't find task
     delete:
 definitions:
   HelloWorldResponse:

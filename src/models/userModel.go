@@ -9,6 +9,7 @@ import (
 const (
 	createUser = "INSERT INTO user (name, login, password) VALUES ($1, $2, $3) RETURNING id"
 	getUser    = "SELECT * FROM user WHERE id = $1"
+	getUserByID = "SELECT ID, Password FROM Users WHERE Login = $1"
 	deleteUser = "DELETE FROM user WHERE id = $1"
 	getUsers   = "SELECT * FROM user"
 )
@@ -41,6 +42,14 @@ func GetUser(id uuid.UUID) (User, error) {
 	var user User
 	err := db.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 
+	return user, err
+}
+
+//GetUserByLogin used for getting user from DB by Login
+
+func GetUserByLogin(login string) (User, error) {
+	var user User
+	err:= db.QueryRow(getUserByID, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 	return user, err
 }
 

@@ -3,13 +3,15 @@ package auth
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/alicebob/miniredis"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
+
+var	GetUserByLogin  = models.GetUserByLogin
 
 func init() {
 	db, _, _ = sqlmock.New()
@@ -45,18 +47,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newLogin.login = r.Form.Get("login")
 	newLogin.pass = r.Form.Get("password")
 
-	var usersInDB User
-	err := db.QueryRow("SELECT ID, Password FROM Users WHERE Login = $1", newLogin.login).Scan(&(usersInDB.ID), &(usersInDB.Password))
+	var userInDB models.User
+	userInDB, err:= GetUserByLogin(newLogin.login)
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 
-	if newLogin.pass == usersInDB.Password {
+	if newLogin.pass == userInDB.Password {
 		sessionUUID, err := uuid.NewV1()
 		if err != nil {
-			fmt.Println("##### ", err)
-			common.SendError(w, r, 418, "ERROR: ", err)
+			common.SendError(w, r, 401, "ERROR: ", err)
 			return
 		}
 		newLogin.sessionID = sessionUUID.String()
@@ -67,7 +67,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, newLogin.sessionID)
 		return
 	}
-	common.SendError(w, r, 418, "ERROR: ", errors.New("no result"))
+	common.SendError(w, r, 401, "ERROR: ", errors.New("Fail to autorize"))
 
 }
 
