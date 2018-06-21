@@ -1,12 +1,12 @@
 package services
 
 import (
-	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
-	"github.com/gorilla/mux"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
+	"github.com/gorilla/mux"
+	"net/http"
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -21,20 +21,22 @@ func NewRouter() *mux.Router {
 
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsers),
-		http.MethodPost: http.HandlerFunc(usersCRUD.AddUser),
+		http.MethodPost: http.HandlerFunc(usersCRUD.CreateUser),
 	}))
 	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:    http.HandlerFunc(usersCRUD.GetUserByID),
 		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUser),
 	}))
-
+	apiV1.Handle("/users/tasks/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(usersCRUD.GetUserTasks),
+	}))
 
 	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(tasksCRUD.GetTasks),
-		http.MethodPost: http.HandlerFunc(tasksCRUD.AddTasks),
+		http.MethodGet:  http.HandlerFunc(tasksCRUD.GetTasks),
+		http.MethodPost: http.HandlerFunc(tasksCRUD.CreateTask),
 	}))
 	apiV1.Handle("/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(tasksCRUD.GetTasksByID),
+		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
 

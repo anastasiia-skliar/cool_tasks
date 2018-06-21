@@ -1,20 +1,18 @@
 package tasksCRUD_test
 
 import (
+	"bytes"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
-	"testing"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"net/url"
-	"bytes"
-	"github.com/satori/go.uuid"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"testing"
 )
 
 var router = services.NewRouter()
 var testUUID = "00000000-0000-0000-0000-000000000001"
-//var testUUIDbad = "00000000-0000-0000-0000-000000000002"
-var testID, _ = uuid.FromString("00000000-0000-0000-0000-000000000011")
 
 type tasksCRUDTestCase struct {
 	name             string
@@ -58,7 +56,7 @@ func TestGetTasksByID(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
 			name: "Get_TaskById_200",
-			url:  "/v1/tasks/"+ testUUID,
+			url:  "/v1/tasks/" + testUUID,
 			want: 200,
 		},
 	}
@@ -102,7 +100,7 @@ func TestDeleteTasks(t *testing.T) {
 	}
 }
 
-func TestAddTasks(t *testing.T) {
+func TestCreateTasks(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
 			name: "Add_Task_200",
@@ -112,7 +110,7 @@ func TestAddTasks(t *testing.T) {
 	}
 
 	data := url.Values{}
-	data.Add("user_id", "00000000-0000-0000-0000-000000000011") //bad value
+	data.Add("user_id", "00000000-0000-0000-0000-000000000011")
 	data.Add("name", "JustUser")
 	data.Add("time", "Mon Jan 2 15:04:05 MST 2006")
 	data.Add("desc", "Desc of my task")

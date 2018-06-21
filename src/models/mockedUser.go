@@ -20,9 +20,8 @@ func MockedDeleteUser(id uuid.UUID, err error) {
 	}
 }
 
-func MockedGetUsers(user []User, err error)  {
+func MockedGetUsers(user []User, err error) {
 	GetUsers = func() ([]User, error) {
 		return user, err
 	}
 }
-

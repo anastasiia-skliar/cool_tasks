@@ -1,9 +1,9 @@
 package models
 
 import (
+	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"time"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 const (
@@ -25,14 +25,14 @@ type Task struct {
 }
 
 //CreateTask used for creation task in DB
-var CreateTask = func (task Task) error {
+var CreateTask = func(task Task) (Task, error) {
 	_, err := DB.Exec(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc)
 
-	return err
+	return task, err
 }
 
 //GetTask used for getting task from DB
-var GetTask = func (id uuid.UUID) (Task, error) {
+var GetTask = func(id uuid.UUID) (Task, error) {
 	var task Task
 	err := DB.QueryRow(getTask, id).Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
 
@@ -40,19 +40,19 @@ var GetTask = func (id uuid.UUID) (Task, error) {
 }
 
 //UpdateTask used fro updating task in DB
-var UpdateTask = func () {
+var UpdateTask = func() {
 
 }
 
 //DeleteTask used for deleting task from DB
-var DeleteTask = func (id uuid.UUID) error {
+var DeleteTask = func(id uuid.UUID) error {
 	_, err := DB.Exec(deleteTask, id)
 
 	return err
 }
 
 //GetTasks used for getting tasks from DB
-var GetTasks = func () ([]Task, error) {
+var GetTasks = func() ([]Task, error) {
 	rows, err := DB.Query(getTasks)
 	if err != nil {
 		return []Task{}, err

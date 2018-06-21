@@ -1,17 +1,22 @@
 package usersCRUD
 
 import (
-	"net/http"
-	"github.com/gorilla/mux"
-	"regexp"
-	"log"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/satori/go.uuid"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"github.com/gorilla/mux"
+	"github.com/satori/go.uuid"
+	"log"
+	"net/http"
+	"regexp"
 )
 
-type succesMessage struct {
-	Status string `json:"status"`
+type successCreate struct {
+	Status string    `json:"status"`
+	ID     uuid.UUID `json:"id"`
+}
+
+type successDelete struct {
+	Status string    `json:"status"`
 }
 
 var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
@@ -19,8 +24,7 @@ var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := models.GetUsers()
 	if err != nil {
-		log.Print(err, " ERROR: Can't get users")
-		common.SendError(w, r, 404, "ERROR: Can't get users", err)
+		common.SendNotFound(w, r, "ERROR: Can't get users", err)
 		return
 	}
 	common.RenderJSON(w, r, users)
@@ -30,24 +34,21 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
 	if err != nil {
-		log.Print(err, "ERROR: Converting ID from URL")
-		common.SendError(w, r, 400, "ERROR: Converting ID from URL", err)
+		common.SendBadRequest(w, r, "ERROR: Converting ID from URL", err)
 		return
 	}
 	user, err := models.GetUser(idUser)
 	if err != nil {
-		log.Print(err, "ERROR: Can't find user with such ID")
-		common.SendError(w, r, 404, "ERROR: Can't find user with such ID", err)
+		common.SendNotFound(w, r, "ERROR: Can't find user with such ID", err)
 		return
 	}
 	common.RenderJSON(w, r, user)
 }
 
-func AddUser(w http.ResponseWriter, r *http.Request) {
+func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Print(err, " ERROR: Can't parse POST Body")
-		common.SendError(w, r, 400, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 	var newUser models.User
@@ -59,13 +60,12 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	if !valid {
 		log.Print(errMessage)
 	}
-	_, err = models.CreateUser(newUser)
+	id, err := models.CreateUser(newUser)
 	if err != nil {
-		log.Print(err, " ERROR: Can't add this user")
-		common.SendError(w, r, 400, "ERROR: Can't add this user", err)
+		common.SendBadRequest(w, r, "ERROR: Can't add this user", err)
 		return
 	}
-	common.RenderJSON(w, r, succesMessage{Status: "success"})
+	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
 func IsValid(user models.User) (bool, string) {
@@ -96,15 +96,25 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
 	if err != nil {
-		log.Print(err, " ERROR: Wrong user ID (can't convert string to int)")
-		common.SendError(w, r, 400, "ERROR: Wrong user ID (can't convert string to int)", err)
+		common.SendBadRequest(w, r, "ERROR: Wrong user ID (can't convert string to int)", err)
 		return
 	}
 	err = models.DeleteUser(idUser)
 	if err != nil {
-		log.Print(err, " ERROR: Can't delete this user")
-		common.SendError(w, r, 404, "ERROR: Can't delete this user", err)
+		common.SendNotFound(w, r, "ERROR: Can't delete this user", err)
 		return
 	}
-	common.RenderJSON(w, r, succesMessage{Status: "success"})
+	common.RenderJSON(w, r,successDelete{Status: "204 No Content"})
+}
+
+func GetUserTasks(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	idUser, err := uuid.FromString(params["id"])
+	_, tasks, err := models.GetUserTasks(idUser)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get user", err)
+		return
+	}
+
+	common.RenderJSON(w, r, tasks)
 }

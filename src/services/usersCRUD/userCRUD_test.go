@@ -1,14 +1,14 @@
 package usersCRUD_test
 
 import (
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"testing"
-	"net/http/httptest"
-	"net/http"
-	"net/url"
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"github.com/satori/go.uuid"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"testing"
 )
 
 var router = services.NewRouter()
@@ -78,12 +78,11 @@ func TestDeleteUser(t *testing.T) {
 	userId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	tests := []usersCRUDTestCase{
 		{
-			name: "Delete_Users_200",
-			url:  "/v1/users/00000000-0000-0000-0000-000000000001",
-			want: 200,
+			name:              "Delete_Users_200",
+			url:               "/v1/users/00000000-0000-0000-0000-000000000001",
+			want:              200,
 			mockedDeleteUsers: userId,
-			mockedUserError: nil,
-
+			mockedUserError:   nil,
 		},
 	}
 	for _, tc := range tests {
@@ -101,14 +100,14 @@ func TestDeleteUser(t *testing.T) {
 	}
 }
 
-func TestAddUser(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	tests := []usersCRUDTestCase{
 		{
-			name: "Add_Users_200",
-			url:  "/v1/users",
-			want: 200,
+			name:             "Add_Users_200",
+			url:              "/v1/users",
+			want:             200,
 			mockedCreateUser: models.User{},
-			mockedUserError: nil,
+			mockedUserError:  nil,
 		},
 	}
 	data := url.Values{}

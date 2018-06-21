@@ -5,8 +5,8 @@ import (
 )
 
 func MockedCreateTask(task Task, err error) {
-	CreateTask = func(task Task) error {
-		return err
+	CreateTask = func(task Task) (Task, error) {
+		return task, err
 	}
 }
 
@@ -16,15 +16,14 @@ func MockedGetTask(task Task, err error) {
 	}
 }
 
-func MockedDeleteTask(id uuid.UUID, err error)  {
+func MockedDeleteTask(id uuid.UUID, err error) {
 	DeleteTask = func(id uuid.UUID) error {
 		return err
 	}
 }
 
-
 func MockedGetTasks(task []Task, err error) {
-	GetTasks = func() ([]Task, error){
+	GetTasks = func() ([]Task, error) {
 		return task, err
 	}
 }

@@ -1,11 +1,11 @@
 package models
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"time"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 func TestCreateTask(t *testing.T) {
@@ -37,7 +37,7 @@ func TestCreateTask(t *testing.T) {
 	mock.ExpectExec("INSERT INTO tasks").WithArgs(UserID, "TaskOne",
 		until, currentTime, currentTime, "Do smth").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	if err := CreateTask(task); err != nil {
+	if _, err := CreateTask(task); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
