@@ -13,12 +13,11 @@ func TestSetupPostgres(t *testing.T) {
 	db, _, _ := sqlmock.NewWithDSN(database.DSN(config.Config.Database.PostgreSQL))
 	database.DB = db
 	if database.IsPostgresConnected == true {
-		db2, err := database.SetupPostgres(config.Config.Database)
+		db2, _ := database.SetupPostgres(config.Config.Database)
 		if db2 != database.DB {
-			t.Fatal(err)
+			t.Fatal("SetupPostgres is not reusing existing connection")
 		}
 	}
-
 }
 
 func TestSetupRedis(t *testing.T) {
@@ -26,9 +25,9 @@ func TestSetupRedis(t *testing.T) {
 	conn := redigomock.NewConn()
 	database.Cache = conn
 	if database.IsRedisConnected == true {
-		conn, err := database.SetupRedis(config.Config.Database)
+		conn, _ := database.SetupRedis(config.Config.Database)
 		if conn != database.Cache {
-			t.Fatal(err)
+			t.Fatal("SetupRedis is not reusing existing connection")
 		}
 	}
 }
