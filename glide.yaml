@@ -10,3 +10,4 @@ import:
 - package: gopkg.in/DATA-DOG/go-sqlmock.v1
 testImport:
 - package: github.com/rafaeljusto/redigomock
+
