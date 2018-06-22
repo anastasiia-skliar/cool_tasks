@@ -11,6 +11,7 @@ const (
 	getTask    = "SELECT * FROM tasks WHERE id = $1"
 	deleteTask = "DELETE FROM tasks WHERE id = $1"
 	getTasks   = "SELECT * FROM tasks"
+	getUserTasks = "SELECT * FROM tasks where user_id = $1"
 )
 
 //Task representation in DB
@@ -68,4 +69,23 @@ var GetTasks = func() ([]Task, error) {
 		tasks = append(tasks, t)
 	}
 	return tasks, nil
+}
+
+//UserWithTasks used for getting all tasks which related to user
+var GetUserTasks = func(id uuid.UUID) ([]Task, error) {
+	rows, err := DB.Query(getUserTasks, id)
+	if err != nil {
+		return []Task{}, err
+	}
+
+	userTasks := make([]Task, 0)
+
+	for rows.Next() {
+		task := Task{}
+		rows.Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
+
+		userTasks = append(userTasks, task)
+	}
+
+	return userTasks, err
 }

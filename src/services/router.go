@@ -28,7 +28,7 @@ func NewRouter() *mux.Router {
 		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUser),
 	}))
 	apiV1.Handle("/users/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(usersCRUD.GetUserTasks),
+		http.MethodGet: http.HandlerFunc(tasksCRUD.GetUserTasks),
 	}))
 
 	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{

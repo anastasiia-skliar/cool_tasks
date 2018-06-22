@@ -106,15 +106,3 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	common.RenderJSON(w, r,successDelete{Status: "204 No Content"})
 }
-
-func GetUserTasks(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	idUser, err := uuid.FromString(params["id"])
-	_, tasks, err := models.GetUserTasks(idUser)
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get user", err)
-		return
-	}
-
-	common.RenderJSON(w, r, tasks)
-}

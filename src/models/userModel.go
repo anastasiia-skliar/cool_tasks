@@ -6,11 +6,10 @@ import (
 )
 
 const (
-	createUser       = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
-	getUser          = "SELECT * FROM users WHERE id = $1"
-	deleteUser       = "DELETE FROM users WHERE id = $1"
-	getUsers         = "SELECT * FROM users"
-	getUserWithTasks = "SELECT * FROM users u INNER JOIN tasks t ON u.id = t.user_id WHERE u.id = $1"
+	createUser   = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
+	getUser      = "SELECT * FROM users WHERE id = $1"
+	deleteUser   = "DELETE FROM users WHERE id = $1"
+	getUsers     = "SELECT * FROM users"
 )
 
 //User representation in DB
@@ -66,25 +65,4 @@ var GetUsers = func() ([]User, error) {
 		users = append(users, u)
 	}
 	return users, nil
-}
-
-//UserWithTasks ....
-var GetUserTasks = func(id uuid.UUID) (User, []Task, error) {
-	rows, err := DB.Query(getUserWithTasks, id)
-	if err != nil {
-		return User{}, []Task{}, err
-	}
-
-	userTasks := make([]Task, 0)
-	user := User{}
-
-	for rows.Next() {
-		task := Task{}
-		rows.Scan(&user.ID, &user.Name, &user.Login, &user.Password,
-			&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
-
-		userTasks = append(userTasks, task)
-	}
-
-	return user, userTasks, err
 }
