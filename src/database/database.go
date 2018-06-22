@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/lib/pq" //PostgreSQL driver
+	"log"
 )
 
 var (
-	databases Info
-	DB        *sql.DB
-	Cache     redis.Conn
+	DB                  *sql.DB
+	Cache               redis.Conn
+	IsPostgresConnected bool
+	IsRedisConnected    bool
 )
 
 // Type is the type of database from a Type* constant
@@ -44,23 +46,41 @@ func DSN(ci PostgreSQLInfo) string {
 		"password=%s dbname=%s sslmode=disable",
 		ci.Hostname, ci.Port, ci.Username, ci.Password, ci.DatabaseName)
 }
+
+//Data Source Name for Redis
 func DSN_Redis(ci RedisInfo) string {
 	return fmt.Sprintf("%s:%d", ci.URL, ci.Port)
 }
 
+//Setup Postgres Connection
 func SetupPostgres(d Info) (*sql.DB, error) {
+	if IsPostgresConnected == true {
+		return DB, nil
+	}
 	db, err := sql.Open("postgres", DSN(d.PostgreSQL))
 	//check if is alive
 	err = db.Ping()
+	if err != nil {
+		log.Println(err)
+	}
+	SetPostgresConnected()
 	return db, err
 }
 
 func SetupRedis(d Info) (redis.Conn, error) {
+	if IsRedisConnected == true {
+		return Cache, nil
+	}
 	var err, pool = newPool(d)
+	if err != nil {
+		log.Println(err)
+	}
 	connection := pool.Get()
+	SetRedisConnected()
 	return connection, err
 }
 
+//New redis connection pool
 func newPool(d Info) (error, *redis.Pool) {
 	c, err := redis.Dial("tcp", DSN_Redis(d.Redis))
 	return err, &redis.Pool{
@@ -72,7 +92,12 @@ func newPool(d Info) (error, *redis.Pool) {
 	}
 }
 
-// ReadConfig returns the database information
-func ReadConfig() Info {
-	return databases
+//Sets boolean isPostgresConnected to true
+func SetPostgresConnected() {
+	IsPostgresConnected = true
+}
+
+//Sets boolean isRedisConnected to true
+func SetRedisConnected() {
+	IsRedisConnected = true
 }
