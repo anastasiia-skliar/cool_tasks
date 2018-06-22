@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
