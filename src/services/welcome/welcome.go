@@ -13,4 +13,5 @@ type welcomeStruct struct {
 // GetWelcomeHandler get policies for partner
 func GetWelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, welcomeStruct{Message: "Hello World"})
+
 }

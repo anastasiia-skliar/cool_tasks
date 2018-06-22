@@ -7,12 +7,13 @@ info:
 schemes:
   - http
 host: localhost:8080
+basePath: /v1
 produces:
   - application/json
 consumes:
   - application/json
 paths:
-  /v1/hello-world:
+  /hello-world:
     get:
       summary: Hello World
       tags:
@@ -22,6 +23,91 @@ paths:
           description: Hello World
           schema:
             $ref: '#/definitions/HelloWorldResponse'
+  /login:
+    post:
+      summary: Login method, creates user session
+      tags:
+        - login
+      responses:
+        200:
+          description: Session successfully created
+          shema:
+            required:
+             - user login
+             - user password
+        418:
+          description: Login failed
+  /logout:
+    post:
+      summary: Close session by ID
+      tags:
+        - logout
+      responses:
+        200:
+          description: Successfull logout
+        418: Error
+  /users:
+    get:
+      summary: Get all users info
+      tags:
+      - login
+      responses:
+        200:
+          description: All users send to client
+        404:
+          description: Can't get users
+    post:
+      summary: Add user
+      tags:
+      - login
+      responses:
+       200:
+        description: User added
+        shema:
+          required:
+          - user name
+          - user login
+          - user password
+       404:
+        description: Can't add this user
+  /users{id}:
+    get:
+      summary: Get all users info
+        tags:
+        - login
+        responses:
+          200:
+            description: All users send to client
+          404:
+            description: Can't get users
+    delete:
+  /tasks:
+    get:
+      summary: Get all users info
+      tags:
+      - login
+      responses:
+        200:
+          description: All users send to client
+        404:
+          description: Can't get users
+    post:
+      summary: Add user
+      tags:
+      - login
+      responses:
+       200:
+        description: User added
+        shema:
+          required:
+          - user name
+          - user login
+          - user password
+       404:
+        description: Can't add this user
+  /tasks{id}:
+    get:
+    delete:
 definitions:
   HelloWorldResponse:
     type: object

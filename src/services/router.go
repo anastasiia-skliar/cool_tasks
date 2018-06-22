@@ -19,6 +19,14 @@ func NewRouter() *mux.Router {
 		http.MethodGet: http.HandlerFunc(welcome.GetWelcomeHandler),
 	}))
 
+	apiV1.Handle("/login", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandlerFunc(auth.Login),
+	}))
+	apiV1.Handle("/logout", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandlerFunc(auth.Logout),
+	}))
+
+
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsers),
 		http.MethodPost: http.HandlerFunc(usersCRUD.CreateUser),
@@ -39,6 +47,7 @@ func NewRouter() *mux.Router {
 		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
+
 
 	return router
 }
