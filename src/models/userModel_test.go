@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
@@ -12,9 +12,9 @@ var err error
 
 func TestCreateUser(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -32,7 +32,7 @@ func TestCreateUser(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserId.Bytes())
 
-	mock.ExpectQuery("INSERT INTO user").WithArgs("John", "john", "1111").WillReturnRows(rows)
+	mock.ExpectQuery("INSERT INTO users").WithArgs("John", "john", "1111").WillReturnRows(rows)
 	if _, err := CreateUser(user); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
@@ -44,9 +44,9 @@ func TestCreateUser(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -65,8 +65,7 @@ func TestGetUser(t *testing.T) {
 
 		AddRow(UserId.Bytes(), "John", "john", "1111")
 
-
-	mock.ExpectQuery("SELECT (.+) FROM user").WithArgs(UserId).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM users").WithArgs(UserId).WillReturnRows(rows)
 
 	result, err := GetUser(UserId)
 
@@ -79,16 +78,14 @@ func TestGetUser(t *testing.T) {
 
 	if result != expected {
 		t.Error("Expected:", expected, "Was:", result)
-	} else {
-		fmt.Println(result)
 	}
 }
 
 func TestDeleteUser(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -96,7 +93,7 @@ func TestDeleteUser(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	mock.ExpectExec("DELETE FROM user WHERE").WithArgs(
+	mock.ExpectExec("DELETE FROM users WHERE").WithArgs(
 		id).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	if err := DeleteUser(id); err != nil {
@@ -109,9 +106,9 @@ func TestDeleteUser(t *testing.T) {
 
 func TestGetUsers(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -134,8 +131,7 @@ func TestGetUsers(t *testing.T) {
 
 		AddRow(UserId.Bytes(), "John", "john_doe", "1111").AddRow(UserId.Bytes(), "Tom", "hate_jerry", "2222")
 
-
-	mock.ExpectQuery("SELECT (.+) FROM user").WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM users").WillReturnRows(rows)
 
 	result, err := GetUsers()
 

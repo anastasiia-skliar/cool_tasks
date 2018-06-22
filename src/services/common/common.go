@@ -26,6 +26,21 @@ func SendMethodNotAllowed(w http.ResponseWriter, r *http.Request, message string
 	SendError(w, r, http.StatusMethodNotAllowed, message, err)
 }
 
+//SendUnsupportedMediaType sends Internal Server Error Status and logs an error if it exists
+func SendUnsupportedMediaType(w http.ResponseWriter, r *http.Request, message string, err error) {
+	SendError(w, r, http.StatusUnsupportedMediaType, message, err)
+}
+
+//SendBadRequest sends Internal Server Error Status and logs an error if it exists
+func SendBadRequest(w http.ResponseWriter, r *http.Request, message string, err error) {
+	SendError(w, r, http.StatusBadRequest, message, err)
+}
+
+//SendNotFound sends Internal Server Error Status and logs an error if it exists
+func SendNotFound(w http.ResponseWriter, r *http.Request, message string, err error) {
+	SendError(w, r, http.StatusNotFound, message, err)
+}
+
 // SendInternalServerError sends Internal Server Error Status and logs an error if it exists
 func SendInternalServerError(w http.ResponseWriter, r *http.Request, err error) {
 	SendError(w, r, http.StatusInternalServerError, "", err)

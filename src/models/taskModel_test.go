@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
@@ -9,9 +10,9 @@ import (
 
 func TestCreateTask(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	until, _ := time.Parse(time.UnixDate, "Mon Jun  15 10:53:39 PST 2018")
 	currentTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
@@ -33,10 +34,10 @@ func TestCreateTask(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	mock.ExpectExec("INSERT INTO task").WithArgs(UserID, "TaskOne",
+	mock.ExpectExec("INSERT INTO tasks").WithArgs(UserID, "TaskOne",
 		until, currentTime, currentTime, "Do smth").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	if err := CreateTask(task); err != nil {
+	if _, err := CreateTask(task); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -47,9 +48,9 @@ func TestCreateTask(t *testing.T) {
 
 func TestGetTask(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-00000000001")
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
@@ -75,7 +76,7 @@ func TestGetTask(t *testing.T) {
 
 		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
 
-	mock.ExpectQuery("SELECT (.+) FROM task").WithArgs(ID).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM tasks").WithArgs(ID).WillReturnRows(rows)
 
 	result, err := GetTask(ID)
 
@@ -94,17 +95,17 @@ func TestGetTask(t *testing.T) {
 
 func TestDeleteTask(t *testing.T) {
 
-	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	mock.ExpectExec("DELETE FROM task").WithArgs(
+	mock.ExpectExec("DELETE FROM tasks").WithArgs(
 		ID).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	if err := DeleteTask(ID); err != nil {
@@ -118,9 +119,9 @@ func TestDeleteTask(t *testing.T) {
 
 func TestGetTasks(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB = originalDB }()
 
 	until, _ := time.Parse(time.UnixDate, "Mon Jun  15 10:53:39 PST 2018")
 	currentTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
@@ -154,7 +155,7 @@ func TestGetTasks(t *testing.T) {
 		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime,
 			"Do smth").AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
 
-	mock.ExpectQuery("SELECT (.+) FROM task").WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM tasks").WillReturnRows(rows)
 
 	result, err := GetTasks()
 
