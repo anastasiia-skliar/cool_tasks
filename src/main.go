@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/auth"
 )
 
 func main() {
@@ -44,7 +45,9 @@ func main() {
 	log.SetOutput(f)
 
 	// setting up web server middlewares
-	middlewareManager := negroni.New()
+	middlewareManager := negroni.New(
+		negroni.HandlerFunc(auth.IsAuthorized),
+	)
 	middlewareManager.Use(negroni.NewRecovery())
 	middlewareManager.UseHandler(services.NewRouter())
 
