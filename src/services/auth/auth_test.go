@@ -3,17 +3,14 @@ package auth
 import (
 	"bytes"
 	"github.com/alicebob/miniredis"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/satori/go.uuid"
 )
 
-var mock sqlmock.Sqlmock
 
 type authTestCase struct {
 	name string
@@ -37,14 +34,8 @@ func TestLogin(t *testing.T) {
 	data := url.Values{}
 	data.Add("login", expetedLogin)
 	data.Add("password", expetedPass)
-	originalDB := db
-	defer func() { db = originalDB }()
-	var err error
-	db, mock, err = sqlmock.New()
-	if err !=nil{
-		fmt.Println("######", err)
-		return
-	}
+
+
 	GetUserByLogin= func(login string) (models.User, error) {
 		UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 

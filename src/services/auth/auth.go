@@ -9,13 +9,10 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"time"
 )
 
 var	GetUserByLogin  = models.GetUserByLogin
-
-func init() {
-	db, _, _ = sqlmock.New()
-}
 
 type login struct {
 	id        uuid.UUID
@@ -63,6 +60,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if newLogin.sessionID != "" {
 		redis.Push(newLogin.sessionID, newLogin.login)
+		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour*4)}
+http.SetCookie(w, &newCookie)
 
 		common.RenderJSON(w, r, newLogin.sessionID)
 		return
@@ -76,5 +75,5 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	newLogout.sessionID = r.Form.Get("sessionID")
 	redis.Del(newLogout.sessionID)
-	common.RenderJSON(w, r, "")
+	common.RenderJSON(w, r, "Success logout")
 }
