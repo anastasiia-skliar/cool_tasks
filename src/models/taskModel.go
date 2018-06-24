@@ -40,11 +40,6 @@ var GetTask = func(id uuid.UUID) (Task, error) {
 	return task, err
 }
 
-//UpdateTask used fro updating task in DB
-var UpdateTask = func() {
-
-}
-
 //DeleteTask used for deleting task from DB
 var DeleteTask = func(id uuid.UUID) error {
 	_, err := DB.Exec(deleteTask, id)
