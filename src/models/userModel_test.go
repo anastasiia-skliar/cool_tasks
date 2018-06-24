@@ -5,6 +5,7 @@ import (
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
+	"fmt"
 )
 
 var mock sqlmock.Sqlmock
@@ -83,9 +84,9 @@ func TestGetUser(t *testing.T) {
 
 func TestGetUserByLogin(t *testing.T) {
 
-	originalDB := db
-	db, mock, err = sqlmock.New()
-	defer func() { db = originalDB }()
+	originalDB := database.DB
+	database.DB, mock, err = sqlmock.New()
+	defer func() { database.DB= originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
