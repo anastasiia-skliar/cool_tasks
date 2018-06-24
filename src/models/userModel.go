@@ -6,11 +6,11 @@ import (
 )
 
 const (
-	createUser = "INSERT INTO user (name, login, password) VALUES ($1, $2, $3) RETURNING id"
-	getUser    = "SELECT * FROM user WHERE id = $1"
-	getUserByID = "SELECT ID, Password FROM Users WHERE Login = $1"
-	deleteUser = "DELETE FROM user WHERE id = $1"
-	getUsers   = "SELECT * FROM user"
+	createUser = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
+	getUser    = "SELECT * FROM users WHERE id = $1"
+	getUserByID = "SELECT ID, Password FROM users WHERE Login = $1"
+	deleteUser = "DELETE FROM users WHERE id = $1"
+	getUsers   = "SELECT * FROM users"
 )
 
 //User representation in DB

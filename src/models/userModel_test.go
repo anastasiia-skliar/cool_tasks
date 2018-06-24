@@ -5,7 +5,6 @@ import (
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
-	"fmt"
 )
 
 var mock sqlmock.Sqlmock
@@ -106,7 +105,7 @@ func TestGetUserByLogin(t *testing.T) {
 		AddRow(UserId.Bytes(), "John", "john", "1111")
 
 
-	mock.ExpectQuery("SELECT ID, Password FROM Users WHERE Login = \\$1").WithArgs(expected.Login).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT ID, Password FROM users WHERE Login = \\$1").WithArgs(expected.Login).WillReturnRows(rows)
 
 	result, err := GetUserByLogin(expected.Login)
 
@@ -119,8 +118,6 @@ func TestGetUserByLogin(t *testing.T) {
 
 	if result != expected {
 		t.Error("Expected:", expected, "Was:", result)
-	} else {
-		fmt.Println(result)
 	}
 }
 
