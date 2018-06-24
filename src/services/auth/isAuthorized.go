@@ -21,6 +21,10 @@ var IsExistRedis = func (key string) bool {
 
 func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
+	if r.URL.Path=="/v1/login"{
+		next(w, r)
+		return
+	}
 	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 
 	if err != nil {
