@@ -46,12 +46,6 @@ func GetUserByLogin(login string) (User, error) {
 	return user, err
 }
 
-//UpdateUser is used for updating user in DB
-func UpdateUser() {
-
-}
-
-
 //DeleteUser used for deleting user from DB
 var DeleteUser = func(id uuid.UUID) error {
 	_, err := DB.Exec(deleteUser, id)
