@@ -36,11 +36,6 @@ var GetUser = func(id uuid.UUID) (User, error) {
 	return user, err
 }
 
-//UpdateUser is used for updating user in DB
-var UpdateUser = func() {
-
-}
-
 //DeleteUser used for deleting user from DB
 var DeleteUser = func(id uuid.UUID) error {
 	_, err := DB.Exec(deleteUser, id)
