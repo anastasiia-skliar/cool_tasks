@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	createUser   = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
-	getUser      = "SELECT * FROM users WHERE id = $1"
-	deleteUser   = "DELETE FROM users WHERE id = $1"
-	getUsers     = "SELECT * FROM users"
+	createUser = "INSERT INTO user (name, login, password) VALUES ($1, $2, $3) RETURNING id"
+	getUser    = "SELECT * FROM user WHERE id = $1"
+	getUserByID = "SELECT ID, Password FROM Users WHERE Login = $1"
+	deleteUser = "DELETE FROM user WHERE id = $1"
+	getUsers   = "SELECT * FROM user"
 )
 
 //User representation in DB
@@ -35,6 +36,21 @@ var GetUser = func(id uuid.UUID) (User, error) {
 
 	return user, err
 }
+
+
+//GetUserByLogin used for getting user from DB by Login
+
+func GetUserByLogin(login string) (User, error) {
+	var user User
+	err:= DB.QueryRow(getUserByID, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	return user, err
+}
+
+//UpdateUser is used for updating user in DB
+func UpdateUser() {
+
+}
+
 
 //DeleteUser used for deleting user from DB
 var DeleteUser = func(id uuid.UUID) error {
