@@ -47,7 +47,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var userInDB models.User
 	userInDB, err:= GetUserByLogin(newLogin.login)
 	if err != nil {
+		common.SendError(w, r, 401, "ERROR: ", err)
 		return
+
 	}
 
 	if newLogin.pass == userInDB.Password {
