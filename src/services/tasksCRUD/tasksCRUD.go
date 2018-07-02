@@ -15,7 +15,7 @@ type successCreate struct {
 }
 
 type successDelete struct {
-	Status string      `json:"message"`
+	Status string `json:"message"`
 }
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +80,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	parsedTime, err := time.Parse(time.UnixDate, newTime)
 
 	if err != nil {
-		common.SendUnsupportedMediaType(w, r,"ERROR: Wrong date(can't convert string to int)", err)
+		common.SendUnsupportedMediaType(w, r, "ERROR: Wrong date(can't convert string to int)", err)
 		return
 	}
 
