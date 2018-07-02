@@ -26,7 +26,7 @@ format:
 	go fmt $(packages)
 
 go-build:
-	go build -o cool_tasksgit
+	go build -o cool_tasks
 
 dc-build:
 	docker-compose build
@@ -35,4 +35,4 @@ dc-up:
 	docker-compose up
 
 create-table:
-	psql -h 172.17.0.2 -p 5432 -U postgres -a -f cool_tasks.sql
+	psql -h 127.0.0.1 -p 5432 -U postgres -a -f cool_tasks.sql
