@@ -35,4 +35,4 @@ dc-up:
 	docker-compose up
 
 create-table:
-	psql -h 127.0.0.1 -p 5432 -U postgres -a -f cool_tasks.sql
+	psql -h 127.0.0.1 -p 5432 -U postgres -c 'create database cool_tasks;' -c '\c cool_tasks' -a -f cool_tasks.sql

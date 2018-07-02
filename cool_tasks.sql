@@ -1,4 +1,3 @@
-CREATE DATABASE cool_tasks;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE users (
 id uuid DEFAULT uuid_generate_v1(),
