@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	getMuseums      = "SELECT * FROM museums"
-	getMuseumByCity = "SELECT * FROM museums WHERE location = $1"
-	addMuseumToTrip = "INSERT INTO trips_museums (museum_id, trip_id) VALUES ($1, $2) RETURNING id"
+	getMuseums       = "SELECT * FROM museums"
+	getMuseumByCity  = "SELECT * FROM museums WHERE location = $1"
+	addMuseumToTrip  = "INSERT INTO trips_museums (museum_id, trip_id) VALUES ($1, $2) RETURNING id"
 	getMuseumsByTrip = "SELECT * FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=$1"
 )
 
@@ -59,7 +59,7 @@ var GetMuseumsByCity = func(city string) ([]Museum, error) {
 	return museums, nil
 }
 
-var AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) (uuid.UUID, error){
+var AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := DB.QueryRow(addMuseumToTrip, museum_id, trip_id).Scan(&id)
 
