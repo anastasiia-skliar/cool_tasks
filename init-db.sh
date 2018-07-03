@@ -1,4 +1,6 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+#!/usr/bin/env bash
+
+psql -c 'create database cool_tasks;' -c '\c cool_tasks' -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE users (
 id uuid DEFAULT uuid_generate_v1(),
 name VARCHAR(34) NOT NULL,
@@ -6,7 +8,6 @@ login VARCHAR(34) NOT NULL,
 password VARCHAR(16) NOT NULL,
 PRIMARY KEY (id)
 );
-
 CREATE TABLE tasks (
 id uuid DEFAULT uuid_generate_v1(),
 user_id uuid REFERENCES users (id) ON DELETE CASCADE,
@@ -16,5 +17,5 @@ created_at TIMESTAMP,
 updated_at TIMESTAMP,
 description TEXT,
 PRIMARY KEY(id)
-);
-
+);'
+#psql -a -f create-tables.sql

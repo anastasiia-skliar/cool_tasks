@@ -10,7 +10,7 @@ packages = \
     ./services/usersCRUD \
     ./services/tasksCRUD \
 
-all: test format go-build dc-build dc-up create-table
+all: test format go-build dc-build dc-up
 
 test:
 	@$(foreach package,$(packages), set -e; \
@@ -33,6 +33,3 @@ dc-build:
 
 dc-up:
 	docker-compose up
-
-create-table:
-	psql -h 127.0.0.1 -p 5432 -U postgres -c 'create database cool_tasks;' -c '\c cool_tasks' -a -f cool_tasks.sql
