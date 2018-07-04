@@ -1,15 +1,13 @@
 package auth
 
 import (
-	"database/sql"
 	"errors"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/alicebob/miniredis"
 	"github.com/satori/go.uuid"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"time"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 var	GetUserByLogin  = models.GetUserByLogin
@@ -28,13 +26,8 @@ type User struct {
 	Password string
 }
 
-var redis *miniredis.Miniredis
-var db *sql.DB
 
-func init() {
-	redis, _ = miniredis.Run()
-	db, _, _ = sqlmock.New()
-}
+
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
@@ -61,7 +54,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		newLogin.sessionID = sessionUUID.String()
 	}
 	if newLogin.sessionID != "" {
-		redis.Push(newLogin.sessionID, newLogin.login)
+		database.Cache.Set(newLogin.sessionID, newLogin.login)
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour*4)}
 http.SetCookie(w, &newCookie)
 
@@ -73,9 +66,9 @@ http.SetCookie(w, &newCookie)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	var newLogout login
-	r.ParseForm()
-	newLogout.sessionID = r.Form.Get("sessionID")
-	redis.Del(newLogout.sessionID)
-	common.RenderJSON(w, r, "Success logout")
+	userSession, _ := r.Cookie("user_session")
+		redis.Del(userSession.Value)
+		common.RenderJSON(w, r, "Success logout")
+
+
 }
