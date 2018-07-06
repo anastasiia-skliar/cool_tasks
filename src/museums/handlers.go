@@ -78,7 +78,7 @@ func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if count == 0 {
-			//common.SendError(w, r, 400, "ERROR: Invalid request", nil)
+			common.SendError(w, r, 400, "ERROR: Invalid request", nil)
 			return
 		}
 		switch key {
