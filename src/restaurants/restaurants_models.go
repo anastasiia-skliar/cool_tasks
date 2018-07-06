@@ -5,6 +5,7 @@ import (
 	"fmt"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
+	"net/url"
 )
 
 const (
@@ -12,7 +13,8 @@ const (
 	getter         = "SELECT * FROM %s"
 	create         = "INSERT INTO restaurants (name, location, stars, prices, description) VALUES ($1, $2, $3, $4, $5) RETURNING id"
 	getByParameter = "WHERE %s = $1"
-	addParam       = " and %s = $%d"
+	addParam       = " AND %s = $%d"
+	addOr = " OR %s = $%d"
 	deleteTempl    = "DELETE FROM %s WHERE id = $1"
 )
 
@@ -42,8 +44,14 @@ func recGen(params ...string) string {
 	request := fmt.Sprintf(base+" "+getByParameter, params[paramsCounter])
 	paramsCounter++
 	for ; paramsCounter < len(params); paramsCounter++ {
-		request += fmt.Sprintf(addParam, params[paramsCounter], paramsCounter+1)
+		if params[paramsCounter]!=params[paramsCounter-1] {
+			request += fmt.Sprintf(addParam, params[paramsCounter], paramsCounter+1)
+		}else {
+			request += fmt.Sprintf(addOr, params[paramsCounter], paramsCounter+1)
+		}
+
 	}
+	fmt.Println(request)
 	return request
 }
 
@@ -81,8 +89,28 @@ var deleteFromDB = func(id uuid.UUID) error {
 
 //GetTasks used for getting tasks from DB
 
-var getByParams = func(paramNames []string, param ...interface{}) ([]Restaurant, error) {
-	rows, err := DB.Query(recGen(paramNames...), param...)
+var getByQuery = func(query url.Values) ([]Restaurant, error) {
+
+	paramNames := make([]string, 0)
+	paramVals := make([]string, 0)
+	for key, value := range query {
+		if len(value) > 0 {
+			for _, v:=range value{
+				paramNames = append(paramNames, key)
+				paramVals = append(paramVals, v)
+			}
+		} else {
+			continue
+		}
+
+	}
+
+	s := make([]interface{}, len(paramVals))
+	for i, v := range paramVals {
+		s[i] = v
+	}
+
+	rows, err := DB.Query(recGen(paramNames...), s...)
 
 	if err != nil {
 		fmt.Println(err)

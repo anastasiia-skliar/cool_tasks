@@ -35,24 +35,9 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, items)
 	}
 
-	paramNames := make([]string, 0)
-	paramVals := make([]string, 0)
-	var usedVal string
-	for key, value := range query {
-		paramNames = append(paramNames, key)
-		if len(value) > 0 {
-			usedVal = value[0]
-		} else {
-			continue
-		}
-		paramVals = append(paramVals, usedVal)
-	}
+
 	//MAGIC BEGINS!!!
-	s := make([]interface{}, len(paramVals))
-	for i, v := range paramVals {
-		s[i] = v
-	}
-	items, err := getByParams(paramNames, s...)
+	items, err := getByQuery(query)
 	//MAGIC ENDS!!!
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get items", err)
