@@ -8,6 +8,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/flights/CRUD"
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -26,7 +27,6 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/logout", common.MethodHandler(map[string]http.Handler{
 		http.MethodPost: http.HandlerFunc(auth.Logout),
 	}))
-
 
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsers),
@@ -48,7 +48,18 @@ func NewRouter() *mux.Router {
 		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
+	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(tasksCRUD.GetTasks),
+		http.MethodPost: http.HandlerFunc(tasksCRUD.CreateTask),
+	}))
 
+	apiV1.Handle("/flights", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(CRUD.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(CRUD.AddToTripHandler),
+	}))
+	apiV1.Handle("/flights/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(CRUD.GetByTripHandler),
+	}))
 
 	return router
 }

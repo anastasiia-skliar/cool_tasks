@@ -6,105 +6,15 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
-	"time"
-	"strconv"
+	"strings"
+	"fmt"
 )
 
 type success struct {
 	Status string `json:"message"`
 }
 
-func GetFlights(w http.ResponseWriter, r *http.Request) {
-
-	flights, err := models.GetFlights()
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get flights", err)
-		return
-	}
-
-	common.RenderJSON(w, r, flights)
-}
-
-func GetByCity(w http.ResponseWriter, r *http.Request) {
-
-	params := mux.Vars(r)
-	departureCity := params["departure_city"]
-	arrivalCity := params["arrival_city"]
-
-	flights, err := models.GetByCity(departureCity, arrivalCity)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get flights by city", err)
-		return
-	}
-
-	common.RenderJSON(w, r, flights)
-}
-
-func GetByDepartureTime(w http.ResponseWriter, r *http.Request) {
-
-	params := mux.Vars(r)
-
-	departureTimeFrom, err := time.Parse(time.UnixDate, params["departure_time_from"])
-	departureTimeTo, err := time.Parse(time.UnixDate, params["departure_time_to"])
-
-	flights, err := models.GetByArrivalTime(departureTimeFrom, departureTimeTo)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get flights by departure time", err)
-		return
-	}
-
-	common.RenderJSON(w, r, flights)
-}
-
-func GetByArrivalTime(w http.ResponseWriter, r *http.Request) {
-
-	params := mux.Vars(r)
-
-	arrivalTimeFrom, err := time.Parse(time.UnixDate, params["arrival_time_from"])
-	arrivalTimeTo, err := time.Parse(time.UnixDate, params["arrival_time_to"])
-
-	flights, err := models.GetByArrivalTime(arrivalTimeFrom, arrivalTimeTo)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get flights by arrival time", err)
-		return
-	}
-
-	common.RenderJSON(w, r, flights)
-}
-
-func GetByPrice(w http.ResponseWriter, r *http.Request) {
-
-	params := mux.Vars(r)
-
-	priceFrom, err := strconv.Atoi(params["price_from"])
-
-	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Converting price from string to int", err)
-		return
-	}
-
-	priceTo, err := strconv.Atoi(params["price_to"])
-
-	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Converting price from string to int", err)
-		return
-	}
-
-	flights, err := models.GetByPrice(priceFrom, priceTo)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get flights by arrival time", err)
-		return
-	}
-
-	common.RenderJSON(w, r, flights)
-}
-
-func AddToTrip(w http.ResponseWriter, r *http.Request) {
+func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 
@@ -127,7 +37,7 @@ func AddToTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddToTrip(flightID,tripID)
+	err = models.AddToTrip(flightID, tripID)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new flight to trip", err)
@@ -137,28 +47,11 @@ func AddToTrip(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, success{Status: "201 Created"})
 }
 
-func GetByDate(w http.ResponseWriter, r *http.Request) {
+func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	departureDate, err := time.Parse(time.UnixDate, params["departure_date"])
-	arrivalDate, err := time.Parse(time.UnixDate, params["arrival_date"])
-
-	flights, err := models.GetByArrivalTime(departureDate, arrivalDate)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get flights by date", err)
-		return
-	}
-
-	common.RenderJSON(w, r, flights)
-}
-
-func GetByTrip(w http.ResponseWriter, r *http.Request) {
-
-	params := mux.Vars(r)
-
-	tripID, err := uuid.FromString(params["trip_id"])
+	tripID, err := uuid.FromString(params["id"])
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
@@ -173,4 +66,66 @@ func GetByTrip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	common.RenderJSON(w, r, flights)
+}
+
+func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	request := "SELECT * FROM flights WHERE "
+	count := 0
+	validKeys := []string{"id", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}
+	for key, value := range params {
+		for _, keys := range validKeys {
+			if key == keys {
+				count++
+			}
+		}
+		if count == 0 {
+			common.SendError(w, r, 400, "ERROR: Invalid request", nil)
+			fmt.Println("error")
+			return
+		}
+
+		switch key {
+		case "departure_city", "arrival_city":
+			if len(value) > 1 {
+				request += key + " IN ("
+				for i, v := range value {
+					v = "'" + v + "'"
+					request += v
+					if i < len(value)-1 {
+						request += ", "
+					}
+				}
+				request += ") AND "
+			} else {
+				value[0] = "'" + value[0] + "'"
+				request += key + "=" + value[0] + " AND "
+			}
+		case "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
+			if len(value) > 1 {
+				request += key + " BETWEEN " + value[0] + " AND " + value[1] + " AND "
+			} else {
+				request += key + "=" + value[0] + " AND "
+			}
+		default:
+			request += key + "=" + value[0] + " AND "
+		}
+		count = 0
+	}
+
+	words := strings.Fields(request)
+
+	if words[len(words)-1] == "AND" || words[len(words)-1] == "WHERE" {
+		words[len(words)-1] = ""
+	}
+
+	request = strings.Join(words, " ")
+	request += ";"
+
+	museums, err := models.GetByRequest(request)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't find flights with such parameters", err)
+		return
+	}
+	common.RenderJSON(w, r, museums)
 }
