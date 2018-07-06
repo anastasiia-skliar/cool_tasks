@@ -73,7 +73,6 @@ func TestGetTask(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc"}).
-
 		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
 
 	mock.ExpectQuery("SELECT (.+) FROM tasks").WithArgs(ID).WillReturnRows(rows)
@@ -151,7 +150,6 @@ func TestGetTasks(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc"}).
-
 		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime,
 			"Do smth").AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
 

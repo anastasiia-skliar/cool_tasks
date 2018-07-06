@@ -9,18 +9,18 @@ import (
 )
 
 type successCreate struct {
-	Status string      `json:"message"`
+	Status string     `json:"message"`
 	Result Restaurant `json:"result"`
 }
 
 type successDelete struct {
-	Status string      `json:"message"`
+	Status string `json:"message"`
 }
 
 func Get(w http.ResponseWriter, r *http.Request) {
-	query:=r.URL.Query()
+	query := r.URL.Query()
 	if val, ok := query["id"]; ok {
-		id, err:=uuid.FromString(val[0])
+		id, err := uuid.FromString(val[0])
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
@@ -35,17 +35,17 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, items)
 	}
 
-	paramNames:=make([]string, 0)
-	paramVals:=make([]string,0)
+	paramNames := make([]string, 0)
+	paramVals := make([]string, 0)
 	var usedVal string
 	for key, value := range query {
-	paramNames=	 append(paramNames, key)
-		if len(value)>0 {
-			usedVal=value[0]
-		}else {
+		paramNames = append(paramNames, key)
+		if len(value) > 0 {
+			usedVal = value[0]
+		} else {
 			continue
 		}
-	paramVals=	append(paramVals,usedVal)
+		paramVals = append(paramVals, usedVal)
 	}
 	//MAGIC BEGINS!!!
 	s := make([]interface{}, len(paramVals))
@@ -53,7 +53,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		s[i] = v
 	}
 	items, err := getByParams(paramNames, s...)
-//MAGIC ENDS!!!
+	//MAGIC ENDS!!!
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get items", err)
 		return
@@ -74,17 +74,15 @@ func PostRestaurant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-
 	newItem.Name = r.Form.Get("name")
-	newItem.Location=r.Form.Get("location")
+	newItem.Location = r.Form.Get("location")
 	newItem.Description = r.Form.Get("description")
-	newItem.Prices, err=	strconv.Atoi(r.Form.Get("prices"))
+	newItem.Prices, err = strconv.Atoi(r.Form.Get("prices"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Invalid prices field", err)
 		return
 	}
-	newItem.Stars,err=	strconv.Atoi(r.Form.Get("stars"))
+	newItem.Stars, err = strconv.Atoi(r.Form.Get("stars"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Invalid stars field", err)
 		return

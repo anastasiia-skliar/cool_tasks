@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	createTask = "INSERT INTO tasks (user_id, name, time, created_at, updated_at, description) VALUES ($1, $2, $3, $4, $5, $6)"
-	getTask    = "SELECT * FROM tasks WHERE id = $1"
-	deleteTask = "DELETE FROM tasks WHERE id = $1"
-	getTasks   = "SELECT * FROM tasks"
+	createTask   = "INSERT INTO tasks (user_id, name, time, created_at, updated_at, description) VALUES ($1, $2, $3, $4, $5, $6)"
+	getTask      = "SELECT * FROM tasks WHERE id = $1"
+	deleteTask   = "DELETE FROM tasks WHERE id = $1"
+	getTasks     = "SELECT * FROM tasks"
 	getUserTasks = "SELECT * FROM tasks where user_id = $1"
 )
 

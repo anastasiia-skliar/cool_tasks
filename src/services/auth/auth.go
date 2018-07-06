@@ -2,15 +2,15 @@ package auth
 
 import (
 	"errors"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"github.com/alicebob/miniredis"
 	"github.com/satori/go.uuid"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"time"
-	"github.com/alicebob/miniredis"
 )
 
-var	GetUserByLogin  = models.GetUserByLogin
+var GetUserByLogin = models.GetUserByLogin
 
 var redis *miniredis.Miniredis
 
@@ -32,9 +32,6 @@ type User struct {
 	Password string
 }
 
-
-
-
 func Login(w http.ResponseWriter, r *http.Request) {
 
 	var newLogin login
@@ -44,7 +41,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newLogin.pass = r.Form.Get("password")
 
 	var userInDB models.User
-	userInDB, err:= GetUserByLogin(newLogin.login)
+	userInDB, err := GetUserByLogin(newLogin.login)
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: ", err)
 		return
@@ -61,8 +58,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if newLogin.sessionID != "" {
 		redis.Set(newLogin.sessionID, newLogin.login)
-		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour*4)}
-http.SetCookie(w, &newCookie)
+		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
+		http.SetCookie(w, &newCookie)
 
 		common.RenderJSON(w, r, newLogin.sessionID)
 		return
@@ -73,8 +70,7 @@ http.SetCookie(w, &newCookie)
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	userSession, _ := r.Cookie("user_session")
-		redis.Del(userSession.Value)
-		common.RenderJSON(w, r, "Success logout")
-
+	redis.Del(userSession.Value)
+	common.RenderJSON(w, r, "Success logout")
 
 }

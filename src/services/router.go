@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/restaurants"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
@@ -8,7 +9,6 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/restaurants"
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -27,7 +27,6 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/logout", common.MethodHandler(map[string]http.Handler{
 		http.MethodPost: http.HandlerFunc(auth.Logout),
 	}))
-
 
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsers),
@@ -50,13 +49,12 @@ func NewRouter() *mux.Router {
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
 	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
-		http.MethodPost:    http.HandlerFunc(restaurants.PostRestaurant),
-		http.MethodGet: http.HandlerFunc(restaurants.Get),
+		http.MethodPost: http.HandlerFunc(restaurants.PostRestaurant),
+		http.MethodGet:  http.HandlerFunc(restaurants.Get),
 	}))
 	apiV1.Handle("/restaurants/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodDelete:    http.HandlerFunc(restaurants.Delete),
+		http.MethodDelete: http.HandlerFunc(restaurants.Delete),
 	}))
-
 
 	return router
 }

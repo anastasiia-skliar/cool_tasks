@@ -5,11 +5,11 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 func main() {

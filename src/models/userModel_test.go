@@ -29,7 +29,6 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserId.Bytes())
 
 	mock.ExpectQuery("INSERT INTO users").WithArgs("John", "john", "1111").WillReturnRows(rows)
@@ -62,7 +61,6 @@ func TestGetUser(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-
 		AddRow(UserId.Bytes(), "John", "john", "1111")
 
 	mock.ExpectQuery("SELECT (.+) FROM users").WithArgs(UserId).WillReturnRows(rows)
@@ -85,7 +83,7 @@ func TestGetUserByLogin(t *testing.T) {
 
 	originalDB := database.DB
 	database.DB, mock, err = sqlmock.New()
-	defer func() { database.DB= originalDB }()
+	defer func() { database.DB = originalDB }()
 
 	UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -101,9 +99,7 @@ func TestGetUserByLogin(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-
 		AddRow(UserId.Bytes(), "John", "john", "1111")
-
 
 	mock.ExpectQuery("SELECT ID, Password FROM users WHERE Login = \\$1").WithArgs(expected.Login).WillReturnRows(rows)
 
@@ -168,7 +164,6 @@ func TestGetUsers(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-
 		AddRow(UserId.Bytes(), "John", "john_doe", "1111").AddRow(UserId.Bytes(), "Tom", "hate_jerry", "2222")
 
 	mock.ExpectQuery("SELECT (.+) FROM users").WillReturnRows(rows)
