@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"net/http"
-	"log"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/alicebob/miniredis"
+	"log"
+	"net/http"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
@@ -25,11 +25,12 @@ var IsExistRedis = func(key string) bool {
 	}
 	return false
 }
+
 //End Mocked func
 
 func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-	if r.URL.Path=="/v1/login"{
+	if r.URL.Path == "/v1/login" {
 		next(w, r)
 		return
 	}

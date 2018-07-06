@@ -3,16 +3,16 @@ package auth
 import (
 	"database/sql"
 	"errors"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/alicebob/miniredis"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"time"
 )
 
-var	GetUserByLogin  = models.GetUserByLogin
+var GetUserByLogin = models.GetUserByLogin
 
 type login struct {
 	id        uuid.UUID
@@ -45,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newLogin.pass = r.Form.Get("password")
 
 	var userInDB models.User
-	userInDB, err:= GetUserByLogin(newLogin.login)
+	userInDB, err := GetUserByLogin(newLogin.login)
 	if err != nil {
 		return
 	}
@@ -60,8 +60,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if newLogin.sessionID != "" {
 		redis.Push(newLogin.sessionID, newLogin.login)
-		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour*4)}
-http.SetCookie(w, &newCookie)
+		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
+		http.SetCookie(w, &newCookie)
 
 		common.RenderJSON(w, r, newLogin.sessionID)
 		return
