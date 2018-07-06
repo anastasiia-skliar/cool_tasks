@@ -4,11 +4,11 @@ packages = \
 	./config \
 	./database \
 	./models \
-    ./services \
     ./services/auth \
-    ./services/common \
     ./services/usersCRUD \
     ./services/tasksCRUD \
+    ./trains/handlers\
+    ./trains/models\
 
 all: test format go-build dc-build dc-up
 
