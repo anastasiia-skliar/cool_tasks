@@ -5,26 +5,8 @@ import (
 )
 
 func MockedGetMuseums() {
-	GetMuseums = func() ([]Museum, error) {
+	GetMuseumsByRequest = func(string) ([]Museum, error) {
 		return []Museum{}, nil
-	}
-}
-
-func MockedGetMuseumByCity() {
-	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	GetMuseumsByCity = func(city string) ([]Museum, error) {
-		return []Museum{
-			{
-				MuseumId,
-				"Louvre",
-				"Paris",
-				1111,
-				1,
-				2,
-				"History",
-				"Cool",
-			},
-		}, nil
 	}
 }
 

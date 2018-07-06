@@ -12,25 +12,6 @@ type successCreate struct {
 	Status string `json:"status"`
 }
 
-func GetMuseumsHandler(w http.ResponseWriter, r *http.Request) {
-	museums, err := GetMuseums()
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get users", err)
-		return
-	}
-	common.RenderJSON(w, r, museums)
-}
-
-func GetMuseumByCityHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	museums, err := GetMuseumsByCity(params["city"])
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't find museums in such city", err)
-		return
-	}
-	common.RenderJSON(w, r, museums)
-}
-
 func AddMuseumToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -78,15 +59,27 @@ func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if count == 0 {
-			//common.SendError(w, r, 400, "ERROR: Invalid request", nil)
+			common.SendError(w, r, 400, "ERROR: Invalid request", nil)
 			return
 		}
 		switch key {
 		case "name", "location", "museum_type":
-			value[0] = "'" + value[0] + "'"
-			request += key + "=" + value[0] + " AND "
-		case "price", "opened_at", "closed_at":
 			if len(value) > 1 {
+				request += key + " IN ("
+				for i, v := range value {
+					v = "'" + v + "'"
+					request += v
+					if i < len(value)-1 {
+						request += ", "
+					}
+				}
+				request += ")"
+			} else {
+				value[0] = "'" + value[0] + "'"
+				request += key + "=" + value[0] + " AND "
+			}
+		case "price", "opened_at", "closed_at":
+			if len(value) == 2 {
 				request += key + " BETWEEN " + value[0] + " AND " + value[1] + " AND "
 			} else {
 				request += key + "=" + value[0] + " AND "

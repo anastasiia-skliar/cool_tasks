@@ -20,7 +20,7 @@ type MuseumsTestCase struct {
 	mockedGetMuseums []museums.Museum
 }
 
-func TestGetMuseumsHandler(t *testing.T) {
+func TestGetMuseumsByRequestHandler(t *testing.T) {
 	tests := []MuseumsTestCase{
 		{
 			name:             "Get_Museums_200",
