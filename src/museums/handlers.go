@@ -98,6 +98,7 @@ func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	request = strings.Join(words, " ")
+	request+=";"
 	museums, err := GetMuseumsByRequest(request)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
