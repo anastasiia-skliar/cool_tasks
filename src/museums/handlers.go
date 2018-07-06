@@ -73,7 +73,7 @@ func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
 						request += ", "
 					}
 				}
-				request += ")"
+				request += ") AND "
 			} else {
 				value[0] = "'" + value[0] + "'"
 				request += key + "=" + value[0] + " AND "
