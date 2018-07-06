@@ -32,7 +32,7 @@ func main() {
 
 	database.DB, err = database.SetupPostgres(config.Config.Database)
 	if err != nil {
-		log.Fatalf("eror while loading postgreSQL: %s:", err)
+		log.Fatalf("error while loading postgreSQL: %s:", err)
 	}
 
 	//database.Cache, err = database.SetupRedis(config.Config.Database)

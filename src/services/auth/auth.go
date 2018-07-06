@@ -7,10 +7,16 @@ import (
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"time"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/alicebob/miniredis"
 )
 
 var	GetUserByLogin  = models.GetUserByLogin
+
+var redis *miniredis.Miniredis
+
+func init() {
+	redis, _ = miniredis.Run()
+}
 
 type login struct {
 	id        uuid.UUID
@@ -54,7 +60,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		newLogin.sessionID = sessionUUID.String()
 	}
 	if newLogin.sessionID != "" {
-		database.Cache.Set(newLogin.sessionID, newLogin.login)
+		redis.Set(newLogin.sessionID, newLogin.login)
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour*4)}
 http.SetCookie(w, &newCookie)
 
