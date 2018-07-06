@@ -5,10 +5,11 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
+	"strings"
 )
 
 type successCreate struct {
-	Status string    `json:"status"`
+	Status string `json:"status"`
 }
 
 func GetMuseumsHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +61,44 @@ func GetMuseumByTripHandler(w http.ResponseWriter, r *http.Request) {
 	museums, err := GetMuseumsByTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums in such trip", err)
+		return
+	}
+	common.RenderJSON(w, r, museums)
+}
+
+func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	request := "SELECT * FROM museums WHERE "
+	count := 0
+	validKeys := []string{"id", "name", "location", "price", "museum_type", "opened_at", "closed_at"}
+	for key, value := range params {
+		for _, keys := range validKeys {
+			if key == keys {
+				count++
+			}
+		}
+		if count == 0 {
+			common.SendError(w, r, 400, "ERROR: Invalid request", nil)
+			return
+		}
+		if key == "name" || key == "location" || key == "museum_type" {
+			value[0] = "'" + value[0] + "'"
+		}
+		request += key + "=" + value[0] + " AND "
+		count = 0
+	}
+
+	words := strings.Fields(request)
+
+	if 	words[len(words)-1] == "AND"{
+		words[len(words)-1] = ""
+	}
+
+
+	request=strings.Join(words," ")
+	museums, err := GetMuseumsByRequest(request)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
 		return
 	}
 	common.RenderJSON(w, r, museums)

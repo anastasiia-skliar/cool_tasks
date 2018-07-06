@@ -19,28 +19,28 @@ func TestGetMuseums(t *testing.T) {
 
 	var expects = []Museum{
 		{
-			ID:          MuseumId,
-			Name:        "Ermitage",
-			Location:    "Peterburg",
-			Price:       1111,
-			Opened_at:   1,
-			Closed_at:   2,
-			Museum_type: "Gallery",
-			Info:        "Cool",
+			ID:         MuseumId,
+			Name:       "Ermitage",
+			Location:   "Peterburg",
+			Price:      1111,
+			OpenedAt:   1,
+			ClosedAt:   2,
+			MuseumType: "Gallery",
+			Info:       "Cool",
 		},
 		{
-			ID:          MuseumId,
-			Name:        "Luvre",
-			Location:    "Paris",
-			Price:       1110,
-			Opened_at:   1,
-			Closed_at:   2,
-			Museum_type: "Gallery",
-			Info:        "Cool",
+			ID:         MuseumId,
+			Name:       "Luvre",
+			Location:   "Paris",
+			Price:      1110,
+			OpenedAt:   1,
+			ClosedAt:   2,
+			MuseumType: "Gallery",
+			Info:       "Cool",
 		},
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "Name", "Location", "Price", "Opened_at", "Closed_at", "Museum_type", "additional_info"}).
+	rows := sqlmock.NewRows([]string{"ID", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
 
 		AddRow(MuseumId.Bytes(), "Ermitage", "Peterburg", 1111, 1, 2, "Gallery", "Cool").AddRow(MuseumId.Bytes(), "Luvre", "Paris", 1110, 1, 2, "Gallery", "Cool")
 
@@ -85,7 +85,7 @@ func TestGetMuseumByCity(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "Opened_at", "Closed_at", "Museum_type", "additional_info"}).
+	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
 		AddRow(MuseumId.Bytes(), "Louvre", "Paris", 1111, 1, 2, "History", "Cool").
 		AddRow(MuseumId.Bytes(), "Ermitage", "Peterburg", 1111, 1, 2, "Gallery", "Cool")
 
@@ -151,7 +151,7 @@ func TestGetMuseumByTrip(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "Opened_at", "Closed_at", "Museum_type", "additional_info"}).
+	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
 		AddRow(MuseumId.Bytes(), "Louvre", "Paris", 1111, 1, 2, "History", "Cool")
 
 	mock.ExpectQuery("SELECT (.+) FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=\\$1").WithArgs(expected.Location).WillReturnRows(rows)

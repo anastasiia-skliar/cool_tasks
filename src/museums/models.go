@@ -14,14 +14,14 @@ const (
 )
 
 type Museum struct {
-	ID          uuid.UUID
-	Name        string
-	Location    string
-	Price       int
-	Opened_at   int
-	Closed_at   int
-	Museum_type string
-	Info        string
+	ID         uuid.UUID
+	Name       string
+	Location   string
+	Price      int
+	OpenedAt   int
+	ClosedAt   int
+	MuseumType string
+	Info       string
 }
 
 var GetMuseums = func() ([]Museum, error) {
@@ -34,7 +34,7 @@ var GetMuseums = func() ([]Museum, error) {
 
 	for rows.Next() {
 		var m Museum
-		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.Opened_at, &m.Closed_at, &m.Museum_type, &m.Info); err != nil {
+		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
 			return []Museum{}, err
 		}
 		museums = append(museums, m)
@@ -52,7 +52,7 @@ var GetMuseumsByCity = func(city string) ([]Museum, error) {
 
 	for rows.Next() {
 		var m Museum
-		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.Opened_at, &m.Closed_at, &m.Museum_type, &m.Info); err != nil {
+		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
 			return []Museum{}, err
 		}
 		museums = append(museums, m)
@@ -75,7 +75,25 @@ var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
 
 	for rows.Next() {
 		var m Museum
-		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.Opened_at, &m.Closed_at, &m.Museum_type, &m.Info); err != nil {
+		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
+			return []Museum{}, err
+		}
+		museums = append(museums, m)
+	}
+	return museums, nil
+}
+
+var GetMuseumsByRequest = func(request string) ([]Museum, error) {
+	rows, err := DB.Query(request)
+	if err != nil {
+		return []Museum{}, err
+	}
+
+	museums := make([]Museum, 0)
+
+	for rows.Next() {
+		var m Museum
+		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
 			return []Museum{}, err
 		}
 		museums = append(museums, m)

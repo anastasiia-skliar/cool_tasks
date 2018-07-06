@@ -49,7 +49,7 @@ func NewRouter() *mux.Router {
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
 	apiV1.Handle("/museums", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsHandler),
+		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsByRequestHandler),
 		http.MethodPost: http.HandlerFunc(museums.AddMuseumToTripHandler),
 	}))
 	apiV1.Handle("/museums/{city}", common.MethodHandler(map[string]http.Handler{
