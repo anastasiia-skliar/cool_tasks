@@ -78,24 +78,33 @@ func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if count == 0 {
-			common.SendError(w, r, 400, "ERROR: Invalid request", nil)
+			//common.SendError(w, r, 400, "ERROR: Invalid request", nil)
 			return
 		}
-		if key == "name" || key == "location" || key == "museum_type" {
+		switch key {
+		case "name", "location", "museum_type":
 			value[0] = "'" + value[0] + "'"
+			request += key + "=" + value[0] + " AND "
+		case "price", "opened_at", "closed_at":
+			if len(value) > 1 {
+				request += key + " BETWEEN " + value[0] + " AND " + value[1] + " AND "
+			} else {
+				request += key + "=" + value[0] + " AND "
+			}
+		default:
+			request += key + "=" + value[0] + " AND "
 		}
-		request += key + "=" + value[0] + " AND "
+
 		count = 0
 	}
 
 	words := strings.Fields(request)
 
-	if 	words[len(words)-1] == "AND"{
+	if words[len(words)-1] == "AND" || words[len(words)-1] == "WHERE" {
 		words[len(words)-1] = ""
 	}
 
-
-	request=strings.Join(words," ")
+	request = strings.Join(words, " ")
 	museums, err := GetMuseumsByRequest(request)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
