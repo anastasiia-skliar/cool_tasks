@@ -63,7 +63,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 
 	trainID, err := uuid.FromString(r.Form.Get("train_id"))
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong flight ID (can't convert string to uuid)", err)
+		common.SendBadRequest(w, r, "ERROR: Wrong train ID (can't convert string to uuid)", err)
 		return
 	}
 
@@ -75,7 +75,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 
 	err = models.SaveTrain(trainID, tripID)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't add new flight to trip", err)
+		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		return
 	}
 

@@ -21,7 +21,7 @@ type TrainsTestCase struct {
 func TestGetTrains(t *testing.T) {
 	tests := []TrainsTestCase{
 		{
-			name: "Get_Flights_200",
+			name: "Get_Trains_200",
 			url:  "/v1/trains?departure_city=lviv&arrival_city=kyiv&price=300uah",
 			want: 200,
 		},
