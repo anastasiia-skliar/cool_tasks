@@ -5,6 +5,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"net/url"
 	"testing"
 	"time"
 )
@@ -19,6 +20,9 @@ func TestGetTrains(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, mockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
+
+	rawUrl, _ := url.Parse("localhost:8080/hello?departure_city=Lviv&arrival_city=Kyiv")
+	params := rawUrl.Query()
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -47,7 +51,7 @@ func TestGetTrains(t *testing.T) {
 			arrivalTime,
 			arrivalDate,
 			"Lviv",
-			"Kharkiv",
+			"Kyiv",
 			"el",
 			"coupe",
 			"250uah",
@@ -62,11 +66,11 @@ func TestGetTrains(t *testing.T) {
 		"departure_city", "arrival_city", "train_type", "car_type", "price"}).
 		AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
 			"Lviv", "Kyiv", "el", "coupe", "200uah").AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
-		"Lviv", "Kharkiv", "el", "coupe", "250uah")
+		"Lviv", "Kyiv", "el", "coupe", "250uah")
 
 	mock.ExpectQuery("SELECT (.+) FROM trains").WillReturnRows(rows)
 
-	result, err := models.GetTrains("SELECT (.+) FROM trains")
+	result, err := models.GetTrains(params)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

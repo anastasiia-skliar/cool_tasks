@@ -1,7 +1,6 @@
 package trains
 
 import (
-	sq "github.com/Masterminds/squirrel"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
@@ -15,46 +14,15 @@ type successAdd struct {
 }
 
 func GetTrains(w http.ResponseWriter, r *http.Request) {
-
-	var (
-		cond sq.And
-		request string
-		reqError error
-	)
-
 	params := r.URL.Query()
-	trains := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("trains")
 
-	for k, v := range params {
-		switch k {
-		case "id", "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
-			if len(params[k]) == 2 {
-				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
-			} else {
-				cond = append(cond, sq.Eq{k: v[0]})
-			}
-		case "departure_city", "arrival_city":
-			cond = append(cond, sq.Eq{k: v[0]})
-		default:
-			common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
-		}
-	}
-
-	request, _, reqError = trains.Where(cond).ToSql()
-	if reqError != nil {
-		common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
-	}
-
-	if len(params) == 0 {
-		request = "SELECT * FROM trains;"
-	}
-
-	result, err := models.GetTrains(request)
+	trains, err := models.GetTrains(params)
 	if err != nil {
-		common.SendError(w, r, 400, "ERROR: Can't get trains", nil)
+		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
+		return
 	}
 
-	common.RenderJSON(w, r, result)
+	common.RenderJSON(w, r, trains)
 }
 
 func SaveTrain(w http.ResponseWriter, r *http.Request) {
