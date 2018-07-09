@@ -1,4 +1,4 @@
-package restaurants
+package restaurantsCRUD
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
@@ -6,11 +6,12 @@ import (
 	"github.com/satori/go.uuid"
 	"net/http"
 	"strconv"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
 
 type successCreate struct {
 	Status string     `json:"message"`
-	Result Restaurant `json:"result"`
+	Result models.Restaurant `json:"result"`
 }
 
 type successDelete struct {
@@ -25,7 +26,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		items, err := getByID(id)
+		items, err := models.GetRestByID(id)
 
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Can't get items", err)
@@ -37,7 +38,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 
 	//MAGIC BEGINS!!!
-	items, err := getByQuery(query)
+	items, err := models.GetRestByQuery(query)
 	//MAGIC ENDS!!!
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get items", err)
@@ -47,10 +48,12 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, items)
 }
 
-func PostRestaurant(w http.ResponseWriter, r *http.Request) {
+func Post(w http.ResponseWriter, r *http.Request) {
 
-	var newItem Restaurant
-	var resultItem Restaurant
+	var(
+		newItem models.Restaurant
+	resultItem models.Restaurant
+	)
 
 	err := r.ParseForm()
 
@@ -73,7 +76,7 @@ func PostRestaurant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resultItem, err = addRestaurant(newItem)
+	resultItem, err = models.AddRestaurant(newItem)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new item", err)
@@ -93,7 +96,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = deleteFromDB(itemID)
+	err = models.DeleteRestFromDB(itemID)
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't delete this item", err)

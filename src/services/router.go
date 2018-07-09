@@ -49,11 +49,11 @@ func NewRouter() *mux.Router {
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
 	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
-		http.MethodPost: http.HandlerFunc(restaurants.PostRestaurant),
-		http.MethodGet:  http.HandlerFunc(restaurants.Get),
+		http.MethodPost: http.HandlerFunc(restaurantsCRUD.PostRestaurant),
+		http.MethodGet:  http.HandlerFunc(restaurantsCRUD.Get),
 	}))
 	apiV1.Handle("/restaurants/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodDelete: http.HandlerFunc(restaurants.Delete),
+		http.MethodDelete: http.HandlerFunc(restaurantsCRUD.Delete),
 	}))
 
 	return router

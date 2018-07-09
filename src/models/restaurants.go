@@ -1,4 +1,4 @@
-package restaurants
+package models
 
 import (
 	"database/sql"
@@ -69,27 +69,27 @@ func parseResult(rows *sql.Rows) ([]Restaurant, error) {
 }
 
 //CreateTask used for creation task in DB
-var addRestaurant = func(item Restaurant) (Restaurant, error) {
+var AddRestaurant = func(item Restaurant) (Restaurant, error) {
 	err := DB.QueryRow(create, item.Name, item.Location, item.Stars, item.Prices, item.Description).Scan(&item.ID)
 	return item, err
 }
 
 //GetTask used for getting task from DB
-var getByID = func(id uuid.UUID) (Restaurant, error) {
+var GetRestByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
 	err := DB.QueryRow(recGen("id"), id).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
 
 //DeleteTask used for deleting task from DB
-var deleteFromDB = func(id uuid.UUID) error {
+var DeleteRestFromDB = func(id uuid.UUID) error {
 	_, err := DB.Exec(deleteRequest, id)
 	return err
 }
 
 //GetTasks used for getting tasks from DB
 
-var getByQuery = func(query url.Values) ([]Restaurant, error) {
+var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
 
 	paramNames := make([]string, 0)
 	paramVals := make([]string, 0)
