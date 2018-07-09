@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/satori/go.uuid"
+	"net/url"
 )
 
 func MockedAddToTrip() {
@@ -11,7 +12,7 @@ func MockedAddToTrip() {
 }
 
 func MockedGetByRequest(){
-	GetByRequest = func(request string) ([]Flights, error) {
+	GetByRequest = func(params url.Values) ([]Flights, error) {
 		return []Flights{}, nil
 	}
 }

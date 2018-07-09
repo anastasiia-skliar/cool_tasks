@@ -6,10 +6,8 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"time"
+	"net/http"
 )
-
-var mock sqlmock.Sqlmock
-var err error
 
 func TestGetByRequest(t *testing.T) {
 
@@ -56,7 +54,9 @@ func TestGetByRequest(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM flights").WillReturnRows(rows)
 
-	result, err := GetByRequest("SELECT (.+) FROM flights")
+	req, _ := http.NewRequest(http.MethodGet, "/v1/flights", nil)
+
+	result, err := GetByRequest(req.URL.Query())
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

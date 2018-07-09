@@ -1,11 +1,11 @@
-package flights
+package flights_test
 
 import (
 	"testing"
 	"net/http/httptest"
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/flights/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"net/url"
 	"bytes"
 )
