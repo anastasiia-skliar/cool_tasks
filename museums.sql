@@ -12,8 +12,8 @@ id id uuid DEFAULT uuid_generate_v1(),
 name VARCHAR(34) NOT NULL,
 location VARCHAR (20) NOT NULL,
 price INT NOT NULL,
-opened_at INT NOT NULL,
-closed_at INT NOT NULL,
+opened_at TIME NOT NULL,
+closed_at TIME NOT NULL,
 museum_type VARCHAR(34) NOT NULL,
 additional_info VARCHAR(60) NOT NULL
 )

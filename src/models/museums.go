@@ -5,8 +5,8 @@ import (
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"net/url"
 	sq "github.com/Masterminds/squirrel"
-	"fmt"
 	"errors"
+	"time"
 )
 
 const (
@@ -19,8 +19,8 @@ type Museum struct {
 	Name       string
 	Location   string
 	Price      int
-	OpenedAt   int
-	ClosedAt   int
+	OpenedAt   time.Time
+	ClosedAt   time.Time
 	MuseumType string
 	Info       string
 }
@@ -49,20 +49,12 @@ var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
 
 var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	museums := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("museums")
-	var request string
-	var err error
-	var b sq.And
-	count := 0
-	validKeys := []string{"id", "name", "location", "price", "museum_type", "opened_at", "closed_at"}
+	var (
+		request string
+		err     error
+		b       sq.And
+	)
 	for key, value := range params {
-		for _, keys := range validKeys {
-			if key == keys {
-				count++
-			}
-		}
-		if count == 0 {
-			return []Museum{}, errors.New("ERROR: Bad request")
-		}
 		switch key {
 		case "name", "location", "museum_type":
 			if len(value) > 1 {
@@ -71,7 +63,6 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 					or = append(or, sq.Eq{key: v})
 				}
 				b = append(b, or)
-				request += ") AND "
 			} else {
 				b = append(b, sq.Eq{key: value[0]})
 			}
@@ -82,11 +73,11 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 				b = append(b, sq.Eq{key: value[0]})
 
 			}
-		default:
+		case "id":
 			b = append(b, sq.Eq{key: value[0]})
+		default:
+			return []Museum{}, errors.New("ERROR: Bad request")
 		}
-
-		count = 0
 	}
 
 	request, _, err = museums.Where(b).ToSql()
