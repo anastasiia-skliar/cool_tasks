@@ -1,4 +1,4 @@
-package CRUD
+package flights
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/flights/models"

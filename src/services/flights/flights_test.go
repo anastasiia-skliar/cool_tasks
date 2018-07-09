@@ -1,4 +1,4 @@
-package CRUD_test
+package flights
 
 import (
 	"testing"
