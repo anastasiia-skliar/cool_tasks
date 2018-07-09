@@ -22,9 +22,6 @@ type Event struct {
 	Date      time.Time
 	Price     int
 }
-type success struct {
-	Status string       `json:"message"`
-}
 var AddToTrip = func(eventID uuid.UUID, tripID uuid.UUID) (error) {
 	_, err := DB.Exec(addToTrip, eventID, tripID)
 	return err
