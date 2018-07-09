@@ -2,7 +2,7 @@ package auth
 
 import "github.com/alicebob/miniredis"
 
-func mockedIsExistRedis(key string){
+func mockedIsExistRedis(key string) {
 	IsExistRedis = func(key string) bool {
 		s, err := miniredis.Run()
 		if err != nil {

@@ -1,20 +1,20 @@
 package auth
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 )
 
 var cookieSession string = "6c3a65d23c5f26fc529f6c5ce01a6b31"
 
 type isAuthorizedTestCase struct {
-	name         string
-	url          string
-	cookieName   string
-	cookieValue  string
-	want         int
+	name        string
+	url         string
+	cookieName  string
+	cookieValue string
+	want        int
 }
 
 func TestIsAuthorized(t *testing.T) {
@@ -53,7 +53,7 @@ func TestIsAuthorized(t *testing.T) {
 			cookie := http.Cookie{Name: tc.cookieName, Value: tc.cookieValue}
 			req.AddCookie(&cookie)
 
-			fackedNext:= func(w http.ResponseWriter, r *http.Request) {
+			fackedNext := func(w http.ResponseWriter, r *http.Request) {
 				common.RenderJSON(w, r, "200")
 			}
 

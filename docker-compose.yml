@@ -9,6 +9,8 @@ services:
     image: "postgres:latest"  
     ports:
      - "5432:5432"
+    volumes:
+     - ./cool_tasks.sql:/docker-entrypoint-initdb.d/cool_tasks.sql
   cool_tasks:
     container_name: cool_tasks
     image: cool_tasks:latest
@@ -18,4 +20,3 @@ services:
       - postgres
     ports:
       - "8080:8080"
-      
