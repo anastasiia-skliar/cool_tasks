@@ -4,6 +4,9 @@ import (
 	"github.com/satori/go.uuid"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"time"
+	"strings"
+	"net/url"
+	"errors"
 )
 
 const (
@@ -45,7 +48,59 @@ var GetByTrip = func(tripID uuid.UUID) ([]Flights, error) {
 	return flights, nil
 }
 
-var GetByRequest = func(request string) ([]Flights, error) {
+var GetByRequest = func(params url.Values) ([]Flights, error) {
+
+	request := "SELECT * FROM flights WHERE "
+	count := 0
+	validKeys := []string{"id", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}
+	for key, value := range params {
+		for _, keys := range validKeys {
+			if key == keys {
+				count++
+			}
+		}
+		if count == 0 {
+			return []Flights{}, errors.New("ERROR: Invalid request")
+
+		}
+
+		switch key {
+		case "departure_city", "arrival_city":
+			if len(value) > 1 {
+				request += key + " IN ("
+				for i, v := range value {
+					v = "'" + v + "'"
+					request += v
+					if i < len(value)-1 {
+						request += ", "
+					}
+				}
+				request += ") AND "
+			} else {
+				value[0] = "'" + value[0] + "'"
+				request += key + "=" + value[0] + " AND "
+			}
+		case "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
+			if len(value) > 1 {
+				request += key + " BETWEEN " + value[0] + " AND " + value[1] + " AND "
+			} else {
+				request += key + "=" + value[0] + " AND "
+			}
+		default:
+			request += key + "=" + value[0] + " AND "
+		}
+		count = 0
+	}
+
+	words := strings.Fields(request)
+
+	if words[len(words)-1] == "AND" || words[len(words)-1] == "WHERE" {
+		words[len(words)-1] = ""
+	}
+
+	request = strings.Join(words, " ")
+	request += ";"
+
 	rows, err := DB.Query(request)
 	if err != nil {
 		return []Flights{}, err
