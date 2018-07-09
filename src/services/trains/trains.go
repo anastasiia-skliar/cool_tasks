@@ -1,20 +1,12 @@
-package handlers
+package trains
 
 import (
+	sq "github.com/Masterminds/squirrel"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/trains/models"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
-)
-
-const (
-	AND         = " AND "
-	BETWEEN     = " BETWEEN "
-	equals      = " = "
-	selectWhere = "SELECT * FROM trains WHERE "
-	selectAll   = "SELECT * FROM trains;"
-	qm          = "'"
 )
 
 type successAdd struct {
@@ -23,35 +15,40 @@ type successAdd struct {
 }
 
 func GetTrains(w http.ResponseWriter, r *http.Request) {
+	var cond sq.And
 	var request string
-	req := selectWhere
-	params := r.URL.Query()
+	var err error
 
-	for k := range params {
+	params := r.URL.Query()
+	trains := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("trains")
+
+	for k, v := range params {
 		switch k {
 		case "id", "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
 			if len(params[k]) == 2 {
-				req += k + BETWEEN + qm + params[k][0] + qm + AND + qm + params[k][1] + qm + AND
+				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
 			} else {
-				req += k + equals + qm + params[k][0] + qm + AND
+				cond = append(cond, sq.Eq{k: v[0]})
 			}
 		case "departure_city", "arrival_city":
-			req += k + equals + qm + params[k][0] + qm + AND
+			cond = append(cond, sq.Eq{k: v[0]})
 		default:
 			common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
 		}
 	}
-	request = req[:len(req)-5] + ";"
+
+	request, _, _ = trains.Where(cond).ToSql()
 
 	if len(params) == 0 {
-		request = selectAll
+		request = "SELECT * FROM trains;"
 	}
 
-	trains, err := models.GetTrains(request)
+	result, err := models.GetTrains(request)
 	if err != nil {
 		common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
 	}
-	common.RenderJSON(w, r, trains)
+
+	common.RenderJSON(w, r, result)
 }
 
 func SaveTrain(w http.ResponseWriter, r *http.Request) {

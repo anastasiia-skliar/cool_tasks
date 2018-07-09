@@ -1,7 +1,8 @@
-package models
+package models_test
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
@@ -26,7 +27,7 @@ func TestGetTrains(t *testing.T) {
 	arrivalTime, _ := time.Parse("15:04:05", "15:00:00")
 	arrivalDate, _ := time.Parse("2006-01-02", "2018-07-21")
 
-	expects := []Train{
+	expects := []models.Train{
 		{
 			ID,
 			departureTime,
@@ -65,7 +66,7 @@ func TestGetTrains(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM trains").WillReturnRows(rows)
 
-	result, err := GetTrains("SELECT (.+) FROM trains")
+	result, err := models.GetTrains("SELECT (.+) FROM trains")
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
@@ -95,7 +96,7 @@ func TestSaveToTrip(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO trips_trains").WithArgs(trainID, tripID).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := SaveTrain(trainID, tripID); err != nil {
+	if err := models.SaveTrain(trainID, tripID); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -120,7 +121,7 @@ func TestGetFromTrip(t *testing.T) {
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	expects := []Train{
+	expects := []models.Train{
 		{
 			ID,
 			departureTime,
@@ -154,7 +155,7 @@ func TestGetFromTrip(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.trains_id = trains.id AND trips_trains.trips").WithArgs(ID).WillReturnRows(rows)
 
-	result, err := GetFromTrip(ID)
+	result, err := models.GetFromTrip(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

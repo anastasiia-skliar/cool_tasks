@@ -1,9 +1,9 @@
-package handlers_test
+package trains_test
 
 import (
 	"bytes"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/trains/models"
 	"net/http"
 	"net/http/httptest"
 	"net/url"

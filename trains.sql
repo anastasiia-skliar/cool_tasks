@@ -16,16 +16,16 @@ CREATE TABLE trains (
 
 INSERT INTO trains
   (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '10:23:54', '2004-10-19', '10:23:54', '2004-10-19', 'Lviv', 'Kyiv', 'electric', 'coupe', '200uah');
+  VALUES ( uuid_generate_v1(), '11:23:54', '2018-07-20', '18:23:54', '2018-07-22', 'Lviv', 'Odessa', 'electric', 'coupe', '200uah');
 INSERT INTO trains
   (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '10:23:54', '2004-10-19', '10:23:54', '2004-10-19', 'Lviv', 'Kyiv', 'electric', 'coupe', '200uah');
+  VALUES ( uuid_generate_v1(), '10:23:54', '2018-07-21', '17:23:54', '2018-07-24', 'Kyiv', 'Moscow', 'electric', 'coupe', '190uah');
 INSERT INTO trains
   (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '10:23:54', '2004-10-19', '10:23:54', '2004-10-19', 'Lviv', 'Kyiv', 'electric', 'coupe', '200uah');
+  VALUES ( uuid_generate_v1(), '12:23:54', '2018-07-22', '16:23:54', '2018-07-23', 'Lviv', 'Kyiv', 'electric', 'coupe', '225uah');
 INSERT INTO trains
   (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '10:23:54', '2004-10-19', '10:23:54', '2004-10-19', 'Lviv', 'Kyiv', 'electric', 'coupe', '200uah');
+  VALUES ( uuid_generate_v1(), '15:23:54', '2018-07-23', '20:23:54', '2018-07-25', 'Lviv', 'Kharkiv', 'electric', 'coupe', '320uah');
 
 
 -- TRIP_TRAINS
@@ -35,4 +35,10 @@ CREATE TABLE trips_trains(
   trips_id uuid REFERENCES trips (trips_id) ON DELETE CASCADE,
   trains_id uuid REFERENCES trains (id) ON DELETE CASCADE,
   PRIMARY KEY (id)
+);
+
+CREATE TABLE trips(
+  trips_id uuid DEFAULT uuid_generate_v1(),
+  users_id uuid REFERENCES users (id) ON DELETE CASCADE,
+  PRIMARY KEY (trips_id)
 );
