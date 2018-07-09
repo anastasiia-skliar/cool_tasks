@@ -8,7 +8,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/museums"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
 )
 
 // NewRouter creates a router for URL-to-service mapping

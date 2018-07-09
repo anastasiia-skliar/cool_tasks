@@ -5,8 +5,7 @@ import (
 	"net/http/httptest"
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/museums"
-	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"net/url"
 	"bytes"
 )
@@ -17,7 +16,7 @@ type MuseumsTestCase struct {
 	name             string
 	url              string
 	want             int
-	mockedGetMuseums []museums.Museum
+	mockedGetMuseums []models.Museum
 }
 
 func TestGetMuseumsByRequestHandler(t *testing.T) {
@@ -26,12 +25,12 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 			name:             "Get_Museums_200",
 			url:              "/v1/museums",
 			want:             200,
-			mockedGetMuseums: []museums.Museum{},
+			mockedGetMuseums: []models.Museum{},
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			museums.MockedGetMuseums()
+			models.MockedGetMuseums()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -44,41 +43,6 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 	}
 }
 
-func TestGetMuseumByCityHandler(t *testing.T) {
-	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	tests := []MuseumsTestCase{
-		{
-			name: "Get_Museums_200",
-			url:  "/v1/museums/Paris",
-			want: 200,
-			mockedGetMuseums: []museums.Museum{
-				{
-					MuseumId,
-					"Louvre",
-					"Paris",
-					1111,
-					1,
-					2,
-					"History",
-					"Cool",
-				},
-			},
-		},
-	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			museums.MockedGetMuseumByCity()
-			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
-
-			router.ServeHTTP(rec, req)
-
-			if rec.Code != tc.want {
-				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
-			}
-		})
-	}
-}
 
 func TestAddMuseumToTripHandler(t *testing.T) {
 	tests := []MuseumsTestCase{
@@ -93,7 +57,7 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 	data.Add("trip", "00000000-0000-0000-0000-000000000001")
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			museums.MockedAddMuseum()
+			models.MockedAddMuseum()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
@@ -113,12 +77,12 @@ func TestGetMuseumByTripHandler(t *testing.T) {
 			name:             "Get_Museums_200",
 			url:              "/v1/museums/trip/00000000-0000-0000-0000-000000000001",
 			want:             200,
-			mockedGetMuseums: []museums.Museum{},
+			mockedGetMuseums: []models.Museum{},
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			museums.MockedGetMuseumsByTrip()
+			models.MockedGetMuseumsByTrip()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

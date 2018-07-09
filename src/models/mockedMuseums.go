@@ -1,11 +1,12 @@
-package museums
+package models
 
 import (
 	"github.com/satori/go.uuid"
+	"net/url"
 )
 
 func MockedGetMuseums() {
-	GetMuseumsByRequest = func(string) ([]Museum, error) {
+	GetMuseumsByRequest = func(values url.Values) ([]Museum, error) {
 		return []Museum{}, nil
 	}
 }

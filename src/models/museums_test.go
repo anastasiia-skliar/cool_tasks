@@ -1,14 +1,13 @@
-package museums
+package models
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
+	"net/http"
 )
 
-var mock sqlmock.Sqlmock
-var err error
 
 func TestGetMuseumsByRequest(t *testing.T) {
 	originalDB := database.DB
@@ -46,7 +45,9 @@ func TestGetMuseumsByRequest(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM museums").WillReturnRows(rows)
 
-	result, err := GetMuseumsByRequest("SELECT * FROM museums")
+	req, _ := http.NewRequest(http.MethodGet, "/v1/museums", nil)
+
+	result, err := GetMuseumsByRequest(req.URL.Query())
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
@@ -110,7 +111,7 @@ func TestGetMuseumByTrip(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
 		AddRow(MuseumId.Bytes(), "Louvre", "Paris", 1111, 1, 2, "History", "Cool")
 
-	mock.ExpectQuery("SELECT (.+) FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=\\$1").WithArgs(expected.Location).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)
 
 	result, err := GetMuseumsByTrip(MuseumId)
 
