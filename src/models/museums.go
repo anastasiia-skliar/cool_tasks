@@ -91,7 +91,7 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 
 	request, _, err = museums.Where(b).ToSql()
 	if err != nil {
-		fmt.Println(err)
+		return []Museum{}, err
 	}
 	b = nil
 	rows, err := DB.Query(request)
