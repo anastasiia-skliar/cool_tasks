@@ -1,120 +1,80 @@
 package events
 
 import (
-	"time"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"net/url"
-	"errors"
-	"strings"
+	"net/http"
 )
 
-const (
-	addToTrip = "INSERT INTO trips_events (event_id, trip_id) VALUES ($1, $2)"
-	getByTrip = "SELECT * FROM events INNER JOIN trips_events ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
-)
-
-type Event struct {
-	ID        uuid.UUID
-	Title     string
-	Category  string
-	Town 	  string
-	Date      time.Time
-	Price     int
-}
 type success struct {
-	Status string       `json:"message"`
+	Status string `json:"message"`
 }
-var AddToTrip = func(eventID uuid.UUID, tripID uuid.UUID) (error) {
-	_, err := DB.Exec(addToTrip, eventID, tripID)
-	return err
-}
+func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
 
-var GetByTrip = func(eventID uuid.UUID) ([]Event, error) {
-	rows, err := DB.Query(getByTrip, eventID)
-	if err != nil {
-		return []Event{}, err
-	}
+err := r.ParseForm()
 
-	events := make([]Event, 0)
-
-	for rows.Next() {
-		var p Event
-		if err := rows.Scan(&p.ID, &p.Title, &p.Category, &p.Town, &p.Date, &p.Price); err != nil {
-			return []Event{}, err
-		}
-		events = append(events, p)
-	}
-	return events, nil
-}
-var GetByRequest = func(params url.Values) ([]Event, error) {
-
-	request := "SELECT * FROM events WHERE "
-	count := 0
-	validKeys := []string{"id","title","category","town","date","price"}
-	for key, value := range params {
-		for _, keys := range validKeys {
-			if key == keys {
-				count++
-			}
-		}
-		if count == 0 {
-			return []Event{}, errors.New("ERROR: Invalid request")
-
-		}
-
-		switch key {
-		case "town","category":
-			if len(value) > 1 {
-				request += key + " IN ("
-				for i, v := range value {
-					v = "'" + v + "'"
-					request += v
-					if i < len(value)-1 {
-						request += ", "
-					}
-				}
-				request += ") AND "
-			} else {
-				value[0] = "'" + value[0] + "'"
-				request += key + "=" + value[0] + " AND "
-			}
-		case "date","price":
-			if len(value) > 1 {
-				request += key + " BETWEEN " + value[0] + " AND " + value[1] + " AND "
-			} else {
-				request += key + "=" + value[0] + " AND "
-			}
-		default:
-			request += key + "=" + value[0] + " AND "
-		}
-		count = 0
-	}
-
-	words := strings.Fields(request)
-
-	if words[len(words)-1] == "AND" || words[len(words)-1] == "WHERE" {
-		words[len(words)-1] = ""
-	}
-
-	request = strings.Join(words, " ")
-	request += ";"
-
-	rows, err := DB.Query(request)
-	if err != nil {
-		return []Event{}, err
-	}
-
-	events := make([]Event, 0)
-
-	for rows.Next() {
-		var p Event
-		if err := rows.Scan(&p.ID, &p.Title, &p.Category, &p.Town, &p.Date, &p.Price); err != nil {
-			return []Event{}, err
-
-		}
-		events = append(events, p)
-	}
-	return events, nil
+if err != nil {
+common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+return
 }
 
+	eventID, err := uuid.FromString(r.Form.Get("flight_id"))
+
+if err != nil {
+common.SendBadRequest(w, r, "ERROR: Wrong event ID (can't convert string to uuid)", err)
+return
+}
+
+tripID, err := uuid.FromString(r.Form.Get("trip_id"))
+
+if err != nil {
+common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+return
+}
+
+err = models.AddToTrip(eventID, tripID)
+
+if err != nil {
+common.SendBadRequest(w, r, "ERROR: Can't add new event to trip", err)
+return
+}
+
+common.RenderJSON(w, r, success{Status: "201 Created"})
+}
+
+func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
+
+params := mux.Vars(r)
+
+tripID, err := uuid.FromString(params["id"])
+
+if err != nil {
+common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+return
+}
+
+	events, err := models.GetByTrip(tripID)
+
+if err != nil {
+common.SendNotFound(w, r, "ERROR: Can't get events by trip ID", err)
+return
+}
+
+common.RenderJSON(w, r, events)
+}
+
+func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+
+params := r.URL.Query()
+
+	events, err := models.GetByRequest(params)
+
+if err != nil {
+common.SendNotFound(w, r, "ERROR: Can't find events with such parameters", err)
+return
+}
+
+common.RenderJSON(w, r, events)
+}
