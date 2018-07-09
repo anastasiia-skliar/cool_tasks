@@ -15,9 +15,12 @@ type successAdd struct {
 }
 
 func GetTrains(w http.ResponseWriter, r *http.Request) {
-	var cond sq.And
-	var request string
-	var err error
+
+	var (
+		cond sq.And
+		request string
+		reqError error
+	)
 
 	params := r.URL.Query()
 	trains := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("trains")
@@ -37,7 +40,10 @@ func GetTrains(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	request, _, _ = trains.Where(cond).ToSql()
+	request, _, reqError = trains.Where(cond).ToSql()
+	if reqError != nil {
+		common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
+	}
 
 	if len(params) == 0 {
 		request = "SELECT * FROM trains;"
@@ -45,7 +51,7 @@ func GetTrains(w http.ResponseWriter, r *http.Request) {
 
 	result, err := models.GetTrains(request)
 	if err != nil {
-		common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
+		common.SendError(w, r, 400, "ERROR: Can't get trains", nil)
 	}
 
 	common.RenderJSON(w, r, result)
