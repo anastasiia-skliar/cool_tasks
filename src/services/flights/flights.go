@@ -67,12 +67,15 @@ func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+
 	params := r.URL.Query()
 
-	museums, err := models.GetByRequest(params)
+	flights, err := models.GetByRequest(params)
+
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find flights with such parameters", err)
 		return
 	}
-	common.RenderJSON(w, r, museums)
+
+	common.RenderJSON(w, r, flights)
 }
