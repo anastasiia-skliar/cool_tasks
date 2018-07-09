@@ -12,13 +12,13 @@ func MockedAddToTrip() {
 }
 
 func MockedGetByRequest(){
-	GetByRequest = func(params url.Values) ([]Flights, error) {
-		return []Flights{}, nil
+	GetByRequest = func(params url.Values) ([]Flight, error) {
+		return []Flight{}, nil
 	}
 }
 
 func MockedGetByTrip(){
-	GetByTrip = func(tripID uuid.UUID) ([]Flights, error) {
-		return []Flights{}, nil
+	GetByTrip = func(tripID uuid.UUID) ([]Flight, error) {
+		return []Flight{}, nil
 	}
 }

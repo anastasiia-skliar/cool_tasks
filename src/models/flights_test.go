@@ -20,7 +20,7 @@ func TestGetByRequest(t *testing.T) {
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	expected := []Flights{
+	expected := []Flight{
 		{
 			ID,
 			"Lviv",
@@ -105,7 +105,7 @@ func TestGetByTrip(t *testing.T) {
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	expected := Flights{
+	expected := Flight{
 
 		ID,
 		"Lviv",

@@ -14,7 +14,7 @@ const (
 	getByTrip = "SELECT * FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
 )
 
-type Flights struct {
+type Flight struct {
 	ID            uuid.UUID
 	departureCity string
 	departureTime time.Time
@@ -30,41 +30,30 @@ var AddToTrip = func(flightID uuid.UUID, tripID uuid.UUID) (error) {
 	return err
 }
 
-var GetByTrip = func(tripID uuid.UUID) ([]Flights, error) {
+var GetByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 	rows, err := DB.Query(getByTrip, tripID)
 	if err != nil {
-		return []Flights{}, err
+		return []Flight{}, err
 	}
 
-	flights := make([]Flights, 0)
+	flights := make([]Flight, 0)
 
 	for rows.Next() {
-		var m Flights
-		if err := rows.Scan(&m.ID, &m.departureCity, &m.departureTime, &m.departureDate, &m.arrivalCity, &m.arrivalDate, &m.arrivalTime, &m.price); err != nil {
-			return []Flights{}, err
+		var f Flight
+		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
+			return []Flight{}, err
 		}
-		flights = append(flights, m)
+		flights = append(flights, f)
 	}
 	return flights, nil
 }
 
-var GetByRequest = func(params url.Values) ([]Flights, error) {
+var GetByRequest = func(params url.Values) ([]Flight, error) {
 
 	var and sq.And
 	var or sq.Or
-	count := 0
 	flights := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("flights")
-	validKeys := []string{"id", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}
 	for key, value := range params {
-		for _, keys := range validKeys {
-			if key == keys {
-				count++
-			}
-		}
-		if count == 0 {
-			return []Flights{}, errors.New("ERROR: Bad request")
-		}
-
 		switch key {
 		case "departure_city", "arrival_city":
 			if len(value) > 1 {
@@ -81,33 +70,34 @@ var GetByRequest = func(params url.Values) ([]Flights, error) {
 			} else {
 				and = append(and, sq.Eq{key: value[0]})
 			}
-		default:
+		case "key":
 			and = append(and, sq.Eq{key: value[0]})
+		default:
+			return []Flight{}, errors.New("ERROR: Bad request")
 		}
-		count = 0
 	}
 
 	req := flights.Where(and)
 
 	request, _, err := req.ToSql()
 	if err != nil {
-		return []Flights{}, errors.New("ERROR: Bad request")
+		return []Flight{}, errors.New("ERROR: Bad request")
 	}
-	and = nil
+	and = nil //make and nil after request
 
 	rows, err := DB.Query(request)
 	if err != nil {
-		return []Flights{}, err
+		return []Flight{}, err
 	}
 
-	flightsArray := make([]Flights, 0)
+	flightsArray := make([]Flight, 0)
 
 	for rows.Next() {
-		var m Flights
-		if err := rows.Scan(&m.ID, &m.departureCity, &m.departureTime, &m.departureDate, &m.arrivalCity, &m.arrivalDate, &m.arrivalTime, &m.price); err != nil {
-			return []Flights{}, err
+		var f Flight
+		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
+			return []Flight{}, err
 		}
-		flightsArray = append(flightsArray, m)
+		flightsArray = append(flightsArray, f)
 	}
 	return flightsArray, nil
 }
