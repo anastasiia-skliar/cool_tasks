@@ -47,6 +47,14 @@ func NewRouter() *mux.Router {
 		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
+	
+	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(events.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(events.AddToTripHandler),
+	}))
+	apiV1.Handle("/events/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(events.GetByTripHandler),
+	}))
 
 	return router
 }
