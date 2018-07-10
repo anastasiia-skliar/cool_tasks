@@ -8,7 +8,7 @@ PRIMARY KEY (id)
 
 
 CREATE TABLE  museums (
-id id uuid DEFAULT uuid_generate_v1(),
+id uuid DEFAULT uuid_generate_v1(),
 name VARCHAR(34) NOT NULL,
 location VARCHAR (20) NOT NULL,
 price INT,
@@ -16,7 +16,7 @@ opened_at TIME NOT NULL,
 closed_at TIME NOT NULL,
 museum_type VARCHAR(34) NOT NULL,
 additional_info VARCHAR(60) NOT NULL
-)
+);
 
 INSERT INTO museums (name, location, price, opened_at, closed_at, museum_type, additional_info) VALUES
 ('Arsenal museum', 'Lviv', 40, '10:00:00', '20:00:00', 'History', 'Half-price for students');
