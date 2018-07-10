@@ -11,7 +11,7 @@ import (
 type success struct {
 	Status string `json:"message"`
 }
-func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
+func AddEventToTripHandler(w http.ResponseWriter, r *http.Request) {
 
 err := r.ParseForm()
 
@@ -44,7 +44,7 @@ return
 common.RenderJSON(w, r, success{Status: "201 Created"})
 }
 
-func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
+func GetEventByTripHandler(w http.ResponseWriter, r *http.Request) {
 
 params := mux.Vars(r)
 
@@ -65,7 +65,7 @@ return
 common.RenderJSON(w, r, events)
 }
 
-func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+func GetEventByRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 params := r.URL.Query()
 
