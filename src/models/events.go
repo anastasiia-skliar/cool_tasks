@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	addToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
-	getByTrip = "SELECT * FROM flights INNER JOIN trips_evets ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
+	addEventToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
+	getEventByTrip = "SELECT * FROM flights INNER JOIN trips_evets ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
 )
 
 type Event struct {
@@ -22,13 +22,13 @@ type Event struct {
 	Date      time.Time
 	Price     int
 }
-var AddToTrip = func(eventID uuid.UUID, tripID uuid.UUID) (error) {
-	_, err := DB.Exec(addToTrip, eventID, tripID)
+var AddEventToTrip = func(eventID uuid.UUID, tripID uuid.UUID) (error) {
+	_, err := DB.Exec(addEventToTrip, eventID, tripID)
 	return err
 }
 
-var GetByTrip = func(eventID uuid.UUID) ([]Event, error) {
-	rows, err := DB.Query(getByTrip, eventID)
+var GetEventByTrip = func(eventID uuid.UUID) ([]Event, error) {
+	rows, err := DB.Query(getEventByTrip, eventID)
 	if err != nil {
 		return []Event{}, err
 	}
@@ -44,7 +44,7 @@ var GetByTrip = func(eventID uuid.UUID) ([]Event, error) {
 	}
 	return events, nil
 }
-var GetByRequest = func(params url.Values) ([]Event, error) {
+var GetEventByRequest = func(params url.Values) ([]Event, error) {
 
 	request := "SELECT * FROM events WHERE "
 	count := 0
