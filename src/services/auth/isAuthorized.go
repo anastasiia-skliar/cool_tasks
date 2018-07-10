@@ -2,25 +2,22 @@ package auth
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/alicebob/miniredis"
 	"log"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
 var IsExistRedis = func(key string) bool {
 
-	s, err := miniredis.Run()
-	if err != nil {
-		panic(err)
-	}
+	var s = database.Cache
 	defer s.Close()
 
 	redisKey := "6c3a65d23c5f26fc529f6c5ce01a6b31"
 
-	s.Set(redisKey, "")
+	s.Set(redisKey, "",0)
 
-	if s.Exists(key) {
+	if s.Exists(key).String() != "" {
 		return true
 	}
 	return false
