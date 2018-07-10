@@ -1,12 +1,4 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE TABLE trips_museums (
-museum_id uuid REFERENCES museums(id) ON DELETE CASCADE,
-trip_id uuid REFERENCES trips(id)  ON DELETE CASCADE,
-id uuid DEFAULT uuid_generate_v1(),
-PRIMARY KEY (id)
-);
-
-
 CREATE TABLE  museums (
 id uuid DEFAULT uuid_generate_v1(),
 name VARCHAR(34) NOT NULL,
@@ -15,7 +7,15 @@ price INT,
 opened_at TIME NOT NULL,
 closed_at TIME NOT NULL,
 museum_type VARCHAR(34) NOT NULL,
-additional_info VARCHAR(60) NOT NULL
+additional_info VARCHAR(60) NOT NULL,
+PRIMARY KEY (id)
+);
+
+CREATE TABLE trips_museums (
+museum_id uuid REFERENCES museums(id) ON DELETE CASCADE,
+trip_id uuid REFERENCES trips(id) ON DELETE CASCADE,
+id uuid DEFAULT uuid_generate_v1(),
+PRIMARY KEY (id)
 );
 
 INSERT INTO museums (name, location, price, opened_at, closed_at, museum_type, additional_info) VALUES
