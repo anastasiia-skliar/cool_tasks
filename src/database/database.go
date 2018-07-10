@@ -3,16 +3,14 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"github.com/go-redis/redis"
-	"log"
-	//"github.com/garyburd/redigo/redis"
-	//"github.com/go-redis/redis"
+	"github.com/garyburd/redigo/redis"
 	_ "github.com/lib/pq" //PostgreSQL driver
+	"log"
 )
 
 var (
 	DB                  *sql.DB
-	Cache               *redis.Client
+	Cache               redis.Conn
 	IsPostgresConnected bool
 	IsRedisConnected    bool
 )
@@ -69,18 +67,29 @@ func SetupPostgres(d Info) (*sql.DB, error) {
 	return db, err
 }
 
-func SetupRedis(d Info) (*redis.Client, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "172.17.0.3:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	_, err := client.Ping().Result()
-	if err!=nil{
+func SetupRedis(d Info) (redis.Conn, error) {
+	if IsRedisConnected == true {
+		return Cache, nil
+	}
+	var err, pool = newPool(d)
+	if err != nil {
 		log.Println(err)
 	}
+	connection := pool.Get()
 	SetRedisConnected()
-	return client, nil
+	return connection, err
+}
+
+//New redis connection pool
+func newPool(d Info) (error, *redis.Pool) {
+	c, err := redis.Dial("tcp", DSN_Redis(d.Redis))
+	return err, &redis.Pool{
+		MaxIdle:   80,
+		MaxActive: 12000, // max number of connections
+		Dial: func() (redis.Conn, error) {
+			return c, err
+		},
+	}
 }
 
 //Sets boolean isPostgresConnected to true

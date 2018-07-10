@@ -4,15 +4,19 @@ import (
 	"errors"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"github.com/alicebob/miniredis"
 	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 var GetUserByLogin = models.GetUserByLogin
 
-var redis = database.Cache
+var redis *miniredis.Miniredis
+
+func init() {
+	redis, _ = miniredis.Run()
+}
 
 
 type login struct {
@@ -30,18 +34,6 @@ type User struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	userSession, _ := r.Cookie("user_session")
-	if redis.Get(userSession.Value)!=nil{
-		login := redis.Get(userSession.Value)
-		redis.Del(userSession.Value)
-		redis.Set(userSession.Value, login, time.Hour*4)
-
-		newCookie := http.Cookie{Name: "user_session", Value:userSession.Value, Expires: time.Now().Add(time.Hour * 4)}
-		http.SetCookie(w, &newCookie)
-
-		common.RenderJSON(w, r, userSession.Value)
-		return
-	}
 
 	var newLogin login
 
@@ -67,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if newLogin.sessionID != "" {
 
-		redis.Set(newLogin.sessionID, newLogin.login, time.Hour*4)
+		redis.Push(newLogin.sessionID, newLogin.login)
 
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
