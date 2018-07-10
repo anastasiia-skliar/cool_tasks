@@ -6,14 +6,16 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"net/http"
+	"time"
 )
 
+var err error
 
 func TestGetMuseumsByRequest(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, err = sqlmock.New()
 	defer func() { database.DB = originalDB }()
-
+	testTime, _ := time.Parse("15:04:05", "12:00:00")
 	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	var expects = []Museum{
@@ -22,8 +24,8 @@ func TestGetMuseumsByRequest(t *testing.T) {
 			Name:       "Ermitage",
 			Location:   "Peterburg",
 			Price:      1111,
-			OpenedAt:   1,
-			ClosedAt:   2,
+			OpenedAt:   testTime,
+			ClosedAt:   testTime,
 			MuseumType: "Gallery",
 			Info:       "Cool",
 		},
@@ -32,8 +34,8 @@ func TestGetMuseumsByRequest(t *testing.T) {
 			Name:       "Luvre",
 			Location:   "Paris",
 			Price:      1110,
-			OpenedAt:   1,
-			ClosedAt:   2,
+			OpenedAt:   testTime,
+			ClosedAt:   testTime,
 			MuseumType: "Gallery",
 			Info:       "Cool",
 		},
@@ -41,7 +43,8 @@ func TestGetMuseumsByRequest(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
 
-		AddRow(MuseumId.Bytes(), "Ermitage", "Peterburg", 1111, 1, 2, "Gallery", "Cool").AddRow(MuseumId.Bytes(), "Luvre", "Paris", 1110, 1, 2, "Gallery", "Cool")
+		AddRow(MuseumId.Bytes(), "Ermitage", "Peterburg", 1111, testTime, testTime, "Gallery", "Cool").
+		AddRow(MuseumId.Bytes(), "Luvre", "Paris", 1110, testTime, testTime, "Gallery", "Cool")
 
 	mock.ExpectQuery("SELECT (.+) FROM museums").WillReturnRows(rows)
 
@@ -90,6 +93,7 @@ func TestGetMuseumByTrip(t *testing.T) {
 	database.DB, mock, err = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
+	testTime, _ := time.Parse("15:04:05", "12:00:00")
 	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	expected := Museum{
@@ -98,8 +102,8 @@ func TestGetMuseumByTrip(t *testing.T) {
 		"Louvre",
 		"Paris",
 		1111,
-		1,
-		2,
+		testTime,
+		testTime,
 		"History",
 		"Cool",
 	}
@@ -109,7 +113,7 @@ func TestGetMuseumByTrip(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
-		AddRow(MuseumId.Bytes(), "Louvre", "Paris", 1111, 1, 2, "History", "Cool")
+		AddRow(MuseumId.Bytes(), "Louvre", "Paris", 1111, testTime, testTime, "History", "Cool")
 
 	mock.ExpectQuery("SELECT (.+) FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)
 
