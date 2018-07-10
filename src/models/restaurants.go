@@ -6,12 +6,13 @@ import (
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
+	sq "gopkg.in/Masterminds/squirrel.v1"
 )
 
 const (
 	datalocation   = "restaurants"
 	getter         = "SELECT * FROM %s"
-	create         = "INSERT INTO restaurants (name, location, stars, prices, description) VALUES ($1, $2, $3, $4, $5) RETURNING id"
+	create         = "INSERT INTO %s (%s) VALUES (%s) RETURNING id"
 	getByParameter = "WHERE %s = $1"
 	addParam       = " AND %s = $%d"
 	addOr = " OR %s = $%d"
@@ -20,7 +21,7 @@ const (
 
 var deleteRequest string
 
-//Task representation in DB
+//Restaurant representation in DB
 type Restaurant struct {
 	ID          uuid.UUID
 	Name        string
@@ -35,8 +36,15 @@ func init() {
 
 }
 
-func recGen(params ...string) string {
-	base := fmt.Sprintf(getter, datalocation)
+func recGen(params map[string][]string) string {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
+	query, res, err := psql.Select("*").From(datalocation).Where(Lt).ToSql()
+	if err!=nil {
+		fmt.Println(err)
+	}
+	fmt.Println(res)
+	/*base := fmt.Sprintf(getter, datalocation)
 	if len(params) < 1 {
 		return base
 	}
@@ -51,8 +59,9 @@ func recGen(params ...string) string {
 		}
 
 	}
-	fmt.Println(request)
-	return request
+	*/
+	fmt.Println(query)
+	return query
 }
 
 func parseResult(rows *sql.Rows) ([]Restaurant, error) {
@@ -75,42 +84,26 @@ var AddRestaurant = func(item Restaurant) (Restaurant, error) {
 }
 
 //GetTask used for getting task from DB
-var GetRestByID = func(id uuid.UUID) (Restaurant, error) {
+var GetRestaurantsByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
-	err := DB.QueryRow(recGen("id"), id).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
+	params:=make(map[string]string)
+	key :=make([]string,0)
+	key=append(key, id.String())
+params["id"]=key
+	err := DB.QueryRow(recGen(params)).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
 
 //DeleteTask used for deleting task from DB
-var DeleteRestFromDB = func(id uuid.UUID) error {
+var DeleteRestaurantsFromDB = func(id uuid.UUID) error {
 	_, err := DB.Exec(deleteRequest, id)
 	return err
 }
 
 //GetTasks used for getting tasks from DB
 
-var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
-
-	paramNames := make([]string, 0)
-	paramVals := make([]string, 0)
-	for key, value := range query {
-		if len(value) > 0 {
-			for _, v:=range value{
-				paramNames = append(paramNames, key)
-				paramVals = append(paramVals, v)
-			}
-		} else {
-			continue
-		}
-
-	}
-
-	s := make([]interface{}, len(paramVals))
-	for i, v := range paramVals {
-		s[i] = v
-	}
-
-	rows, err := DB.Query(recGen(paramNames...), s...)
+var GetRestaurantsByQuery = func(query url.Values) ([]Restaurant, error) {
+	rows, err := DB.Query(recGen(query))
 
 	if err != nil {
 		fmt.Println(err)

@@ -26,7 +26,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		items, err := models.GetRestByID(id)
+		items, err := models.GetRestaurantsByID(id)
 
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Can't get items", err)
@@ -38,7 +38,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 
 	//MAGIC BEGINS!!!
-	items, err := models.GetRestByQuery(query)
+	items, err := models.GetRestaurantsByQuery(query)
 	//MAGIC ENDS!!!
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get items", err)
@@ -96,7 +96,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.DeleteRestFromDB(itemID)
+	err = models.DeleteRestaurantsFromDB(itemID)
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't delete this item", err)
