@@ -5,22 +5,17 @@ import (
 	"log"
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"fmt"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
 var IsExistRedis = func(key string) bool {
-
-	var s = database.Cache
-	defer s.Close()
-
-	redisKey := "6c3a65d23c5f26fc529f6c5ce01a6b31"
-
-	s.Set(redisKey, "",0)
-
-	if s.Exists(key).String() != "" {
-		return true
+	val,err := database.Cache.Get(key).Result()
+	fmt.Println("Values: + " + val)
+	if err != nil {
+		return false
 	}
-	return false
+	return true
 }
 
 //End Mocked func

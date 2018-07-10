@@ -72,18 +72,17 @@ func SetupRedis(d Info) (*redis.Client, error) {
 		return Cache,nil
 	}
 	client := redis.NewClient(&redis.Options{
-		Addr:     DSN_Redis(d.Redis),
+		Addr:     "172.17.0.2:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	_, err := client.Ping().Result()
+	_,err:=client.Ping().Result()
 	if err != nil {
 		log.Println(err)
 	}
 	SetRedisConnected()
-	return client, nil
+	return client,err
 }
-
 //Sets boolean isPostgresConnected to true
 func SetPostgresConnected() {
 	IsPostgresConnected = true
