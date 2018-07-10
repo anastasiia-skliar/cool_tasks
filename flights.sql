@@ -7,7 +7,7 @@ PRIMARY KEY (id)
 );
 
 CREATE TABLE  flights (
-id id uuid DEFAULT uuid_generate_v1(),
+id uuid DEFAULT uuid_generate_v1(),
 departure_city VARCHAR (30) NOT NULL,
 departure_time TIME,
 departure_date DATE,
