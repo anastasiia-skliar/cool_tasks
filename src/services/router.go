@@ -56,7 +56,7 @@ func NewRouter() *mux.Router {
 	}))
 	apiV1.Handle("/museums/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(museums.GetMuseumByTripHandler),
-
+	}))
 	apiV1.Handle("/trains", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(trains.GetTrains),
 		http.MethodPost: http.HandlerFunc(trains.SaveTrain),
