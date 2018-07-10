@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	addToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
-	getByTrip = "SELECT * FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
+	addFlightToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
+	getFlightByTrip = "SELECT * FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
 )
 
 type Flight struct {
@@ -25,13 +25,13 @@ type Flight struct {
 	price         int
 }
 
-var AddToTrip = func(flightID uuid.UUID, tripID uuid.UUID) (error) {
-	_, err := DB.Exec(addToTrip, flightID, tripID)
+var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) (error) {
+	_, err := DB.Exec(addFlightToTrip, flightID, tripID)
 	return err
 }
 
-var GetByTrip = func(tripID uuid.UUID) ([]Flight, error) {
-	rows, err := DB.Query(getByTrip, tripID)
+var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
+	rows, err := DB.Query(getFlightByTrip, tripID)
 	if err != nil {
 		return []Flight{}, err
 	}
@@ -48,7 +48,7 @@ var GetByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 	return flights, nil
 }
 
-var GetByRequest = func(params url.Values) ([]Flight, error) {
+var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	var and sq.And
 	var or sq.Or

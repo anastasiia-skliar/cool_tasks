@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func TestGetByRequest(t *testing.T) {
+func TestGetFlightsByRequest(t *testing.T) {
 
 	originalDB := database.DB
 	database.DB, mock, err = sqlmock.New()
@@ -56,7 +56,7 @@ func TestGetByRequest(t *testing.T) {
 
 	req, _ := http.NewRequest(http.MethodGet, "/v1/flights", nil)
 
-	result, err := GetByRequest(req.URL.Query())
+	result, err := GetFlightsByRequest(req.URL.Query())
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
@@ -73,7 +73,7 @@ func TestGetByRequest(t *testing.T) {
 
 }
 
-func TestAddToTrip(t *testing.T) {
+func TestAddFlightToTrip(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, err = sqlmock.New()
 	defer func() { database.DB = originalDB }()
@@ -86,7 +86,7 @@ func TestAddToTrip(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO trips_flights").WithArgs(flightID, tripID).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := AddToTrip(flightID, tripID); err != nil {
+	if err := AddFlightToTrip(flightID, tripID); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -95,7 +95,7 @@ func TestAddToTrip(t *testing.T) {
 	}
 }
 
-func TestGetByTrip(t *testing.T) {
+func TestGetFlightsByTrip(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, err = sqlmock.New()
 	defer func() { database.DB = originalDB }()
@@ -127,7 +127,7 @@ func TestGetByTrip(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)
 
-	result, err := GetByTrip(ID)
+	result, err := GetFlightsByTrip(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
