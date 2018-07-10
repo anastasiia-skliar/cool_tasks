@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE trips_museums (
-museum_id uuid REFERENCES museums(id) DELETE  ON  CASCADE,
-trip_id uuid REFERENCES trips(id) DELETE ON CASCADE,
+museum_id uuid REFERENCES museums(id) ON DELETE CASCADE,
+trip_id uuid REFERENCES trips(id)  ON DELETE CASCADE,
 id uuid DEFAULT uuid_generate_v1(),
 PRIMARY KEY (id)
 );
