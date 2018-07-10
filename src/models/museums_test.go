@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+var err error
 
 func TestGetMuseumsByRequest(t *testing.T) {
 	originalDB := database.DB
