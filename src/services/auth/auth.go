@@ -2,18 +2,17 @@ package auth
 
 import (
 	"errors"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 var GetUserByLogin = models.GetUserByLogin
 
 var redis = database.Cache
-
 
 type login struct {
 	id        uuid.UUID
@@ -31,12 +30,12 @@ type User struct {
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	userSession, _ := r.Cookie("user_session")
-	if redis.Get(userSession.Value)!=nil{
+	if redis.Get(userSession.Value) != nil {
 		login := redis.Get(userSession.Value)
 		redis.Del(userSession.Value)
 		redis.Set(userSession.Value, login, time.Hour*4)
 
-		newCookie := http.Cookie{Name: "user_session", Value:userSession.Value, Expires: time.Now().Add(time.Hour * 4)}
+		newCookie := http.Cookie{Name: "user_session", Value: userSession.Value, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
 
 		common.RenderJSON(w, r, userSession.Value)
