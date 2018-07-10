@@ -7,7 +7,6 @@ import (
 	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
-	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"log"
 )
@@ -52,7 +51,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newLogin.pass = r.Form.Get("password")
 
 	var userInDB models.User
-	fmt.Println(newLogin)
 	userInDB, er := GetUserByLogin(newLogin.login)
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
@@ -69,15 +67,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if newLogin.sessionID != "" {
 
-		fmt.Println(newLogin)
 		err:=redis.Set(newLogin.sessionID, newLogin.login, time.Hour*4).Err()
 		if err!= nil {
 			log.Println(err)
 		}
-		//fmt.Println(err)
-		fmt.Println("%%%%%%%%%")
-		val,err := database.Cache.Get(newLogin.sessionID).Result()
-		fmt.Println("Value:=" + val)
 
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)

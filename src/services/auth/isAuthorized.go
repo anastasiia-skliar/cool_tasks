@@ -5,13 +5,12 @@ import (
 	"log"
 	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"fmt"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
 var IsExistRedis = func(key string) bool {
-	val,err := database.Cache.Get(key).Result()
-	fmt.Println("Values: + " + val)
+	_,err := database.Cache.Get(key).Result()
+
 	if err != nil {
 		return false
 	}
@@ -26,8 +25,8 @@ func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		next(w, r)
 		return
 	}
-	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 
+	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 	if err != nil {
 		log.Println(err, "ERROR: Can't get cookies")
 		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)
