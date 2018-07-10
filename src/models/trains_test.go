@@ -155,7 +155,7 @@ func TestGetFromTrip(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.trains_id = trains.id AND trips_trains.trips").WithArgs(ID).WillReturnRows(rows)
 
-	result, err := models.GetFromTrip(ID)
+	result, err := models.GetTrainsFromTrip(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

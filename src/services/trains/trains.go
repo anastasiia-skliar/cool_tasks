@@ -88,7 +88,7 @@ func GetFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetFromTrip(tripID)
+	trains, err := models.GetTrainsFromTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
 		return

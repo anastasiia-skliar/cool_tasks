@@ -7,6 +7,7 @@ import (
 	"github.com/satori/go.uuid"
 	"net/url"
 	sq "gopkg.in/Masterminds/squirrel.v1"
+	"github.com/VeryOldLady/cool_tasks/src/database"
 )
 
 const (
@@ -17,9 +18,13 @@ const (
 	addParam       = " AND %s = $%d"
 	addOr = " OR %s = $%d"
 	deleteTempl    = "DELETE FROM %s WHERE id = $1"
+	saveToTripTempl  = "INSERT INTO trips_%s (trips_id, %s_id) VALUES ($1, $2)"
+	getFromTripTempl = "SELECT * FROM trains INNER JOIN trips_%s ON trips_%s.trains_id = trains.id AND trips_trains.trips_id = $1"
 )
 
-var deleteRequest string
+var (
+	deleteRequest     string
+)
 
 //Restaurant representation in DB
 type Restaurant struct {
@@ -33,7 +38,6 @@ type Restaurant struct {
 
 func init() {
 	deleteRequest = fmt.Sprintf(deleteTempl, datalocation)
-
 }
 
 func recGen(params map[string][]string) string {
@@ -86,10 +90,10 @@ var AddRestaurant = func(item Restaurant) (Restaurant, error) {
 //GetTask used for getting task from DB
 var GetRestaurantsByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
-	params:=make(map[string]string)
+	params:=make(map[string][]string)
 	key :=make([]string,0)
 	key=append(key, id.String())
-params["id"]=key
+params["id"]=[]string{id.String()}
 	err := DB.QueryRow(recGen(params)).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
@@ -115,4 +119,32 @@ var GetRestaurantsByQuery = func(query url.Values) ([]Restaurant, error) {
 		return []Restaurant{}, err
 	}
 	return res, nil
+}
+
+var SaveRestaurantToTrip = func(tripID, restaurantID uuid.UUID, dataloc string) error {
+	return saveToTrip(tripID,restaurantID,datalocation)
+}
+
+var saveToTrip = func(tripsID, itemID uuid.UUID, dataloc string) error {
+	saveSQL :=fmt.Sprintf(saveToTripTempl, dataloc, dataloc)
+	_, err := database.DB.Exec(saveSQL, tripsID, itemID)
+
+	return err
+}
+
+var GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
+	rows, err := database.DB.Query(getTrainsFromTrip, tripsID)
+	if err != nil {
+		return []Restaurant{}, err
+	}
+
+	trains := make([]Restaurant, 0)
+	for rows.Next() {
+		var t Train
+		if err := rows.Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description); err != nil {
+			return []Restaurant{}, err
+		}
+		trains = append(trains, t)
+	}
+	return trains, nil
 }

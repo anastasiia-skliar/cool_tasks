@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	saveToTrip  = "INSERT INTO trips_trains (trips_id, trains_id) VALUES ($1, $2)"
-	getFromTrip = "SELECT * FROM trains INNER JOIN trips_trains ON trips_trains.trains_id = trains.id AND trips_trains.trips_id = $1"
+	saveTrainToTrip   = "INSERT INTO trips_trains (trips_id, trains_id) VALUES ($1, $2)"
+	getTrainsFromTrip = "SELECT * FROM trains INNER JOIN trips_trains ON trips_trains.trains_id = trains.id AND trips_trains.trips_id = $1"
 )
 
 //Task representation in DB
@@ -46,14 +46,14 @@ var GetTrains = func(query string) ([]Train, error) {
 
 //SaveTrain used for saving trains to Trip
 var SaveTrain = func(tripsID, trainsID uuid.UUID) error {
-	_, err := database.DB.Exec(saveToTrip, tripsID, trainsID)
+	_, err := database.DB.Exec(saveTrainToTrip, tripsID, trainsID)
 
 	return err
 }
 
-//GetFromTrip used for getting trains from Trip
-var GetFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
-	rows, err := database.DB.Query(getFromTrip, tripsID)
+//GetTrainsFromTrip used for getting trains from Trip
+var GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
+	rows, err := database.DB.Query(getTrainsFromTrip, tripsID)
 	if err != nil {
 		return []Train{}, err
 	}

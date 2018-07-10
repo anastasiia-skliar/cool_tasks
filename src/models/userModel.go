@@ -42,7 +42,7 @@ var GetUser = func(id uuid.UUID) (User, error) {
 func GetUserByLogin(login string) (User, error) {
 	var user User
 
-	err := DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	err := database.DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 
 	return user, err
 }
