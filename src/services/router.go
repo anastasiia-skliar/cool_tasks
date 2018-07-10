@@ -49,11 +49,11 @@ func NewRouter() *mux.Router {
 	}))
 	
 	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(events.GetByRequestHandler),
-		http.MethodPost: http.HandlerFunc(events.AddToTripHandler),
+		http.MethodGet:  http.HandlerFunc(events.GetEventByRequestHandler),
+		http.MethodPost: http.HandlerFunc(events.AddEventToTripHandler),
 	}))
 	apiV1.Handle("/events/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(events.GetByTripHandler),
+		http.MethodGet: http.HandlerFunc(events.GetEventByTripHandler),
 	}))
 
 	return router
