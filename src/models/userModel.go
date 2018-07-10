@@ -1,11 +1,12 @@
 package models
 
 import (
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 )
 
 const (
+
 	createUser     = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
 	getUser        = "SELECT * FROM users WHERE id = $1"
 	getUserByLogin = "SELECT ID, Password FROM users WHERE Login = $1"
@@ -24,7 +25,7 @@ type User struct {
 //CreateUser used for creation user in DB
 var CreateUser = func(user User) (uuid.UUID, error) {
 	var id uuid.UUID
-	err := DB.QueryRow(createUser, user.Name, user.Login, user.Password).Scan(&id)
+	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password).Scan(&id)
 
 	return id, err
 }
@@ -32,29 +33,30 @@ var CreateUser = func(user User) (uuid.UUID, error) {
 //GetUser used for getting user from DB
 var GetUser = func(id uuid.UUID) (User, error) {
 	var user User
-	err := DB.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	err := database.DB.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 
 	return user, err
 }
 
 //GetUserByLogin used for getting user from DB by Login
-
 func GetUserByLogin(login string) (User, error) {
 	var user User
+
 	err := DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+
 	return user, err
 }
 
 //DeleteUser used for deleting user from DB
 var DeleteUser = func(id uuid.UUID) error {
-	_, err := DB.Exec(deleteUser, id)
+	_, err := database.DB.Exec(deleteUser, id)
 
 	return err
 }
 
 //GetUsers used for getting users from DB
 var GetUsers = func() ([]User, error) {
-	rows, err := DB.Query(getUsers)
+	rows, err := database.DB.Query(getUsers)
 	if err != nil {
 		return []User{}, err
 	}

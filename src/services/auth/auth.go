@@ -18,6 +18,7 @@ func init() {
 	redis, _ = miniredis.Run()
 }
 
+
 type login struct {
 	id        uuid.UUID
 	login     string
@@ -57,7 +58,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		newLogin.sessionID = sessionUUID.String()
 	}
 	if newLogin.sessionID != "" {
-		redis.Set(newLogin.sessionID, newLogin.login)
+
+		redis.Push(newLogin.sessionID, newLogin.login)
+
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
 

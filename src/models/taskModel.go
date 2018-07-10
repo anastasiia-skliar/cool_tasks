@@ -1,7 +1,7 @@
 package models
 
 import (
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"time"
 )
@@ -27,7 +27,7 @@ type Task struct {
 
 //CreateTask used for creation task in DB
 var CreateTask = func(task Task) (Task, error) {
-	_, err := DB.Exec(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc)
+	_, err := database.DB.Exec(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc)
 
 	return task, err
 }
@@ -35,21 +35,21 @@ var CreateTask = func(task Task) (Task, error) {
 //GetTask used for getting task from DB
 var GetTask = func(id uuid.UUID) (Task, error) {
 	var task Task
-	err := DB.QueryRow(getTask, id).Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
+	err := database.DB.QueryRow(getTask, id).Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
 
 	return task, err
 }
 
 //DeleteTask used for deleting task from DB
 var DeleteTask = func(id uuid.UUID) error {
-	_, err := DB.Exec(deleteTask, id)
+	_, err := database.DB.Exec(deleteTask, id)
 
 	return err
 }
 
 //GetTasks used for getting tasks from DB
 var GetTasks = func() ([]Task, error) {
-	rows, err := DB.Query(getTasks)
+	rows, err := database.DB.Query(getTasks)
 	if err != nil {
 		return []Task{}, err
 	}
@@ -66,9 +66,9 @@ var GetTasks = func() ([]Task, error) {
 	return tasks, nil
 }
 
-//UserWithTasks used for getting all tasks which related to user
+//GetUserTasks used for getting all tasks which related to user
 var GetUserTasks = func(id uuid.UUID) ([]Task, error) {
-	rows, err := DB.Query(getUserTasks, id)
+	rows, err := database.DB.Query(getUserTasks, id)
 	if err != nil {
 		return []Task{}, err
 	}
@@ -77,8 +77,10 @@ var GetUserTasks = func(id uuid.UUID) ([]Task, error) {
 
 	for rows.Next() {
 		task := Task{}
-		rows.Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
-
+		scanErr := rows.Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
+		if scanErr != nil {
+			return []Task{}, scanErr
+		}
 		userTasks = append(userTasks, task)
 	}
 
