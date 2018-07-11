@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	addEventToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
-	getEventByTrip = "SELECT * FROM flights INNER JOIN trips_evets ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
+	addEventToTrip = "INSERT INTO trips_events (event_id, trip_id) VALUES ($1, $2)"
+	getEventByTrip = "SELECT * FROM events INNER JOIN trips_events ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
 )
 
 type Event struct {
