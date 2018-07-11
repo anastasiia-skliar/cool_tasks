@@ -10,6 +10,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/hotels"
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -64,6 +65,13 @@ func NewRouter() *mux.Router {
 	}))
 	apiV1.Handle("/trains/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(trains.GetFromTrip),
+	}))
+	apiV1.Handle("/hotels", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(hotels.GetHotels),
+		http.MethodPost: http.HandlerFunc(hotels.AddHotel),
+	}))
+	apiV1.Handle("/hotels/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(hotels.GetFromTrip),
 	}))
 	return router
 }
