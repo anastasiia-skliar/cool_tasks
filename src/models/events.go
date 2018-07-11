@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 	"github.com/satori/go.uuid"
+	sq "github.com/Masterminds/squirrel"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"net/url"
 	"errors"
