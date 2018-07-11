@@ -1,15 +1,15 @@
 package auth
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"log"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
 var IsExistRedis = func(key string) bool {
-	_,err := database.Cache.Get(key).Result()
+	_, err := database.Cache.Get(key).Result()
 
 	if err != nil {
 		return false

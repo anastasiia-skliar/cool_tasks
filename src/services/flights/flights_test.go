@@ -1,13 +1,13 @@
 package flights_test
 
 import (
-	"testing"
-	"net/http/httptest"
-	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"net/url"
 	"bytes"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"testing"
 )
 
 var router = services.NewRouter()

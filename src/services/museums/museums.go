@@ -1,11 +1,11 @@
 package museums
 
 import (
-	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"net/http"
 )
 
 type successCreate struct {

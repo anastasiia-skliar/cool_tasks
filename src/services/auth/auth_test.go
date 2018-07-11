@@ -17,8 +17,9 @@ type authTestCase struct {
 	want int
 }
 
-func TestLogin(t *testing.T) {
+var GetUserByLogin = models.GetUserByLogin
 
+func TestLogin(t *testing.T) {
 	tests := []authTestCase{
 		{
 			name: "Login_200",
@@ -51,7 +52,7 @@ func TestLogin(t *testing.T) {
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
-			Login(rec, req)
+			MockedLogin(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
@@ -62,6 +63,7 @@ func TestLogin(t *testing.T) {
 }
 
 func TestLogout(t *testing.T) {
+	var redis *miniredis.Miniredis
 	redis, _ = miniredis.Run()
 	redis.Push("00000000-0000-0000-0000-000000000001", "admin")
 
@@ -81,7 +83,7 @@ func TestLogout(t *testing.T) {
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 
-			Logout(rec, req)
+			MockedLogout(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)

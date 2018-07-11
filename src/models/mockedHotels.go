@@ -21,4 +21,3 @@ func GetHotelByTripIdMocked() {
 		return []Hotel{}, nil
 	}
 }
-

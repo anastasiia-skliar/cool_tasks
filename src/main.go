@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 )
 
 func main() {
@@ -40,7 +40,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error while loading redis: %s:", err)
 	}
-
 
 	defer f.Close()
 

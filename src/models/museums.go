@@ -1,11 +1,11 @@
 package models
 
 import (
-	"github.com/satori/go.uuid"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"net/url"
-	sq "github.com/Masterminds/squirrel"
 	"errors"
+	sq "github.com/Masterminds/squirrel"
+	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/satori/go.uuid"
+	"net/url"
 	"time"
 )
 
@@ -25,7 +25,7 @@ type Museum struct {
 	Info       string
 }
 
-var AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) (error) {
+var AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) error {
 	_, err := DB.Exec(addMuseumToTrip, museum_id, trip_id)
 	return err
 }
