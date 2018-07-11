@@ -52,13 +52,13 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	var (
 		request string
 		err     error
-		b       sq.And
+		b       sq.And = nil
 	)
 	for key, value := range params {
 		switch key {
 		case "name", "location", "museum_type":
 			if len(value) > 1 {
-				var or sq.Or
+				var or sq.Or = nil
 				for _, v := range value {
 					or = append(or, sq.Eq{key: v})
 				}
@@ -84,7 +84,6 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	if err != nil {
 		return []Museum{}, err
 	}
-	b = nil
 	rows, err := DB.Query(request)
 	if err != nil {
 		return []Museum{}, err
