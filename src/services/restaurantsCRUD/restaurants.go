@@ -1,16 +1,16 @@
 package restaurantsCRUD
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
 	"strconv"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
 
 type successCreate struct {
-	Status string     `json:"message"`
+	Status string            `json:"message"`
 	Result models.Restaurant `json:"result"`
 }
 
@@ -36,10 +36,8 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, items)
 	}
 
-
-	//MAGIC BEGINS!!!
 	items, err := models.GetRestaurantsByQuery(query)
-	//MAGIC ENDS!!!
+
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get items", err)
 		return
@@ -48,11 +46,29 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, items)
 }
 
+func GetFromTrip(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	tripID, err := uuid.FromString(params["id"])
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+		return
+	}
+
+	restaurants, err := models.GetRestaurantsFromTrip(tripID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get restaurants by trip ID", err)
+		return
+	}
+
+	common.RenderJSON(w, r, restaurants)
+}
+
 func Post(w http.ResponseWriter, r *http.Request) {
 
-	var(
-		newItem models.Restaurant
-	resultItem models.Restaurant
+	var (
+		newItem    models.Restaurant
+		resultItem models.Restaurant
 	)
 
 	err := r.ParseForm()

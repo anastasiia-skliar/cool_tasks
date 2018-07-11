@@ -18,7 +18,6 @@ func init() {
 	redis, _ = miniredis.Run()
 }
 
-
 type login struct {
 	id        uuid.UUID
 	login     string

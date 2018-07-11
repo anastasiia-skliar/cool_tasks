@@ -3,15 +3,14 @@ package services
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/restaurantsCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/restaurantsCRUD"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
-
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -59,21 +58,23 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/restaurants/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodDelete: http.HandlerFunc(restaurantsCRUD.Delete),
 	}))
+	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(restaurantsCRUD.GetFromTrip),
+	}))
 	apiV1.Handle("/museums", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsByRequestHandler),
 		http.MethodPost: http.HandlerFunc(museums.AddMuseumToTripHandler),
 	}))
 	apiV1.Handle("/museums/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(museums.GetMuseumByTripHandler),
+		http.MethodGet: http.HandlerFunc(museums.GetMuseumByTripHandler),
 	}))
 	apiV1.Handle("/trains", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(trains.GetTrains),
 		http.MethodPost: http.HandlerFunc(trains.SaveTrain),
 	}))
 	apiV1.Handle("/trains/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:    http.HandlerFunc(trains.GetFromTrip),
+		http.MethodGet: http.HandlerFunc(trains.GetFromTrip),
 	}))
 
 	return router
 }
-

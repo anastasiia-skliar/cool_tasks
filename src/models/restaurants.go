@@ -1,29 +1,30 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/satori/go.uuid"
-	"net/url"
-	sq "gopkg.in/Masterminds/squirrel.v1"
 	"github.com/VeryOldLady/cool_tasks/src/database"
+	"github.com/satori/go.uuid"
+	sq "gopkg.in/Masterminds/squirrel.v1"
+	"net/url"
+	"database/sql"
 )
 
 const (
-	datalocation   = "restaurants"
-	getter         = "SELECT * FROM %s"
-	create         = "INSERT INTO %s (%s) VALUES (%s) RETURNING id"
-	getByParameter = "WHERE %s = $1"
-	addParam       = " AND %s = $%d"
-	addOr = " OR %s = $%d"
-	deleteTempl    = "DELETE FROM %s WHERE id = $1"
+	datalocation     = "restaurants"
+	getter           = "SELECT * FROM %s"
+	create           = "INSERT INTO %s (%s) VALUES (%s) RETURNING id"
+	getByParameter   = "WHERE %s = $1"
+	addParam         = " AND %s = $%d"
+	addOr            = " OR %s = $%d"
+	deleteTempl      = "DELETE FROM %s WHERE id = $1"
 	saveToTripTempl  = "INSERT INTO trips_%s (trips_id, %s_id) VALUES ($1, $2)"
-	getFromTripTempl = "SELECT * FROM trains INNER JOIN trips_%s ON trips_%s.trains_id = trains.id AND trips_trains.trips_id = $1"
+	getFromTripTempl = "SELECT * FROM %s INNER JOIN trips_%s ON trips_%s.%s_id = trains.id AND trips_%s.trips_id = $1"
 )
 
 var (
-	deleteRequest     string
+	deleteRequest   string
+	getItemFromTrip string
 )
 
 //Restaurant representation in DB
@@ -38,37 +39,47 @@ type Restaurant struct {
 
 func init() {
 	deleteRequest = fmt.Sprintf(deleteTempl, datalocation)
+	getItemFromTrip = getFromTripGenreator(datalocation)
 }
 
-func recGen(params map[string][]string) string {
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+var getFromTripGenreator = func(dest string) string {
+	return fmt.Sprintf(getFromTripTempl, dest, dest, dest, dest, dest)
+}
 
-	query, res, err := psql.Select("*").From(datalocation).Where(Lt).ToSql()
-	if err!=nil {
-		fmt.Println(err)
-	}
-	fmt.Println(res)
-	/*base := fmt.Sprintf(getter, datalocation)
-	if len(params) < 1 {
-		return base
-	}
-	paramsCounter := 0
-	request := fmt.Sprintf(base+" "+getByParameter, params[paramsCounter])
-	paramsCounter++
-	for ; paramsCounter < len(params); paramsCounter++ {
-		if params[paramsCounter]!=params[paramsCounter-1] {
-			request += fmt.Sprintf(addParam, params[paramsCounter], paramsCounter+1)
-		}else {
-			request += fmt.Sprintf(addOr, params[paramsCounter], paramsCounter+1)
+var recGen = func(params map[string][]string) string {
+	var cond sq.And
+	var request string
+
+	items := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From(datalocation)
+
+	for k, v := range params {
+		switch k {
+		case "stars", "prices", "location", "name":
+			if len(params[k]) > 1 {
+				var multivars sq.Or
+				for _, v2 := range params[k] {
+					multivars = append(multivars, sq.Eq{k: v2})
+				}
+				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
+			} else {
+				cond = append(cond, sq.Eq{k: v[0]})
+			}
+		case "departure_city", "arrival_city":
+			cond = append(cond, sq.Eq{k: v[0]})
+
 		}
-
 	}
-	*/
-	fmt.Println(query)
-	return query
+
+	request, _, _ = items.Where(cond).ToSql()
+
+	if len(params) == 0 {
+		request = "SELECT * FROM trains;"
+	}
+	fmt.Println(request)
+	return request
 }
 
-func parseResult(rows *sql.Rows) ([]Restaurant, error) {
+var parseResult = func(rows *sql.Rows) ([]Restaurant, error) {
 	res := make([]Restaurant, 0)
 
 	for rows.Next() {
@@ -90,10 +101,10 @@ var AddRestaurant = func(item Restaurant) (Restaurant, error) {
 //GetTask used for getting task from DB
 var GetRestaurantsByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
-	params:=make(map[string][]string)
-	key :=make([]string,0)
-	key=append(key, id.String())
-params["id"]=[]string{id.String()}
+	params := make(map[string][]string)
+	key := make([]string, 0)
+	key = append(key, id.String())
+	params["id"] = []string{id.String()}
 	err := DB.QueryRow(recGen(params)).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
@@ -122,11 +133,11 @@ var GetRestaurantsByQuery = func(query url.Values) ([]Restaurant, error) {
 }
 
 var SaveRestaurantToTrip = func(tripID, restaurantID uuid.UUID, dataloc string) error {
-	return saveToTrip(tripID,restaurantID,datalocation)
+	return saveToTrip(tripID, restaurantID, datalocation)
 }
 
 var saveToTrip = func(tripsID, itemID uuid.UUID, dataloc string) error {
-	saveSQL :=fmt.Sprintf(saveToTripTempl, dataloc, dataloc)
+	saveSQL := fmt.Sprintf(saveToTripTempl, dataloc, dataloc)
 	_, err := database.DB.Exec(saveSQL, tripsID, itemID)
 
 	return err
@@ -138,13 +149,10 @@ var GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
 		return []Restaurant{}, err
 	}
 
-	trains := make([]Restaurant, 0)
-	for rows.Next() {
-		var t Train
-		if err := rows.Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description); err != nil {
-			return []Restaurant{}, err
-		}
-		trains = append(trains, t)
+	restaurants := make([]Restaurant, 0)
+	restaurants, err = parseResult(rows)
+	if err != nil {
+		return []Restaurant{}, err
 	}
-	return trains, nil
+	return restaurants, nil
 }
