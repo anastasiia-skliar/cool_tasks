@@ -70,7 +70,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 			} else {
 				and = append(and, sq.Eq{key: value[0]})
 			}
-		case "key":
+		case "id":
 			and = append(and, sq.Eq{key: value[0]})
 		default:
 			return []Flight{}, errors.New("ERROR: Bad request")
