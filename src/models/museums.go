@@ -33,14 +33,14 @@ var AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) (error) {
 var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
 	rows, err := DB.Query(getMuseumsByTrip, trip_id)
 	if err != nil {
-		return []Museum{}, err
+		return nil, err
 	}
 	museums := make([]Museum, 0)
 
 	for rows.Next() {
 		var m Museum
 		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
-			return []Museum{}, err
+			return nil, err
 		}
 		museums = append(museums, m)
 	}
@@ -76,17 +76,17 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 		case "id":
 			b = append(b, sq.Eq{key: value[0]})
 		default:
-			return []Museum{}, errors.New("ERROR: Bad request")
+			return nil, errors.New("ERROR: Bad request")
 		}
 	}
 
 	request, _, err = museums.Where(b).ToSql()
 	if err != nil {
-		return []Museum{}, err
+		return nil, err
 	}
 	rows, err := DB.Query(request)
 	if err != nil {
-		return []Museum{}, err
+		return nil, err
 	}
 
 	museumsArray := make([]Museum, 0)
@@ -94,7 +94,7 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	for rows.Next() {
 		var m Museum
 		if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
-			return []Museum{}, err
+			return nil, err
 		}
 		museumsArray = append(museumsArray, m)
 	}
