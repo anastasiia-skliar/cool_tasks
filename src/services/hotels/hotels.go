@@ -31,7 +31,7 @@ func GetHotels(w http.ResponseWriter, r *http.Request) {
 			}
 		case "departure_city", "arrival_city":
 			cond = append(cond, sq.Eq{k: v[0]})
-		case "MAX_PRICE":
+		case "max_price":
 			cond = append(cond,sq.Eq{k:v[0]})
 		default:
 			common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
