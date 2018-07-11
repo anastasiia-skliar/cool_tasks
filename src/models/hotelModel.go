@@ -39,11 +39,11 @@ var GetHotels = func(query string) ([]Hotel, error) {
 	return hotels, nil
 }
 
-func AddHotelToTrip(tripsID, trainsID uuid.UUID) error {
-	_, err := database.DB.Exec(addHotelToTrip, tripsID, trainsID)
+ var AddHotelToTrip = func (tripsID, hotelsID uuid.UUID) error {
+	_, err := database.DB.Exec(addHotelToTrip, tripsID, hotelsID)
 	return err
 }
-func GetHotelFromTrip(tripsID uuid.UUID) ([]Hotel, error) {
+var GetHotelFromTrip = func (tripsID uuid.UUID) ([]Hotel, error) {
 	rows, err := database.DB.Query(getHotelFromTrip, tripsID)
 	if err != nil {
 		return []Hotel{}, err

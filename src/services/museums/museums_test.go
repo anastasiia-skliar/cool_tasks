@@ -10,6 +10,7 @@ import (
 	"bytes"
 )
 
+
 var router = services.NewRouter()
 
 type MuseumsTestCase struct {

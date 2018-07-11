@@ -23,22 +23,19 @@ func GetHotels(w http.ResponseWriter, r *http.Request) {
 
 	for k, v := range params {
 		switch k {
-		case "id", "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
+		case "id", "name", "class", "capacity", "room_left", "floors", "max_price","city_name","address":
 			if len(params[k]) == 2 {
 				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
 			} else {
 				cond = append(cond, sq.Eq{k: v[0]})
 			}
-		case "departure_city", "arrival_city":
-			cond = append(cond, sq.Eq{k: v[0]})
-		case "max_price":
-			cond = append(cond,sq.Eq{k:v[0]})
 		default:
 			common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
 		}
 	}
 
 	request, _, _ = hotels.Where(cond).ToSql()
+
 
 	if len(params) == 0 {
 		request = "SELECT * FROM hotels;"
@@ -96,4 +93,3 @@ func GetFromTrip(w http.ResponseWriter, r *http.Request) {
 
 	common.RenderJSON(w, r, trains)
 }
-
