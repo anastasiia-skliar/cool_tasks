@@ -6,18 +6,18 @@ import (
 )
 
 func MockedAddToTrip() {
-	AddFlightToTrip = func(flightID, tripID uuid.UUID) (error) {
+	AddFlightToTrip = func(flightID, tripID uuid.UUID) error {
 		return nil
 	}
 }
 
-func MockedGetByRequest(){
+func MockedGetByRequest() {
 	GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 		return []Flight{}, nil
 	}
 }
 
-func MockedGetByTrip(){
+func MockedGetByTrip() {
 	GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 		return []Flight{}, nil
 	}

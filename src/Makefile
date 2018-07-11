@@ -7,6 +7,9 @@ packages = \
     ./services/auth \
     ./services/usersCRUD \
     ./services/tasksCRUD \
+    ./services/events \
+    ./services/flights \
+    ./services/museums \
     ./services/trains \
 
 all: test format go-build dc-build dc-up

@@ -79,7 +79,7 @@ func TestGetTrainFromTrip(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetFromTrip()
+			models.MockedGetTrainsFromTrip()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

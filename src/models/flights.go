@@ -1,12 +1,12 @@
 package models
 
 import (
-	"github.com/satori/go.uuid"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"time"
-	"net/url"
 	"errors"
 	sq "github.com/Masterminds/squirrel"
+	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/satori/go.uuid"
+	"net/url"
+	"time"
 )
 
 const (
@@ -16,16 +16,16 @@ const (
 
 type Flight struct {
 	ID            uuid.UUID
-	departureCity string
-	departureTime time.Time
-	departureDate time.Time
-	arrivalCity   string
-	arrivalTime   time.Time
-	arrivalDate   time.Time
-	price         int
+	DepartureCity string
+	DepartureTime time.Time
+	DepartureDate time.Time
+	ArrivalCity   string
+	ArrivalTime   time.Time
+	ArrivalDate   time.Time
+	Price         int
 }
 
-var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) (error) {
+var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) error {
 	_, err := DB.Exec(addFlightToTrip, flightID, tripID)
 	return err
 }
@@ -40,7 +40,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 
 	for rows.Next() {
 		var f Flight
-		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
+		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
 			return nil, err
 		}
 		flights = append(flights, f)
@@ -92,7 +92,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	for rows.Next() {
 		var f Flight
-		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
+		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
 			return nil, err
 		}
 		flightsArray = append(flightsArray, f)

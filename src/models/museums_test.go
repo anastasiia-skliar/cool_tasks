@@ -4,8 +4,8 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"testing"
 	"net/http"
+	"testing"
 	"time"
 )
 
@@ -42,7 +42,6 @@ func TestGetMuseumsByRequest(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
-
 		AddRow(MuseumId.Bytes(), "Ermitage", "Peterburg", 1111, testTime, testTime, "Gallery", "Cool").
 		AddRow(MuseumId.Bytes(), "Luvre", "Paris", 1110, testTime, testTime, "Gallery", "Cool")
 

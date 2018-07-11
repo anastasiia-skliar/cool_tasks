@@ -17,7 +17,7 @@ func MockedSaveTrain() {
 	}
 }
 
-func MockedGetFromTrip() {
+func MockedGetTrainsFromTrip() {
 	GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 		return []Train{}, nil
 	}
