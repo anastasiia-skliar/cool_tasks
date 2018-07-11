@@ -20,17 +20,17 @@ common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 return
 }
 
-	eventID, err := uuid.FromString(r.Form.Get("flight_id"))
+	eventID, err := uuid.FromString(r.Form.Get("event_id"))
 
 if err != nil {
-common.SendBadRequest(w, r, "ERROR: Wrong event ID (can't convert string to uuid)", err)
+common.SendBadRequest(w, r, "ERROR: Wrong eventID (can't convert string to uuid)", err)
 return
 }
 
 tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 
 if err != nil {
-common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 return
 }
 
@@ -51,25 +51,25 @@ params := mux.Vars(r)
 tripID, err := uuid.FromString(params["id"])
 
 if err != nil {
-common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 return
 }
 
 	events, err := models.GetByTrip(tripID)
 
 if err != nil {
-common.SendNotFound(w, r, "ERROR: Can't get events by trip ID", err)
+common.SendNotFound(w, r, "ERROR: Can't get events by tripID", err)
 return
 }
 
 common.RenderJSON(w, r, events)
 }
 
-func GetEventByRequestHandler(w http.ResponseWriter, r *http.Request) {
+func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 params := r.URL.Query()
 
-	events, err := models.GetByRequest(params)
+	events, err := models.GetEventsByRequest(params)
 
 if err != nil {
 common.SendNotFound(w, r, "ERROR: Can't find events with such parameters", err)
