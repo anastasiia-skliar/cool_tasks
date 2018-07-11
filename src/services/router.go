@@ -8,6 +8,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/flights"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
 )
@@ -49,7 +50,17 @@ func NewRouter() *mux.Router {
 		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
-
+	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(tasksCRUD.GetTasks),
+		http.MethodPost: http.HandlerFunc(tasksCRUD.CreateTask),
+	}))
+	apiV1.Handle("/flights", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(flights.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(flights.AddToTripHandler),
+	}))
+	apiV1.Handle("/flights/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(flights.GetByTripHandler),
+  }))
 	apiV1.Handle("/museums", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsByRequestHandler),
 		http.MethodPost: http.HandlerFunc(museums.AddMuseumToTripHandler),
