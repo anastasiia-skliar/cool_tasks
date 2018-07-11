@@ -27,7 +27,7 @@ var AddEventToTrip = func(eventID uuid.UUID, tripID uuid.UUID) (error) {
 	return err
 }
 
-var GetEventByTrip = func(eventID uuid.UUID) ([]Event, error) {
+var GetEventsByTrip = func(eventID uuid.UUID) ([]Event, error) {
 	rows, err := DB.Query(getEventByTrip, eventID)
 	if err != nil {
 		return []Event{}, err
@@ -36,83 +36,62 @@ var GetEventByTrip = func(eventID uuid.UUID) ([]Event, error) {
 	events := make([]Event, 0)
 
 	for rows.Next() {
-		var p Event
-		if err := rows.Scan(&p.ID, &p.Title, &p.Category, &p.Town, &p.Date, &p.Price); err != nil {
+		var e Event
+		if err := rows.Scan(&e.ID, &e.Title, &e.Category, &e.Town, &e.Date, &e.Price); err != nil {
 			return []Event{}, err
 		}
-		events = append(events, p)
+		events = append(events, e)
 	}
 	return events, nil
 }
-var GetEventByRequest = func(params url.Values) ([]Event, error) {
+var GetEventsByRequest = func(params url.Values) ([]Event, error) {
 
-	request := "SELECT * FROM events WHERE "
-	count := 0
-	validKeys := []string{"id","title","category","town","date","price"}
+	var and sq.And
+	var or sq.Or
+	events := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("events")
 	for key, value := range params {
-		for _, keys := range validKeys {
-			if key == keys {
-				count++
-			}
-		}
-		if count == 0 {
-			return []Event{}, errors.New("ERROR: Invalid request")
-
-		}
-
 		switch key {
-		case "town","category":
+		case "town","title", "category":
 			if len(value) > 1 {
-				request += key + " IN ("
-				for i, v := range value {
-					v = "'" + v + "'"
-					request += v
-					if i < len(value)-1 {
-						request += ", "
-					}
+				for _, v := range value {
+					or = append(or, sq.Eq{key: v})
 				}
-				request += ") AND "
+				and = append(and, or)
 			} else {
-				value[0] = "'" + value[0] + "'"
-				request += key + "=" + value[0] + " AND "
+				and = append(and, sq.Eq{key: value[0]})
 			}
-		case "date","price":
+		case "date", "price":
 			if len(value) > 1 {
-				request += key + " BETWEEN " + value[0] + " AND " + value[1] + " AND "
+				and = append(and, sq.And{sq.GtOrEq{key: value[1]}, sq.LtOrEq{key: value[0]}})
 			} else {
-				request += key + "=" + value[0] + " AND "
+				and = append(and, sq.Eq{key: value[0]})
 			}
+		case "id":
+			and = append(and, sq.Eq{key: value[0]})
 		default:
-			request += key + "=" + value[0] + " AND "
+			return []Event{}, errors.New("ERROR: Bad request")
 		}
-		count = 0
 	}
-
-	words := strings.Fields(request)
-
-	if words[len(words)-1] == "AND" || words[len(words)-1] == "WHERE" {
-		words[len(words)-1] = ""
+	req := events.Where(and)
+	request, _, err := req.ToSql()
+	if err != nil {
+		return []Event{}, errors.New("ERROR: Bad request")
 	}
-
-	request = strings.Join(words, " ")
-	request += ";"
-
+	and = nil
 	rows, err := DB.Query(request)
 	if err != nil {
 		return []Event{}, err
 	}
-
-	events := make([]Event, 0)
-
+	req_events := make([]Event, 0)
 	for rows.Next() {
-		var p Event
-		if err := rows.Scan(&p.ID, &p.Title, &p.Category, &p.Town, &p.Date, &p.Price); err != nil {
+		var e Event
+		if err := rows.Scan(&e.ID, &e.Title, &e.Category, &e.Town, &e.Date, &e.Price); err != nil {
 			return []Event{}, err
-
 		}
-		events = append(events, p)
+		req_events = append(req_events, e)
 	}
-	return events, nil
+	return req_events, nil
 }
+
 
 
