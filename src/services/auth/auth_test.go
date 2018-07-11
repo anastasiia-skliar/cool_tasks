@@ -2,15 +2,14 @@ package auth
 
 import (
 	"bytes"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/alicebob/miniredis"
+	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/satori/go.uuid"
 )
-
 
 type authTestCase struct {
 	name string
@@ -28,15 +27,14 @@ func TestLogin(t *testing.T) {
 		},
 	}
 
-	expetedLogin:="admin"
-	expetedPass:="admin"
+	expetedLogin := "admin"
+	expetedPass := "admin"
 
 	data := url.Values{}
 	data.Add("login", expetedLogin)
 	data.Add("password", expetedPass)
 
-
-	GetUserByLogin= func(login string) (models.User, error) {
+	GetUserByLogin = func(login string) (models.User, error) {
 		UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 		expected := models.User{
