@@ -53,7 +53,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
-func GetFromTrip(w http.ResponseWriter, r *http.Request) {
+func GetTrainFromTrip(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -62,7 +62,7 @@ func GetFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetFromTrip(tripID)
+	trains, err := models.GetTrainFromTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
 		return

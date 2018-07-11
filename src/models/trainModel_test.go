@@ -86,7 +86,7 @@ func TestGetTrains(t *testing.T) {
 	}
 }
 
-func TestSaveToTrip(t *testing.T) {
+func TestSaveTrainToTrip(t *testing.T) {
 
 	originalDB := database.DB
 	database.DB, mock, mockErr = sqlmock.New()
@@ -109,7 +109,7 @@ func TestSaveToTrip(t *testing.T) {
 	}
 }
 
-func TestGetFromTrip(t *testing.T) {
+func TestGetTrainFromTrip(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, mockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
@@ -157,9 +157,9 @@ func TestGetFromTrip(t *testing.T) {
 		AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
 			"Lviv", "Kyiv", "el", "coupe", "200uah")
 
-	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.trains_id = trains.id AND trips_trains.trips").WithArgs(ID).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id").WithArgs(ID).WillReturnRows(rows)
 
-	result, err := models.GetFromTrip(ID)
+	result, err := models.GetTrainFromTrip(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

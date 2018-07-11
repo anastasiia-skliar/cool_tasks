@@ -69,7 +69,7 @@ func TestSaveTrain(t *testing.T) {
 	}
 }
 
-func TestGetFromTrip(t *testing.T) {
+func TestGetTrainFromTrip(t *testing.T) {
 	tests := []TrainsTestCase{
 		{
 			name: "Get_train_200",
