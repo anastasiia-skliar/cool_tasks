@@ -1,12 +1,16 @@
 package hotels
+
 import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
+	"log"
 	"net/http"
 )
+
+const selectAllHotels = "SELECT * FROM hotels;"
 
 type successAdd struct {
 	Status string       `json:"message"`
@@ -23,7 +27,7 @@ func GetHotels(w http.ResponseWriter, r *http.Request) {
 
 	for k, v := range params {
 		switch k {
-		case "id", "name", "class", "capacity", "room_left", "floors", "max_price","city_name","address":
+		case "id", "name", "class", "capacity", "room_left", "floors", "max_price", "city_name", "address":
 			if len(params[k]) == 2 {
 				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
 			} else {
@@ -34,11 +38,13 @@ func GetHotels(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	request, _, _ = hotels.Where(cond).ToSql()
-
+	request, _, err = hotels.Where(cond).ToSql()
+	if err != nil {
+		log.Println(err)
+	}
 
 	if len(params) == 0 {
-		request = "SELECT * FROM hotels;"
+		request = selectAllHotels
 	}
 
 	result, err := models.GetHotels(request)
@@ -56,9 +62,9 @@ func AddHotel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trainID, err := uuid.FromString(r.Form.Get("train_id"))
+	hotelID, err := uuid.FromString(r.Form.Get("hotel_id"))
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong train ID (can't convert string to uuid)", err)
+		common.SendBadRequest(w, r, "ERROR: Wrong hotel ID (can't convert string to uuid)", err)
 		return
 	}
 
@@ -68,9 +74,9 @@ func AddHotel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddHotelToTrip(trainID, tripID)
+	err = models.AddHotelToTrip(hotelID, tripID)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
+		common.SendBadRequest(w, r, "ERROR: Can't add new hotel to trip", err)
 		return
 	}
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
@@ -85,11 +91,11 @@ func GetFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetHotelFromTrip(tripID)
+	hotels, err := models.GetHotelFromTrip(tripID)
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
+		common.SendNotFound(w, r, "ERROR: Can't get hotels by trip ID", err)
 		return
 	}
 
-	common.RenderJSON(w, r, trains)
+	common.RenderJSON(w, r, hotels)
 }

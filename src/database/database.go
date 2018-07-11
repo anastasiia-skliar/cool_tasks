@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"github.com/go-redis/redis" //Redis library
-	_ "github.com/lib/pq" //PostgreSQL driver
+	"github.com/go-redis/redis"
+	_ "github.com/lib/pq"
 	"log"
 )
 
@@ -72,7 +72,7 @@ func SetupRedis(d Info) (*redis.Client, error) {
 		return Cache,nil
 	}
 	client := redis.NewClient(&redis.Options{
-		Addr:     "172.17.0.2:6379",
+		Addr:     DSN_Redis(d.Redis),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
