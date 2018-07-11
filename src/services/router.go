@@ -8,8 +8,12 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/events"
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/flights"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -49,7 +53,23 @@ func NewRouter() *mux.Router {
 		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
 	}))
-
+  
+	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(events.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(events.AddToTripHandler),
+	}))
+	apiV1.Handle("/events/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(events.GetByTripHandler),
+  }))
+  
+	apiV1.Handle("/flights", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(flights.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(flights.AddToTripHandler),
+	}))
+	apiV1.Handle("/flights/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet:  http.HandlerFunc(flights.GetByTripHandler),
+  }))
+    
 	apiV1.Handle("/museums", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsByRequestHandler),
 		http.MethodPost: http.HandlerFunc(museums.AddMuseumToTripHandler),
@@ -57,7 +77,6 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/museums/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(museums.GetMuseumByTripHandler),
 	}))
-  
 	apiV1.Handle("/trains", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(trains.GetTrains),
 		http.MethodPost: http.HandlerFunc(trains.SaveTrain),
