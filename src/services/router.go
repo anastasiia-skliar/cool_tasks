@@ -6,6 +6,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/events"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -49,11 +50,11 @@ func NewRouter() *mux.Router {
 	}))
 	
 	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(events.GetEventByRequestHandler),
-		http.MethodPost: http.HandlerFunc(events.AddEventToTripHandler),
+		http.MethodGet:  http.HandlerFunc(events.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(events.AddToTripHandler),
 	}))
 	apiV1.Handle("/events/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(events.GetEventByTripHandler),
+		http.MethodGet: http.HandlerFunc(events.GetByTripHandler),
 	}))
 
 	return router
