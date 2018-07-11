@@ -14,6 +14,23 @@ INSERT INTO hotels
  (id,  name, class, capacity, rooms_left, floors, max_price, city_name,address)
   VALUES ( uuid_generate_v1(),'Hotel Ukraine', '3', '1000','218', '12','3200uah', 'Kyiv','Vulytsya Instytutsʹka 4');
 
+INSERT INTO hotels
+(id,  name, class, capacity, rooms_left, floors, max_price, city_name,address)
+VALUES ( uuid_generate_v1(),'Lviv', '4', '1450','200', '9','3480uah', 'Lviv','Prospect V. Chornovil, 7');
+
+INSERT INTO hotels
+(id,  name, class, capacity, rooms_left, floors, max_price, city_name,address)
+VALUES ( uuid_generate_v1(),'Citadel Inn', '5', '1234','0', '9','4000uah', 'Lviv','Hrabovskoho Street, 11');
+
+INSERT INTO hotels
+(id,  name, class, capacity, rooms_left, floors, max_price, city_name,address)
+VALUES ( uuid_generate_v1(),'Nota bene','3','750', '49','4','1380uah', 'Lviv','Valer''yana Polishchuka St, 78');
+
+INSERT INTO hotels
+(id,  name, class, capacity, rooms_left, floors, max_price, city_name,address)
+VALUES ( uuid_generate_v1(),'Astoria Hotel', '4', '900','390', '6','4000uah', 'Lviv','Hrabovskoho Street, 11');
+
+
 
 CREATE TABLE trips_hotels(
   id uuid DEFAULT uuid_generate_v1(),
