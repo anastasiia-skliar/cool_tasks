@@ -25,6 +25,11 @@ func TestGetByRequestHandler(t *testing.T) {
 			url:  "/v1/flights?departure_city=lviv&arrival_city=kyiv",
 			want: 200,
 		},
+		{
+			name: "Get_Flights_404",
+			url:  "/v1/flight?departure_city=lviv&arrival_city=kyiv",
+			want: 404,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -47,6 +52,11 @@ func TestAddToTripHandler(t *testing.T) {
 			name: "Add_To_Trip_200",
 			url:  "/v1/flights",
 			want: 200,
+		},
+		{
+			name: "Add_To_Trip_404",
+			url:  "/v1/flight",
+			want: 404,
 		},
 	}
 	data := url.Values{}
@@ -75,6 +85,11 @@ func TestGetByTripHandler(t *testing.T) {
 			name: "Get_flight_200",
 			url:  "/v1/flights/trip/00000000-0000-0000-0000-000000000001",
 			want: 200,
+		},
+		{
+			name: "Get_flight_400",
+			url:  "/v1/flights/trip/000-0000-0000-0000-000000000001",
+			want: 400,
 		},
 	}
 	for _, tc := range tests {

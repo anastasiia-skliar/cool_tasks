@@ -33,7 +33,7 @@ var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) (error) {
 var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 	rows, err := DB.Query(getFlightByTrip, tripID)
 	if err != nil {
-		return []Flight{}, err
+		return nil, err
 	}
 
 	flights := make([]Flight, 0)
@@ -41,7 +41,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 	for rows.Next() {
 		var f Flight
 		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
-			return []Flight{}, err
+			return nil, err
 		}
 		flights = append(flights, f)
 	}
@@ -50,10 +50,10 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 
 var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
-	var and sq.And
-	var or sq.Or
+	var and sq.And = nil
 	flights := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("flights")
 	for key, value := range params {
+		var or sq.Or = nil
 		switch key {
 		case "departure_city", "arrival_city":
 			if len(value) > 1 {
@@ -73,7 +73,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 		case "id":
 			and = append(and, sq.Eq{key: value[0]})
 		default:
-			return []Flight{}, errors.New("ERROR: Bad request")
+			return nil, errors.New("ERROR: Bad request")
 		}
 	}
 
@@ -81,13 +81,11 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	request, _, err := req.ToSql()
 	if err != nil {
-		return []Flight{}, errors.New("ERROR: Bad request")
+		return nil, errors.New("ERROR: Bad request")
 	}
-	and = nil //make and nil after request
-
 	rows, err := DB.Query(request)
 	if err != nil {
-		return []Flight{}, err
+		return nil, err
 	}
 
 	flightsArray := make([]Flight, 0)
@@ -95,7 +93,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 	for rows.Next() {
 		var f Flight
 		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
-			return []Flight{}, err
+			return nil, err
 		}
 		flightsArray = append(flightsArray, f)
 	}

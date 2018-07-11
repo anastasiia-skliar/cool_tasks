@@ -61,7 +61,7 @@ func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 	flights, err := models.GetFlightsByRequest(params)
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't find flights with such parameters", err)
+		common.SendBadRequest(w, r, "ERROR: Can't find flights with such parameters", err)
 		return
 	}
 	common.RenderJSON(w, r, flights)
