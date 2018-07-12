@@ -11,7 +11,7 @@ PRIMARY KEY (id)
 
 CREATE TABLE trips_events (
 id uuid DEFAULT uuid_generate_v1(),
-events_id uuid REFERENCES events(id) ON  DELETE  CASCADE,
+event_id uuid REFERENCES events(id) ON  DELETE  CASCADE,
 trip_id uuid REFERENCES trips(trip_id) ON  DELETE  CASCADE,
 PRIMARY KEY (id)
 );
