@@ -8,6 +8,7 @@ packages = \
     ./services/usersCRUD \
     ./services/tasksCRUD \
     ./services/trains \
+    ./services/events \
 
 all: test format go-build dc-build dc-up
 
