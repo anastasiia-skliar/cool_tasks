@@ -13,7 +13,7 @@ PRIMARY KEY (id)
 
 CREATE TABLE trips_museums (
 museum_id uuid REFERENCES museums(id) ON DELETE CASCADE,
-trip_id uuid REFERENCES trips(id) ON DELETE CASCADE,
+trip_id uuid REFERENCES trips(trip_id) ON DELETE CASCADE,
 id uuid DEFAULT uuid_generate_v1(),
 PRIMARY KEY (id)
 );
