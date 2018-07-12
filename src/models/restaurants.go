@@ -3,11 +3,11 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	."github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	sq "gopkg.in/Masterminds/squirrel.v1"
-	"net/url"
 	"log"
+	"net/url"
 )
 
 const (
@@ -42,7 +42,7 @@ var getFromTripGenreator = func(dest string) string {
 	return fmt.Sprintf(getFromTripTempl, dest, dest, dest, dest, dest)
 }
 
-var recGen = func(params map[string][]string) string {
+var recGen = func(params map[string][]string) (string, []interface{}){
 	var cond sq.And
 	var request string
 
@@ -56,7 +56,7 @@ var recGen = func(params map[string][]string) string {
 				for _, v2 := range params[k] {
 					multivars = append(multivars, sq.Eq{k: v2})
 				}
-				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
+				cond = append(cond, multivars)
 			} else {
 				cond = append(cond, sq.Eq{k: v[0]})
 			}
@@ -65,16 +65,16 @@ var recGen = func(params map[string][]string) string {
 
 		}
 	}
-var err error
-	request, _, err = items.Where(cond).ToSql()
-	if err!=nil {
+	var err error
+	request, args, err := items.Where(cond).ToSql()
+	if err != nil {
 		log.Println(err)
 	}
 	if len(params) == 0 {
-		request = "SELECT * FROM trains;"
+		request = fmt.Sprintf("SELECT * FROM %s",datalocation)
 	}
 	fmt.Println(request)
-	return request
+	return request, args
 }
 
 var parseResult = func(rows *sql.Rows) ([]Restaurant, error) {
@@ -114,7 +114,8 @@ var DeleteRestaurantsFromDB = func(id uuid.UUID) error {
 //GetTasks used for getting tasks from DB
 
 var GetRestaurantsByQuery = func(query url.Values) ([]Restaurant, error) {
-	rows, err := DB.Query(recGen(query))
+	sqlQuery, args:=recGen(query)
+	rows, err := DB.Query(sqlQuery, args...)
 
 	if err != nil {
 		fmt.Println(err)
