@@ -1,7 +1,7 @@
 CREATE TABLE hotels (
 id uuid DEFAULT uuid_generate_v1(),
 name VARCHAR(255) NOT NULL,
-class string,
+class VARCHAR(1),
 capacity INT,
 rooms_left INT,
 floors INT,
@@ -34,6 +34,6 @@ VALUES ( uuid_generate_v1(),'Astoria Hotel', '4', '900','390', '6','4000uah', 'L
 
 CREATE TABLE trips_hotels(
   id uuid DEFAULT uuid_generate_v1(),
-  trips_id uuid REFERENCES trips (trips_id) ON DELETE CASCADE,
+  trip_id uuid REFERENCES trips (trip_id) ON DELETE CASCADE,
   hotels_id uuid REFERENCES hotels (id) ON DELETE CASCADE,
 PRIMARY KEY (id));
