@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
@@ -42,7 +43,7 @@ var getFromTripGenreator = func(dest string) string {
 	return fmt.Sprintf(getFromTripTempl, dest, dest, dest, dest, dest)
 }
 
-var recGen = func(params map[string][]string) (string, []interface{}){
+var recGen = func(params map[string][]string) (string, []interface{}) {
 	var cond sq.And
 	var request string
 
@@ -72,7 +73,7 @@ var recGen = func(params map[string][]string) (string, []interface{}){
 		return "", nil
 	}
 	if len(params) == 0 {
-		request = fmt.Sprintf("SELECT * FROM %s",datalocation)
+		request = fmt.Sprintf("SELECT * FROM %s", datalocation)
 	}
 	fmt.Println(request)
 	return request, args
@@ -115,7 +116,10 @@ var DeleteRestaurantsFromDB = func(id uuid.UUID) error {
 //GetTasks used for getting tasks from DB
 
 var GetRestaurantsByQuery = func(query url.Values) ([]Restaurant, error) {
-	sqlQuery, args:=recGen(query)
+	sqlQuery, args := recGen(query)
+	if sqlQuery == "" {
+		return []Restaurant{}, errors.New("Bad request")
+	}
 	rows, err := DB.Query(sqlQuery, args...)
 
 	if err != nil {
