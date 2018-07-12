@@ -4,9 +4,9 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"net/http"
 	"testing"
 	"time"
-	"net/http"
 )
 
 func TestGetFlightsByRequest(t *testing.T) {
@@ -48,7 +48,6 @@ func TestGetFlightsByRequest(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}).
-
 		AddRow(ID.Bytes(), "Lviv", departureTime, departureTime, "Kyiv", arrivalTime, arrivalTime, 100).
 		AddRow(ID.Bytes(), "Sokal", departureTime, departureTime, "Mosty", arrivalTime, arrivalTime, 200)
 
@@ -122,7 +121,6 @@ func TestGetFlightsByTrip(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}).
-
 		AddRow(ID.Bytes(), "Lviv", departureTime, departureTime, "Kyiv", arrivalTime, arrivalTime, 100)
 
 	mock.ExpectQuery("SELECT (.+) FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)

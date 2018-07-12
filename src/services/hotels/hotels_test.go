@@ -1,30 +1,30 @@
 package hotels_test
 
 import (
-	"testing"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"net/http/httptest"
-	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"net/url"
 	"bytes"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"testing"
 )
 
 var router = services.NewRouter()
 
 type HotelsTestCase struct {
-	name             string
-	url              string
-	want             int
+	name            string
+	url             string
+	want            int
 	mockedGetHotels []models.Hotel
 }
 
 func TestGetHotels(t *testing.T) {
 	tests := []HotelsTestCase{
 		{
-			name:             "Get_Hotels_200",
-			url:              "/v1/hotels",
-			want:             200,
+			name:            "Get_Hotels_200",
+			url:             "/v1/hotels",
+			want:            200,
 			mockedGetHotels: []models.Hotel{},
 		},
 	}
@@ -43,7 +43,6 @@ func TestGetHotels(t *testing.T) {
 	}
 }
 
-
 func TestAddHotel(t *testing.T) {
 	tests := []HotelsTestCase{
 		{
@@ -53,8 +52,8 @@ func TestAddHotel(t *testing.T) {
 		},
 	}
 	data := url.Values{}
-	data.Add("hotel", "00000000-0000-0000-0000-000000000001")
-	data.Add("trip", "00000000-0000-0000-0000-000000000001")
+	data.Add("hotel_id", "00000000-0000-0000-0000-000000000001")
+	data.Add("trip_id", "00000000-0000-0000-0000-000000000001")
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			models.AddHotelMocked()
@@ -74,9 +73,9 @@ func TestAddHotel(t *testing.T) {
 func TestGetHotelByTripHandler(t *testing.T) {
 	tests := []HotelsTestCase{
 		{
-			name:             "Get_Hotels_200",
-			url:              "/v1/hotels/trip/00000000-0000-0000-0000-000000000001",
-			want:             200,
+			name:            "Get_Hotels_200",
+			url:             "/v1/hotels/trip/00000000-0000-0000-0000-000000000001",
+			want:            200,
 			mockedGetHotels: []models.Hotel{},
 		},
 	}

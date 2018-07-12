@@ -25,7 +25,7 @@ type User struct {
 	Password string
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+var Login = func(w http.ResponseWriter, r *http.Request) {
 	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
 	userSession, err := r.Cookie("user_session")
@@ -77,9 +77,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Logout(w http.ResponseWriter, r *http.Request) {
+var Logout = func(w http.ResponseWriter, r *http.Request) {
 	userSession, _ := r.Cookie("user_session")
 	database.Cache.Del(userSession.Value)
 	common.RenderJSON(w, r, "Success logout")
-
 }

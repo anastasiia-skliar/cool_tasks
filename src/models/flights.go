@@ -1,12 +1,12 @@
 package models
 
 import (
-	"github.com/satori/go.uuid"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"time"
-	"net/url"
 	"errors"
 	sq "github.com/Masterminds/squirrel"
+	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/satori/go.uuid"
+	"net/url"
+	"time"
 )
 
 const (
@@ -25,7 +25,7 @@ type Flight struct {
 	price         int
 }
 
-var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) (error) {
+var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) error {
 	_, err := DB.Exec(addFlightToTrip, flightID, tripID)
 	return err
 }
