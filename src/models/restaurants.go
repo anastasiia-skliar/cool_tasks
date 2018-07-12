@@ -68,7 +68,7 @@ var recGen = func(params map[string][]string) string {
 var err error
 	request, _, err = items.Where(cond).ToSql()
 	if err!=nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 	if len(params) == 0 {
 		request = "SELECT * FROM trains;"
