@@ -3,8 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/VeryOldLady/cool_tasks/src/database"
+	."github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	sq "gopkg.in/Masterminds/squirrel.v1"
 	"net/url"
@@ -138,13 +137,13 @@ var SaveRestaurantToTrip = func(tripID, restaurantID uuid.UUID, dataloc string) 
 
 var saveToTrip = func(tripsID, itemID uuid.UUID, dataloc string) error {
 	saveSQL := fmt.Sprintf(saveToTripTempl, dataloc, dataloc)
-	_, err := database.DB.Exec(saveSQL, tripsID, itemID)
+	_, err := DB.Exec(saveSQL, tripsID, itemID)
 
 	return err
 }
 
 var GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
-	rows, err := database.DB.Query(getTrainsFromTrip, tripsID)
+	rows, err := DB.Query(getTrainsFromTrip, tripsID)
 	if err != nil {
 		return []Restaurant{}, err
 	}
