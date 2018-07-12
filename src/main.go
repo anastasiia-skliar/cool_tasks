@@ -35,10 +35,11 @@ func main() {
 		log.Fatalf("error while loading postgreSQL: %s:", err)
 	}
 
-	//database.Cache, err = database.SetupRedis(config.Config.Database)
-	//if err != nil {
-	//	log.Fatalf("eror while loading redis: %s:", err)
-	//}
+	database.Cache, err = database.SetupRedis(config.Config.Database)
+
+	if err != nil {
+		log.Fatalf("error while loading redis: %s:", err)
+	}
 
 	defer f.Close()
 

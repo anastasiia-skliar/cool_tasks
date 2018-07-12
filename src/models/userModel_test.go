@@ -103,7 +103,7 @@ func TestGetUserByLogin(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
 		AddRow(UserID.Bytes(), "John", "john", "1111")
 
-	mock.ExpectQuery("SELECT ID, Password FROM users WHERE Login = \\$1").WithArgs(expected.Login).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM users WHERE login").WithArgs(expected.Login).WillReturnRows(rows)
 
 	result, err := GetUserByLogin(expected.Login)
 

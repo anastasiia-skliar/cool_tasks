@@ -1,13 +1,13 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/VeryOldLady/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	sq "gopkg.in/Masterminds/squirrel.v1"
 	"net/url"
-	"database/sql"
 )
 
 const (
