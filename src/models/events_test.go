@@ -1,15 +1,13 @@
 package models
 
 import (
-"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-"github.com/satori/go.uuid"
-"gopkg.in/DATA-DOG/go-sqlmock.v1"
-"testing"
-"net/http"
-"time"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/satori/go.uuid"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"net/http"
+	"testing"
+	"time"
 )
-
-var is_err error
 
 func TestGetEventsByRequest(t *testing.T) {
 	originalDB := database.DB
@@ -20,28 +18,25 @@ func TestGetEventsByRequest(t *testing.T) {
 
 	var expects = []Event{
 		{
-			ID:         EventId,
-			Title:       "Careerday",
-			Category:   "work",
-			Town:		"Kiev",
-			Date:		testTime,
-			Price:      50,
-
+			ID:       EventId,
+			Title:    "Careerday",
+			Category: "work",
+			Town:     "Kiev",
+			Date:     testTime,
+			Price:    50,
 		},
 		{
-			ID:         EventId,
-			Title:       "ProjectX",
-			Category:   "entertaiment",
-			Town:		"Lviv",
-			Date:		testTime,
-			Price:      300,
-
+			ID:       EventId,
+			Title:    "ProjectX",
+			Category: "entertaiment",
+			Town:     "Lviv",
+			Date:     testTime,
+			Price:    300,
 		},
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Title", "Category", "Town", "Date", "Price"}).
-
-		AddRow(EventId.Bytes(), "Careerday", "work", "Kiev", testTime,50).
+		AddRow(EventId.Bytes(), "Careerday", "work", "Kiev", testTime, 50).
 		AddRow(EventId.Bytes(), "ProjectX", "entertaiment", "Lviv", testTime, 300)
 
 	mock.ExpectQuery("SELECT (.+) FROM events").WillReturnRows(rows)
@@ -109,7 +104,7 @@ func TestGetEventsByTrip(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"EventId", "Title", "Category", "Town", "Date", "Price"}).
-		AddRow(EventId.Bytes(),"Careerday", "work","Kiev",testTime,50)
+		AddRow(EventId.Bytes(), "Careerday", "work", "Kiev", testTime, 50)
 
 	mock.ExpectQuery("SELECT (.+) FROM events INNER JOIN trips_events ON events.id=trips_events.event_id AND trips_events.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)
 
