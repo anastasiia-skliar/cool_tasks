@@ -1,18 +1,15 @@
 package auth
 
 import (
-	"database/sql"
 	"errors"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/alicebob/miniredis"
 	"github.com/satori/go.uuid"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"log"
 	"net/http"
 	"time"
 )
-
-var GetUserByLogin = models.GetUserByLogin
 
 type login struct {
 	id        uuid.UUID
@@ -28,15 +25,19 @@ type User struct {
 	Password string
 }
 
-var redis *miniredis.Miniredis
-var db *sql.DB
-
-func init() {
-	redis, _ = miniredis.Run()
-	db, _, _ = sqlmock.New()
-}
-
-func Login(w http.ResponseWriter, r *http.Request) {
+var Login = func(w http.ResponseWriter, r *http.Request) {
+	GetUserByLogin := models.GetUserByLogin
+	redis := database.Cache
+	userSession, err := r.Cookie("user_session")
+	if err != nil {
+		log.Println(err)
+	}
+	//proceeding user session
+	if redis.Get(userSession.Value) != nil {
+		userSession.Expires.Add(time.Hour)
+		common.RenderJSON(w, r, userSession.Value)
+		return
+	}
 
 	var newLogin login
 
@@ -45,8 +46,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newLogin.pass = r.Form.Get("password")
 
 	var userInDB models.User
-	userInDB, err := GetUserByLogin(newLogin.login)
-	if err != nil {
+	userInDB, er := GetUserByLogin(newLogin.login)
+	if er != nil {
+		common.SendError(w, r, 401, "ERROR: ", er)
 		return
 	}
 
@@ -59,7 +61,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		newLogin.sessionID = sessionUUID.String()
 	}
 	if newLogin.sessionID != "" {
-		redis.Push(newLogin.sessionID, newLogin.login)
+
+		err := redis.Set(newLogin.sessionID, newLogin.login, time.Hour*4).Err()
+		if err != nil {
+			log.Println(err)
+		}
+
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
 
@@ -70,10 +77,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Logout(w http.ResponseWriter, r *http.Request) {
-	var newLogout login
-	r.ParseForm()
-	newLogout.sessionID = r.Form.Get("sessionID")
-	redis.Del(newLogout.sessionID)
+var Logout = func(w http.ResponseWriter, r *http.Request) {
+	userSession, _ := r.Cookie("user_session")
+	database.Cache.Del(userSession.Value)
 	common.RenderJSON(w, r, "Success logout")
 }

@@ -3,7 +3,6 @@ package database_test
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/rafaeljusto/redigomock"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 )
@@ -20,7 +19,7 @@ func TestSetupPostgres(t *testing.T) {
 	}
 }
 
-func TestSetupRedis(t *testing.T) {
+/*func TestSetupRedis(t *testing.T) {
 	database.SetRedisConnected()
 	conn := redigomock.NewConn()
 	database.Cache = conn
@@ -31,3 +30,4 @@ func TestSetupRedis(t *testing.T) {
 		}
 	}
 }
+*/

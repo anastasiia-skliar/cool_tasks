@@ -1,29 +1,20 @@
 package auth
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/alicebob/miniredis"
 	"log"
 	"net/http"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
 var IsExistRedis = func(key string) bool {
+	_, err := database.Cache.Get(key).Result()
 
-	s, err := miniredis.Run()
 	if err != nil {
-		panic(err)
+		return false
 	}
-	defer s.Close()
-
-	redisKey := "6c3a65d23c5f26fc529f6c5ce01a6b31"
-
-	s.Set(redisKey, "")
-
-	if s.Exists(key) {
-		return true
-	}
-	return false
+	return true
 }
 
 //End Mocked func
@@ -34,8 +25,8 @@ func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		next(w, r)
 		return
 	}
-	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 
+	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 	if err != nil {
 		log.Println(err, "ERROR: Can't get cookies")
 		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)

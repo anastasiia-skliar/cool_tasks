@@ -5,11 +5,11 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 func main() {
@@ -35,10 +35,11 @@ func main() {
 		log.Fatalf("eror while loading postgreSQL: %s:", err)
 	}
 
-	//database.Cache, err = database.SetupRedis(config.Config.Database)
-	//if err != nil {
-	//	log.Fatalf("eror while loading redis: %s:", err)
-	//}
+	database.Cache, err = database.SetupRedis(config.Config.Database)
+
+	if err != nil {
+		log.Fatalf("error while loading redis: %s:", err)
+	}
 
 	defer f.Close()
 
