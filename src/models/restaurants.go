@@ -7,15 +7,12 @@ import (
 	"github.com/satori/go.uuid"
 	sq "gopkg.in/Masterminds/squirrel.v1"
 	"net/url"
+	"log"
 )
 
 const (
 	datalocation     = "restaurants"
-	getter           = "SELECT * FROM %s"
 	create           = "INSERT INTO %s (%s) VALUES (%s) RETURNING id"
-	getByParameter   = "WHERE %s = $1"
-	addParam         = " AND %s = $%d"
-	addOr            = " OR %s = $%d"
 	deleteTempl      = "DELETE FROM %s WHERE id = $1"
 	saveToTripTempl  = "INSERT INTO trips_%s (trips_id, %s_id) VALUES ($1, $2)"
 	getFromTripTempl = "SELECT * FROM %s INNER JOIN trips_%s ON trips_%s.%s_id = trains.id AND trips_%s.trips_id = $1"
@@ -68,9 +65,11 @@ var recGen = func(params map[string][]string) string {
 
 		}
 	}
-
-	request, _, _ = items.Where(cond).ToSql()
-
+var err error
+	request, _, err = items.Where(cond).ToSql()
+	if err!=nil {
+		log.Fatalln(err)
+	}
 	if len(params) == 0 {
 		request = "SELECT * FROM trains;"
 	}
@@ -101,8 +100,6 @@ var AddRestaurant = func(item Restaurant) (Restaurant, error) {
 var GetRestaurantsByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
 	params := make(map[string][]string)
-	key := make([]string, 0)
-	key = append(key, id.String())
 	params["id"] = []string{id.String()}
 	err := DB.QueryRow(recGen(params)).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
