@@ -12,6 +12,7 @@ packages = \
     ./services/museums \
     ./services/trains \
     ./services/events \
+    ./services/hotels \
 
 all: test format go-build dc-build dc-up
 

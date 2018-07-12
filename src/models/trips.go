@@ -16,6 +16,7 @@ type Trip struct {
 	Events  []Event
 	Flights []Flight
 	Museums []Museum
+	Hotels  []Hotel
 	Trains  []Train
 }
 
@@ -33,17 +34,20 @@ var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 		events  []Event
 		flights []Flight
 		museums []Museum
+		hotels  []Hotel
 		trains  []Train
 	)
 
 	events, _ = GetEventsByTrip(id)
 	flights, _ = GetFlightsByTrip(id)
 	museums, _ = GetMuseumsByTrip(id)
+	hotels, _ = GetHotelFromTrip(id)
 	trains, _ = GetTrainFromTrip(id)
 
 	trip.Events = events
 	trip.Flights = flights
 	trip.Museums = museums
+	trip.Hotels = hotels
 	trip.Trains = trains
 
 	return trip, nil

@@ -82,7 +82,7 @@ func NewRouter() *mux.Router {
 		http.MethodPost: http.HandlerFunc(trains.SaveTrain),
 	}))
 	apiV1.Handle("/trains/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(trains.GetFromTrip),
+		http.MethodGet: http.HandlerFunc(trains.GetTrainFromTrip),
 	}))
 	apiV1.Handle("/hotels", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(hotels.GetHotels),
