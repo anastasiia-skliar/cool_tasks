@@ -69,6 +69,7 @@ var recGen = func(params map[string][]string) (string, []interface{}){
 	request, args, err := items.Where(cond).ToSql()
 	if err != nil {
 		log.Println(err)
+		return "", nil
 	}
 	if len(params) == 0 {
 		request = fmt.Sprintf("SELECT * FROM %s",datalocation)
