@@ -11,6 +11,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/restaurantsCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trips"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
@@ -92,14 +93,25 @@ func NewRouter() *mux.Router {
 		http.MethodPost: http.HandlerFunc(trains.SaveTrain),
 	}))
 	apiV1.Handle("/trains/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(trains.GetFromTrip),
+		http.MethodGet: http.HandlerFunc(trains.GetTrainFromTrip),
 	}))
 	apiV1.Handle("/hotels", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(hotels.GetHotels),
-		http.MethodPost: http.HandlerFunc(hotels.AddHotel),
+		http.MethodGet:  http.HandlerFunc(hotels.GetByRequestHandler),
+		http.MethodPost: http.HandlerFunc(hotels.AddToTripHandler),
 	}))
 	apiV1.Handle("/hotels/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(hotels.GetFromTrip),
+		http.MethodGet: http.HandlerFunc(hotels.GetByTripHandler),
 	}))
+
+	apiV1.Handle("/users/trips/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(trips.GetTripIDByUserID),
+	}))
+	apiV1.Handle("/trips/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(trips.GetTripsByTripID),
+	}))
+	apiV1.Handle("/trips", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandlerFunc(trips.CreateTrip),
+	}))
+
 	return router
 }

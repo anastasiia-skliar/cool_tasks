@@ -11,7 +11,7 @@ import (
 
 const (
 	addMuseumToTrip  = "INSERT INTO trips_museums (museum_id, trip_id) VALUES ($1, $2)"
-	getMuseumsByTrip = "SELECT * FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=$1"
+	getMuseumsByTrip = "SELECT museums.* FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=$1"
 )
 
 type Museum struct {
@@ -80,11 +80,11 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 		}
 	}
 
-	request, _, err = museums.Where(b).ToSql()
+	request, args, err := museums.Where(b).ToSql()
 	if err != nil {
 		return nil, err
 	}
-	rows, err := DB.Query(request)
+	rows, err := DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}
