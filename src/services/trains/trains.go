@@ -9,8 +9,7 @@ import (
 )
 
 type successAdd struct {
-	Status string       `json:"message"`
-	Result models.Train `json:"result"`
+	Status string `json:"message"`
 }
 
 func GetTrains(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +43,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.SaveTrain(trainID, tripID)
+	err = models.SaveTrain(tripID, trainID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		return

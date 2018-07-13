@@ -11,7 +11,7 @@ import (
 
 const (
 	addFlightToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
-	getFlightByTrip = "SELECT * FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
+	getFlightByTrip = "SELECT flights.* FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
 )
 
 type Flight struct {
@@ -79,11 +79,11 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	req := flights.Where(and)
 
-	request, _, err := req.ToSql()
+	request, args, err := req.ToSql()
 	if err != nil {
 		return nil, errors.New("ERROR: Bad request")
 	}
-	rows, err := DB.Query(request)
+	rows, err := DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}

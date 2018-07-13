@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	saveTrainToTrip  = "INSERT INTO trips_trains (trip_id, train_id) VALUES ($1, $2)"
-	getTrainFromTrip = "SELECT * FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id = $1"
+	saveTrainToTrip  = "INSERT INTO trips_trains (trip_id, train_id) VALUES ($1, $2);"
+	getTrainFromTrip = "SELECT trains.* FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id = $1;"
 )
 
 //Task representation in DB
@@ -50,13 +50,13 @@ var GetTrains = func(params url.Values) ([]Train, error) {
 		}
 	}
 
-	request, _, _ = selectTrains.Where(cond).ToSql()
+	request, args, _ := selectTrains.Where(cond).ToSql()
 
 	if len(params) == 0 {
 		request = "SELECT * FROM trains;"
 	}
 
-	rows, err := database.DB.Query(request)
+	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return []Train{}, err
 	}
@@ -84,7 +84,7 @@ var SaveTrain = func(tripsID, trainsID uuid.UUID) error {
 var GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 	rows, err := database.DB.Query(getTrainFromTrip, tripsID)
 	if err != nil {
-		return []Train{}, err
+		return nil, err
 	}
 
 	trains := make([]Train, 0)
@@ -92,7 +92,7 @@ var GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 		var t Train
 		if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
 			&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
-			return []Train{}, err
+			return nil, err
 		}
 		trains = append(trains, t)
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	createTrip       = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id"
+	createTrip       = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
 	getTripsByUserID = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
 )
 
@@ -41,7 +41,7 @@ var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 	events, _ = GetEventsByTrip(id)
 	flights, _ = GetFlightsByTrip(id)
 	museums, _ = GetMuseumsByTrip(id)
-	hotels, _ = GetHotelFromTrip(id)
+	hotels, _ = GetHotelsByTrip(id)
 	trains, _ = GetTrainFromTrip(id)
 
 	trip.Events = events

@@ -13,8 +13,6 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
-var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
-
 func CreateTrip(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -24,7 +22,6 @@ func CreateTrip(w http.ResponseWriter, r *http.Request) {
 
 	var trip models.Trip
 	trip.UserID, err = uuid.FromString(r.Form.Get("user_id"))
-	trip.TripID = tempID
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong userID", err)
 		return
