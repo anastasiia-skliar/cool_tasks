@@ -146,7 +146,7 @@ var saveToTrip = func(tripsID, itemID uuid.UUID, dataloc string) error {
 }
 
 var GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
-	rows, err := DB.Query(getTrainsFromTrip, tripsID)
+	rows, err := DB.Query(getItemFromTrip, tripsID)
 	if err != nil {
 		return []Restaurant{}, err
 	}
