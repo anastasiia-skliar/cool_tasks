@@ -10,6 +10,7 @@ packages = \
     ./services/events \
     ./services/flights \
     ./services/museums \
+    ./services/restaurants \
     ./services/trains \
     ./services/events \
     ./services/hotels \

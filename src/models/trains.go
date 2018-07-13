@@ -58,7 +58,7 @@ var GetTrains = func(params url.Values) ([]Train, error) {
 
 	rows, err := database.DB.Query(request, args...)
 	if err != nil {
-		return []Train{}, err
+		return nil, err
 	}
 
 	trains := make([]Train, 0)
@@ -66,7 +66,7 @@ var GetTrains = func(params url.Values) ([]Train, error) {
 		var t Train
 		if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
 			&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
-			return []Train{}, err
+			return nil, err
 		}
 		trains = append(trains, t)
 	}

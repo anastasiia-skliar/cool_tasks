@@ -6,18 +6,20 @@ import (
 )
 
 const (
-	createTrip       = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
-	getTripsByUserID = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
+	createTrip        = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
+	getTripsByUserID  = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
+	getUserIDFromTrip = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
 )
 
 type Trip struct {
-	TripID  uuid.UUID
-	UserID  uuid.UUID
-	Events  []Event
-	Flights []Flight
-	Museums []Museum
-	Hotels  []Hotel
-	Trains  []Train
+	TripID      uuid.UUID
+	UserID      uuid.UUID
+	Events      []Event
+	Flights     []Flight
+	Museums     []Museum
+	Restaurants []Restaurant
+	Hotels      []Hotel
+	Trains      []Train
 }
 
 var CreateTrip = func(trip Trip) (uuid.UUID, error) {
@@ -30,25 +32,58 @@ var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 
 	var (
-		trip    Trip
-		events  []Event
-		flights []Flight
-		museums []Museum
-		hotels  []Hotel
-		trains  []Train
+		trip        Trip
+		err         error
+		events      []Event
+		flights     []Flight
+		museums     []Museum
+		hotels      []Hotel
+		trains      []Train
+		restaurants []Restaurant
 	)
 
-	events, _ = GetEventsByTrip(id)
-	flights, _ = GetFlightsByTrip(id)
-	museums, _ = GetMuseumsByTrip(id)
-	hotels, _ = GetHotelsByTrip(id)
-	trains, _ = GetTrainFromTrip(id)
+	trip.TripID = id
 
+	events, err = GetEventsByTrip(id)
+	if err != nil {
+		return trip, err
+	}
 	trip.Events = events
+
+	flights, err = GetFlightsByTrip(id)
+	if err != nil {
+		return trip, err
+	}
 	trip.Flights = flights
+
+	museums, err = GetMuseumsByTrip(id)
+	if err != nil {
+		return trip, err
+	}
 	trip.Museums = museums
+
+	hotels, err = GetHotelsByTrip(id)
+	if err != nil {
+		return trip, err
+	}
 	trip.Hotels = hotels
+
+	trains, err = GetTrainFromTrip(id)
+	if err != nil {
+		return trip, err
+	}
 	trip.Trains = trains
+
+	restaurants, err = GetRestFromTrip(id)
+	if err != nil {
+		return trip, err
+	}
+	trip.Restaurants = restaurants
+
+	errDB := database.DB.QueryRow(getUserIDFromTrip, id).Scan(&trip.UserID)
+	if err != nil {
+		return trip, errDB
+	}
 
 	return trip, nil
 }
