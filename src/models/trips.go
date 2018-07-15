@@ -7,8 +7,8 @@ import (
 
 const (
 	createTrip        = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
-	getTripsByUserID  = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
-	getUserIDFromTrip = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
+	getUserIDFromTrip = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
+	getTripsByUserID  = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
 )
 
 type Trip struct {
@@ -80,7 +80,7 @@ var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 	}
 	trip.Restaurants = restaurants
 
-	errDB := database.DB.QueryRow(getUserIDFromTrip, id).Scan(&trip.UserID)
+	errDB := database.DB.QueryRow(getTripsByUserID, id).Scan(&trip.UserID)
 	if err != nil {
 		return trip, errDB
 	}
@@ -95,7 +95,7 @@ var GetTripIDByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 		tripID  uuid.UUID
 	)
 
-	rows, err := database.DB.Query(getTripsByUserID, id)
+	rows, err := database.DB.Query(getUserIDFromTrip, id)
 	if err != nil {
 		return nil, err
 	}
