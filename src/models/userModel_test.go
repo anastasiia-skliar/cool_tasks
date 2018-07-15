@@ -53,7 +53,7 @@ func TestGetUser(t *testing.T) {
 		ID:       UserID,
 		Name:     "John",
 		Login:    "john",
-		Password: "1111",
+		Password: "****",
 	}
 
 	if mockErr != nil {
@@ -61,7 +61,7 @@ func TestGetUser(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-		AddRow(UserID.Bytes(), "John", "john", "1111")
+		AddRow(UserID.Bytes(), "John", "john", "****")
 
 	mock.ExpectQuery("SELECT (.+) FROM users").WithArgs(UserID).WillReturnRows(rows)
 
