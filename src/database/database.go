@@ -4,10 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/go-redis/redis"
-	_ "github.com/lib/pq"
 	"log"
 )
 
+//DB is used for postgres connection
+//Cache is used for redis connection
+//IsPostgresConnected shows is postgres connected
+//IsRedisConnected shows is redis connected
 var (
 	DB                  *sql.DB
 	Cache               *redis.Client
@@ -15,9 +18,10 @@ var (
 	IsRedisConnected    bool
 )
 
-// Type is the type of database from a Type* constant
+//Type is the type of database from a Type* constant
 type Type string
 
+//Info contains information of connections
 type Info struct {
 	// Database type
 	Type []Type
@@ -27,7 +31,7 @@ type Info struct {
 	Redis RedisInfo
 }
 
-// PostgreSQLInfo is the details for the database connection
+//PostgreSQLInfo is the details for the database connection
 type PostgreSQLInfo struct {
 	Hostname     string
 	Port         int
@@ -35,30 +39,35 @@ type PostgreSQLInfo struct {
 	Username     string
 	Password     string
 }
+
+//RedisInfo is...
 type RedisInfo struct {
 	URL  string
 	Port int
 }
 
-// DSN returns the Data Source Name
+//DSN returns the Data Source Name
 func DSN(ci PostgreSQLInfo) string {
 	return fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		ci.Hostname, ci.Port, ci.Username, ci.Password, ci.DatabaseName)
 }
 
-//Data Source Name for Redis
-func DSN_Redis(ci RedisInfo) string {
+//DSNRedis Name for Redis
+func DSNRedis(ci RedisInfo) string {
 	return fmt.Sprintf("%s:%d", ci.URL, ci.Port)
 }
 
-//Setup Postgres Connection
+//SetupPostgres used for setup connection to postgres
 func SetupPostgres(d Info) (*sql.DB, error) {
-	if IsPostgresConnected == true {
+	if IsPostgresConnected {
 		return DB, nil
 	}
 	db, err := sql.Open("postgres", DSN(d.PostgreSQL))
-	//check if is alive
+	if err != nil {
+		log.Println(err)
+	}
+
 	err = db.Ping()
 	if err != nil {
 		log.Println(err)
@@ -67,12 +76,13 @@ func SetupPostgres(d Info) (*sql.DB, error) {
 	return db, err
 }
 
+//SetupRedis used for setup connection to redis
 func SetupRedis(d Info) (*redis.Client, error) {
-	if IsRedisConnected == true {
+	if IsRedisConnected {
 		return Cache, nil
 	}
 	client := redis.NewClient(&redis.Options{
-		Addr:     DSN_Redis(d.Redis),
+		Addr:     DSNRedis(d.Redis),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
@@ -84,12 +94,12 @@ func SetupRedis(d Info) (*redis.Client, error) {
 	return client, err
 }
 
-//Sets boolean isPostgresConnected to true
+//SetPostgresConnected checks postgres connection
 func SetPostgresConnected() {
 	IsPostgresConnected = true
 }
 
-//Sets boolean isRedisConnected to true
+//SetRedisConnected checks redis connection
 func SetRedisConnected() {
 	IsRedisConnected = true
 }

@@ -19,8 +19,7 @@ type successDelete struct {
 	Status string `json:"status"`
 }
 
-var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
-
+//GetUsers is a handler for getting all Users from DB
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := models.GetUsers()
 	if err != nil {
@@ -30,6 +29,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, users)
 }
 
+//GetUserByID is a handler for getting User from DB by ID
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
@@ -45,6 +45,7 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, user)
 }
 
+//CreateUser is a handler for creating User
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -52,7 +53,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var newUser models.User
-	newUser.ID = tempID
 	newUser.Login = r.Form.Get("login")
 	newUser.Name = r.Form.Get("name")
 	newUser.Password = r.Form.Get("password")
@@ -68,6 +68,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
+//IsValid checks if password is valid
 func IsValid(user models.User) (bool, string) {
 	errMessage := ""
 	var checkPass = regexp.MustCompile(`^[[:graph:]]*$`)
@@ -92,6 +93,7 @@ func IsValid(user models.User) (bool, string) {
 	return validName && validLogin && validPass, errMessage
 }
 
+//DeleteUser is a handler for deleting User from DB
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])

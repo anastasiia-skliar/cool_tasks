@@ -17,4 +17,3 @@ updated_at TIMESTAMP,
 description TEXT,
 PRIMARY KEY(id)
 );
-

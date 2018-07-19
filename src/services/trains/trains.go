@@ -1,7 +1,6 @@
 package trains
 
 import (
-	sq "github.com/Masterminds/squirrel"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
@@ -10,47 +9,23 @@ import (
 )
 
 type successAdd struct {
-	Status string       `json:"message"`
-	Result models.Train `json:"result"`
+	Status string `json:"message"`
 }
 
+//GetTrains is a handler for getting Train from Trip by request
 func GetTrains(w http.ResponseWriter, r *http.Request) {
-	var cond sq.And
-	var request string
-	var err error
-
 	params := r.URL.Query()
-	trains := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("trains")
 
-	for k, v := range params {
-		switch k {
-		case "id", "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
-			if len(params[k]) == 2 {
-				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
-			} else {
-				cond = append(cond, sq.Eq{k: v[0]})
-			}
-		case "departure_city", "arrival_city":
-			cond = append(cond, sq.Eq{k: v[0]})
-		default:
-			common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
-		}
-	}
-
-	request, _, _ = trains.Where(cond).ToSql()
-
-	if len(params) == 0 {
-		request = "SELECT * FROM trains;"
-	}
-
-	result, err := models.GetTrains(request)
+	trains, err := models.GetTrains(params)
 	if err != nil {
-		common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
+		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
+		return
 	}
 
-	common.RenderJSON(w, r, result)
+	common.RenderJSON(w, r, trains)
 }
 
+//SaveTrain is a handler for saving Train to Trip
 func SaveTrain(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -70,7 +45,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.SaveTrain(trainID, tripID)
+	err = models.SaveTrain(tripID, trainID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		return
@@ -79,7 +54,8 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
-func GetFromTrip(w http.ResponseWriter, r *http.Request) {
+//GetTrainFromTrip is a handler for getting Trains from Trip
+func GetTrainFromTrip(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -88,7 +64,7 @@ func GetFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetFromTrip(tripID)
+	trains, err := models.GetTrainFromTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
 		return

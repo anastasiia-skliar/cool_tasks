@@ -11,7 +11,7 @@ func TestSetupPostgres(t *testing.T) {
 	database.SetPostgresConnected()
 	db, _, _ := sqlmock.NewWithDSN(database.DSN(config.Config.Database.PostgreSQL))
 	database.DB = db
-	if database.IsPostgresConnected == true {
+	if database.IsPostgresConnected {
 		db2, _ := database.SetupPostgres(config.Config.Database)
 		if db2 != database.DB {
 			t.Fatal("SetupPostgres is not reusing existing connection")

@@ -12,26 +12,33 @@ type successCreate struct {
 	Status string `json:"status"`
 }
 
+//AddMuseumToTripHandler is a handler for adding Museums to Trips
 func AddMuseumToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
-	museum_id, err := uuid.FromString(r.Form.Get("museum"))
+	museumID, err := uuid.FromString(r.Form.Get("museum"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
-	trip_id, err := uuid.FromString(r.Form.Get("trip"))
+	tripID, err := uuid.FromString(r.Form.Get("trip"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
-	err = models.AddMuseumToTrip(museum_id, trip_id)
+
+	musErr := models.AddMuseumToTrip(museumID, tripID)
+	if musErr != nil {
+		common.SendBadRequest(w, r, "ERROR: Cant ADD Museum", err)
+		return
+	}
 	common.RenderJSON(w, r, successCreate{Status: "201 Created"})
 }
 
+//GetMuseumByTripHandler is a handler for getting Museums from Trips
 func GetMuseumByTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	tripID, err := uuid.FromString(params["id"])
@@ -47,6 +54,7 @@ func GetMuseumByTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, museums)
 }
 
+//GetMuseumsByRequestHandler is a handler for getting Museums from Trips by request
 func GetMuseumsByRequestHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
