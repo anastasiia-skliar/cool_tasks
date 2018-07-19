@@ -83,5 +83,8 @@ func render(w http.ResponseWriter, status int, response []byte) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
-	w.Write(response)
+	_, err := w.Write(response)
+	if err == nil {
+		log.Println(err)
+	}
 }

@@ -13,6 +13,7 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
+//CreateTrip is a handler for creating Trips
 func CreateTrip(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -35,6 +36,7 @@ func CreateTrip(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
+//GetTripsByTripID is a handler for getting Trip from DB bu tripID
 func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
@@ -43,11 +45,17 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Wrong tripID", err)
 		return
 	}
+
 	result, err := models.GetTripsByTripID(tripID)
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
+		return
+	}
 
 	common.RenderJSON(w, r, result)
 }
 
+//GetTripIDByUserID is a handler for getting tripID from DB by userID
 func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
@@ -56,7 +64,12 @@ func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Wrong userID", err)
 		return
 	}
+
 	result, err := models.GetTripIDByUserID(userID)
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
+		return
+	}
 
 	common.RenderJSON(w, r, result)
 }

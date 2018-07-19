@@ -12,6 +12,7 @@ type successAdd struct {
 	Status string `json:"message"`
 }
 
+//GetTrains is a handler for getting Train from Trip by request
 func GetTrains(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
@@ -24,6 +25,7 @@ func GetTrains(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, trains)
 }
 
+//SaveTrain is a handler for saving Train to Trip
 func SaveTrain(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -52,6 +54,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
+//GetTrainFromTrip is a handler for getting Trains from Trip
 func GetTrainFromTrip(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 

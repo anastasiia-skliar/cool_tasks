@@ -11,13 +11,14 @@ import (
 	"time"
 )
 
+//Login stores info for logging
 type login struct {
-	id        uuid.UUID
 	login     string
 	pass      string
 	sessionID string
 }
 
+//User representation in DB
 type User struct {
 	ID       uuid.UUID
 	Name     string
@@ -25,6 +26,7 @@ type User struct {
 	Password string
 }
 
+//Login login new User
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
@@ -41,7 +43,11 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 
 	var newLogin login
 
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+	}
+
 	newLogin.login = r.Form.Get("login")
 	newLogin.pass = r.Form.Get("password")
 
@@ -77,8 +83,12 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//Logout logout User
 var Logout = func(w http.ResponseWriter, r *http.Request) {
-	userSession, _ := r.Cookie("user_session")
+	userSession, err := r.Cookie("user_session")
+	if err != nil {
+		log.Println(err)
+	}
 	database.Cache.Del(userSession.Value)
 	common.RenderJSON(w, r, "Success logout")
 }

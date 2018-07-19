@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	sq "github.com/Masterminds/squirrel"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
 	"time"
@@ -14,6 +14,7 @@ const (
 	getFlightByTrip = "SELECT flights.* FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
 )
 
+//Flight is a representation of Flight table in DB
 type Flight struct {
 	ID            uuid.UUID
 	DepartureCity string
@@ -25,13 +26,15 @@ type Flight struct {
 	Price         int
 }
 
+//AddFlightToTrip adds Flight to Trip
 var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) error {
-	_, err := DB.Exec(addFlightToTrip, flightID, tripID)
+	_, err := database.DB.Exec(addFlightToTrip, flightID, tripID)
 	return err
 }
 
+//GetFlightsByTrip gets Flights from Trip by tripID
 var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
-	rows, err := DB.Query(getFlightByTrip, tripID)
+	rows, err := database.DB.Query(getFlightByTrip, tripID)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +51,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 	return flights, nil
 }
 
+//GetFlightsByRequest gets Flights from Trip by incoming request
 var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	var and sq.And = nil
@@ -83,7 +87,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 	if err != nil {
 		return nil, errors.New("ERROR: Bad request")
 	}
-	rows, err := DB.Query(request, args...)
+	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}

@@ -17,6 +17,9 @@ packages = \
 
 all: test format go-build dc-build dc-up
 
+setup:
+	go get -u gopkg.in/alecthomas/gometalinter.v2
+
 test:
 	@$(foreach package,$(packages), set -e; \
     		go test -coverprofile $(package)/cover.out -covermode=count $(package);)

@@ -2,7 +2,7 @@ package auth
 
 import "github.com/alicebob/miniredis"
 
-func mockedIsExistRedis(key string) {
+func mockedIsExistRedis() {
 	IsExistRedis = func(key string) bool {
 		s, err := miniredis.Run()
 		if err != nil {
@@ -12,7 +12,10 @@ func mockedIsExistRedis(key string) {
 
 		redisKey := "6c3a65d23c5f26fc529f6c5ce01a6b31"
 
-		s.Set(redisKey, "")
+		redErr := s.Set(redisKey, "")
+		if redErr != nil {
+			return false
+		}
 
 		if s.Exists(key) {
 			return true

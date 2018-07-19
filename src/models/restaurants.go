@@ -21,7 +21,7 @@ const (
 
 var deleteRequest string
 
-//Task representation in DB
+//Restaurant representation in DB
 type Restaurant struct {
 	ID          uuid.UUID
 	Name        string
@@ -69,28 +69,27 @@ func parseResult(rows *sql.Rows) ([]Restaurant, error) {
 	return res, nil
 }
 
-//CreateTask used for creation task in DB
+//SaveRest saves Restaurant to Trip
 var SaveRest = func(tripsID, restaurantsID uuid.UUID) error {
 	_, err := database.DB.Exec(saveRestToTrip, tripsID, restaurantsID)
 
 	return err
 }
 
-//GetTask used for getting task from DB
+//GetRestByID gets Restaurants from Trip by tripID
 var GetRestByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
 	err := database.DB.QueryRow(recGen("id"), id).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
 
-//DeleteTask used for deleting task from DB
+//DeleteRestFromDB deletes Restaurant from DB
 var DeleteRestFromDB = func(id uuid.UUID) error {
 	_, err := database.DB.Exec(deleteRequest, id)
 	return err
 }
 
-//GetTasks used for getting tasks from DB
-
+//GetRestByQuery gets Restaurants from Trip by incoming query
 var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
 
 	paramNames := make([]string, 0)
@@ -126,6 +125,7 @@ var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
 	return res, nil
 }
 
+//GetRestFromTrip gets Restaurants from Trip by tripID
 var GetRestFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
 	rows, err := database.DB.Query(getRestFromTrip, tripsID)
 	if err != nil {

@@ -11,6 +11,7 @@ const (
 	getTripsByTripID  = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
 )
 
+//Trip is a representation of Event Trip in DB
 type Trip struct {
 	TripID      uuid.UUID
 	UserID      uuid.UUID
@@ -22,6 +23,7 @@ type Trip struct {
 	Trains      []Train
 }
 
+//CreateTrip creates Trip and saves it to DB
 var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createTrip, trip.UserID).Scan(&id)
@@ -29,6 +31,7 @@ var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 	return id, err
 }
 
+//GetTripsByTripID gets Trips from DB by tripID
 var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 
 	var (
@@ -88,6 +91,7 @@ var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 	return trip, nil
 }
 
+//GetTripIDByUserID gets Trips from DB by userID
 var GetTripIDByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 
 	var (

@@ -16,6 +16,7 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
+//Get is...
 func Get(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if val, ok := query["id"]; ok {
@@ -34,9 +35,8 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, items)
 	}
 
-	//MAGIC BEGINS!!!
 	items, err := models.GetRestByQuery(query)
-	//MAGIC ENDS!!!
+
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get items", err)
 		return
@@ -45,6 +45,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, items)
 }
 
+//SaveRest is...
 func SaveRest(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
@@ -74,6 +75,7 @@ func SaveRest(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
+//Delete is...
 func Delete(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -94,6 +96,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
+//GetRestFromTrip is...
 func GetRestFromTrip(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
