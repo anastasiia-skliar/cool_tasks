@@ -12,16 +12,16 @@ CREATE TABLE restaurants (
 
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Крива липа', 'Lviv', 4, 3, 'Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи');
+  VALUES ( uuid_generate_v1(), 'Крива липа', 'Lviv', 4, 3, 'Culinary studio "Krivaya Lipa" is an author's cuisine without GMOs. True culinary masterpieces of only the best quality and fresh produce from well-known masters.');
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Криівка', 'Lviv', 5, 5, 'Автентичний заклад, оздоблений у вигляді польової криївки УПА, знаходиться у підвалі одного з будинків');
+  VALUES ( uuid_generate_v1(), 'Криівка', 'Lviv', 5, 5, 'The authentic institution, decorated in the form of a field shelter UPA, is in the basement of one of the houses');
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Живий хліб', 'Lviv', 5, 3, 'Хліб та булочки тут готують на натуральних заквасках з італійського борошна. Для круасанів використовують французьке масло.');
+  VALUES ( uuid_generate_v1(), 'Живий хліб', 'Lviv', 5, 3, 'Bread and rolls are cooked here on natural starter from Italian flour. For croissants, use French butter.');
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Фан-бар Банка', 'Lviv', 5, 4, 'Концептуальний демократичний бар, де вперше в Україні всі страви та напої подаються виключно у традиційних скляних банках. Все повинно бути в банках – в барі заборонені пляшки, тарілки, чарки, склянки й інший подібний посуд.');
+  VALUES ( uuid_generate_v1(), 'Фан-бар Банка', 'Lviv', 5, 4, 'Conceptual Democratic Bar, where for the first time in Ukraine all meals and drinks are served exclusively in traditional glass jars. Everything should be in the cans - bottles, plates, glasses and other similar dishes are forbidden in the bar.');
 
 
 -- TRIP_RESTAURANTS
