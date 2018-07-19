@@ -84,7 +84,7 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := DB.Query(request)
+	rows, err := DB.Query(request, params)
 	if err != nil {
 		return nil, err
 	}
