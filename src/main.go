@@ -5,15 +5,15 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/auth"
 )
 
 func main() {
-	configFile := flag.String("config", "./config.json", "Configuration file in JSON-format")
+	configFile := flag.String("config", "src/config.json", "Configuration file in JSON-format")
 	flag.Parse()
 
 	if len(*configFile) > 0 {
@@ -32,12 +32,13 @@ func main() {
 
 	database.DB, err = database.SetupPostgres(config.Config.Database)
 	if err != nil {
-		log.Fatalf("eror while loading postgreSQL: %s:", err)
+		log.Fatalf("error while loading postgreSQL: %s:", err)
 	}
 
 	database.Cache, err = database.SetupRedis(config.Config.Database)
+
 	if err != nil {
-		log.Fatalf("eror while loading redis: %s:", err)
+		log.Fatalf("error while loading redis: %s:", err)
 	}
 
 	defer f.Close()

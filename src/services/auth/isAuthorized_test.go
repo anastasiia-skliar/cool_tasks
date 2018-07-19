@@ -1,21 +1,20 @@
 package auth
 
 import (
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/urfave/negroni"
 )
 
 var cookieSession string = "6c3a65d23c5f26fc529f6c5ce01a6b31"
 
 type isAuthorizedTestCase struct {
-	name         string
-	url          string
-	cookieName   string
-	cookieValue  string
-	want         int
+	name        string
+	url         string
+	cookieName  string
+	cookieValue string
+	want        int
 }
 
 func TestIsAuthorized(t *testing.T) {
@@ -54,13 +53,19 @@ func TestIsAuthorized(t *testing.T) {
 			cookie := http.Cookie{Name: tc.cookieName, Value: tc.cookieValue}
 			req.AddCookie(&cookie)
 
-			middlewareManager := negroni.New(
+			fackedNext := func(w http.ResponseWriter, r *http.Request) {
+				common.RenderJSON(w, r, "200")
+			}
+
+			IsAuthorized(rec, req, fackedNext)
+
+			/*middlewareManager := negroni.New(
 				negroni.HandlerFunc(IsAuthorized),
 			)
 			middlewareManager.Use(negroni.NewRecovery())
 			middlewareManager.UseHandler(services.NewRouter())
 
-			middlewareManager.ServeHTTP(rec, req)
+			middlewareManager.ServeHTTP(rec, req)*/
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)

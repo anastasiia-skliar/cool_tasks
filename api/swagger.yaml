@@ -1,5 +1,3 @@
-# this is an example of the Cool Tasks Service API
-# as a demonstration of an API spec in YAML
 swagger: '2.0'
 info:
   title: Cool Tasks Service API
@@ -7,12 +5,13 @@ info:
 schemes:
   - http
 host: localhost:8080
+basePath: /v1
 produces:
   - application/json
 consumes:
   - application/json
 paths:
-  /v1/hello-world:
+  /hello-world:
     get:
       summary: Hello World
       tags:
@@ -22,6 +21,129 @@ paths:
           description: Hello World
           schema:
             $ref: '#/definitions/HelloWorldResponse'
+  /login:
+    post:
+      summary: Login method, creates user session
+      tags:
+        - login
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            properties:
+              login:
+                type: string
+                minLength: 1
+                maxLength: 256
+              password:
+                type: string
+                minLength: 1
+                maxLength: 256
+      responses:
+        '200':
+          description: Session successfully created
+          schema:
+            type: string
+            properties:
+              sessionID:
+                type: string
+        '401':
+          description: Login failed
+
+  /logout:
+    post:
+      summary: Close session by ID
+      tags:
+       - logout
+      responses:
+        '200':
+          description: Successfull logout
+        '401':
+          description: Not autorized
+  /users:
+    get:
+      summary: Get all users info
+      tags:
+      - get all users
+      responses:
+        '200':
+          description: All users sent
+          schema:
+            $ref: "#/definitions/User"
+        '404':
+          description: Failed to add user
+    post:
+      summary: Post user to DB
+      tags:
+      - post user
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to create.
+          shema:
+            $ref: "#/definitions/User"
+      responses:
+        200:
+        404:
+  /users{id}:
+    get:
+      summary: Get all users info
+      tags:
+        - get user
+      parameters:
+      - name: task_id
+        required: true
+        type: string
+      responses:
+        200:
+          description: All users send to client
+        404:
+          description: Can't get users
+    delete:
+  /tasks:
+    get:
+      summary: Get all users info
+      tags:
+      - login
+      responses:
+        200:
+          description: All users send to client
+        404:
+          description: Can't get users
+    post:
+      summary: Add user
+      tags:
+      - login
+      responses:
+       200:
+        description: User added
+        shema:
+          required:
+          - user ID
+          - user name
+          - time
+          - creation time
+          - update time
+          - description
+       404:
+        description: Can't add this task
+  /tasks{id}:
+    get:
+      summary: Get Task by ID
+        tags:
+        - tasks
+        responses:
+          200:
+            description: Send task by it's ID
+            required:
+            - Task ID
+          404:
+          description: Can't find task
+    delete:
+      summary: Delete Task by ID
 definitions:
   HelloWorldResponse:
     type: object
@@ -29,3 +151,39 @@ definitions:
       message:
         type: string
         description: Hello World
+  User:
+      type: object
+      required:
+        - Name
+        - Login
+        - Password
+      properties:
+        ID:
+          type: string
+          description: The user ID in DB in UUID format.
+        Name:
+          type: string
+          description: User name.
+        Login:
+          type: string
+          description: User login.
+        Password:
+          type: string
+          description: User password
+  TaskModel:
+    type: object
+    properties:
+      ID:
+        type: UUID
+      UserID:
+        type: UUID
+      Name:
+        type: string
+      Time:
+        type: time
+      CreatedAt:
+        type: time
+      UpdatedAt:
+        type: time
+      Desc:
+        type: string

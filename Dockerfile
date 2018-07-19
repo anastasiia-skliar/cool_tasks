@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-COPY cool_tasks /opt/cool_tasks/bin/
+COPY src/cool_tasks /opt/cool_tasks/bin/
 COPY config.json /opt/cool_tasks/config/
 
 RUN chmod +x /opt/cool_tasks/bin/*

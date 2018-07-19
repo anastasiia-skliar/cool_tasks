@@ -1,28 +1,32 @@
 package auth
 
 import (
-	"net/http"
-	"log"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+	"log"
+	"net/http"
 )
 
 //Start Mocked func that check is the key exist on redis and return true is exist
-var IsExistRedis = func (key string) bool {
+var IsExistRedis = func(key string) bool {
+	_, err := database.Cache.Get(key).Result()
 
-	redisKey := "6c3a65d23c5f26fc529f6c5ce01a6b31"
-
-	if key == redisKey {
-		return true
+	if err != nil {
+		return false
 	}
-	return false
+	return true
 }
 
 //End Mocked func
 
 func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
+	if r.URL.Path == "/v1/login" {
+		next(w, r)
+		return
+	}
 
+	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 	if err != nil {
 		log.Println(err, "ERROR: Can't get cookies")
 		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)
