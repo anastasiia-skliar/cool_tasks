@@ -1,8 +1,6 @@
 package models
 
 import (
-	"errors"
-	sq "github.com/Masterminds/squirrel"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
@@ -48,39 +46,9 @@ var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
 }
 
 var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
-	museums := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("museums")
-	var (
-		request string
-		err     error
-		b       sq.And = nil
-	)
-	for key, value := range params {
-		switch key {
-		case "name", "location", "museum_type":
-			if len(value) > 1 {
-				var or sq.Or = nil
-				for _, v := range value {
-					or = append(or, sq.Eq{key: v})
-				}
-				b = append(b, or)
-			} else {
-				b = append(b, sq.Eq{key: value[0]})
-			}
-		case "price", "opened_at", "closed_at":
-			if len(value) == 2 {
-				b = append(b, sq.And{sq.GtOrEq{key: value[1]}, sq.LtOrEq{key: value[0]}})
-			} else {
-				b = append(b, sq.Eq{key: value[0]})
-
-			}
-		case "id":
-			b = append(b, sq.Eq{key: value[0]})
-		default:
-			return nil, errors.New("ERROR: Bad request")
-		}
-	}
-
-	request, args, err := museums.Where(b).ToSql()
+	stringArgs := []string{"name", "location", "museum_type"}
+	numberArgs := []string{"price", "opened_at", "closed_at"}
+	request, args, err := SqlGenerator("museums", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}

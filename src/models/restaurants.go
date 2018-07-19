@@ -91,39 +91,28 @@ var DeleteRestFromDB = func(id uuid.UUID) error {
 
 //GetTasks used for getting tasks from DB
 
-var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
+var GetRestByQuery = func(params url.Values) ([]Restaurant, error) {
+	stringArgs := []string{"name", "location"}
+	numberArgs := []string{"stars", "prices"}
+	request, args, err := SqlGenerator("restaurants", stringArgs, numberArgs, params)
+	if err != nil {
+		return nil, err
+	}
 
-	paramNames := make([]string, 0)
-	paramVals := make([]string, 0)
-	for key, value := range query {
-		if len(value) > 0 {
-			for _, v := range value {
-				paramNames = append(paramNames, key)
-				paramVals = append(paramVals, v)
-			}
-		} else {
-			continue
+	rows, err := database.DB.Query(request, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	restaurant := make([]Restaurant, 0)
+	for rows.Next() {
+		var r Restaurant
+		if err := rows.Scan(&r.ID, &r.Name, &r.Location, &r.Stars, &r.Prices, &r.Description); err != nil {
+			return nil, err
 		}
-
+		restaurant = append(restaurant, r)
 	}
-
-	s := make([]interface{}, len(paramVals))
-	for i, v := range paramVals {
-		s[i] = v
-	}
-
-	rows, err := database.DB.Query(recGen(paramNames...), s...)
-
-	if err != nil {
-		fmt.Println(err)
-		return []Restaurant{}, err
-	}
-	res, err := parseResult(rows)
-	if err != nil {
-		fmt.Println(err)
-		return []Restaurant{}, err
-	}
-	return res, nil
+	return restaurant, nil
 }
 
 var GetRestFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {

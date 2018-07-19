@@ -17,32 +17,15 @@ type successDelete struct {
 }
 
 func Get(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-	if val, ok := query["id"]; ok {
-		id, err := uuid.FromString(val[0])
-		if err != nil {
-			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
-			return
-		}
-		items, err := models.GetRestByID(id)
+	params := r.URL.Query()
 
-		if err != nil {
-			common.SendNotFound(w, r, "ERROR: Can't get items", err)
-			return
-		}
-
-		common.RenderJSON(w, r, items)
-	}
-
-	//MAGIC BEGINS!!!
-	items, err := models.GetRestByQuery(query)
-	//MAGIC ENDS!!!
+	restaurants, err := models.GetRestByQuery(params)
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get items", err)
+		common.SendNotFound(w, r, "ERROR: Can't find any restaurants", err)
 		return
 	}
 
-	common.RenderJSON(w, r, items)
+	common.RenderJSON(w, r, restaurants)
 }
 
 func SaveRest(w http.ResponseWriter, r *http.Request) {

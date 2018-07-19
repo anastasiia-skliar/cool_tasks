@@ -1,8 +1,6 @@
 package models
 
 import (
-	"errors"
-	sq "github.com/Masterminds/squirrel"
 	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
@@ -49,39 +47,11 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 }
 
 var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
-
-	var and sq.And = nil
-	flights := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("flights")
-	for key, value := range params {
-		var or sq.Or = nil
-		switch key {
-		case "departure_city", "arrival_city":
-			if len(value) > 1 {
-				for _, v := range value {
-					or = append(or, sq.Eq{key: v})
-				}
-				and = append(and, or)
-			} else {
-				and = append(and, sq.Eq{key: value[0]})
-			}
-		case "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
-			if len(value) > 1 {
-				and = append(and, sq.And{sq.GtOrEq{key: value[1]}, sq.LtOrEq{key: value[0]}})
-			} else {
-				and = append(and, sq.Eq{key: value[0]})
-			}
-		case "id":
-			and = append(and, sq.Eq{key: value[0]})
-		default:
-			return nil, errors.New("ERROR: Bad request")
-		}
-	}
-
-	req := flights.Where(and)
-
-	request, args, err := req.ToSql()
+	stringArgs := []string{"departure_city", "arrival_city"}
+	numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
+	request, args, err := SqlGenerator("flights", stringArgs, numberArgs, params)
 	if err != nil {
-		return nil, errors.New("ERROR: Bad request")
+		return nil, err
 	}
 	rows, err := DB.Query(request, args...)
 	if err != nil {
