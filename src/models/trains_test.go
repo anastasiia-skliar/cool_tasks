@@ -22,6 +22,11 @@ type trainsTestCase struct {
 
 func TestGetTrains(t *testing.T) {
 	testCases := []trainsTestCase{
+		{"id departure_time departure_date arrival_time arrival_date price",
+		"localhost:8080/hello?id=00000000-0000-0000-0000-000000000001&departure_time=12:00:00" +
+			"&arrival_time=15:00:00&arrival_date=2018-07-21&price=200uah",
+
+		},
 		{
 			"Departure city & arrival City",
 			"localhost:8080/hello?departure_city=Lviv&arrival_city=Kyiv",
