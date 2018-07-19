@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"log"
+	_ "github.com/lib/pq"
 )
 
 //DB is used for postgres connection
