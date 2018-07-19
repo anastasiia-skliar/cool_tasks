@@ -48,7 +48,7 @@ var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
 var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	stringArgs := []string{"name", "location", "museum_type"}
 	numberArgs := []string{"price", "opened_at", "closed_at"}
-	request, args, err := SqlGenerator("museums", stringArgs, numberArgs, params)
+	request, args, err := SQLGenerator("museums", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}

@@ -48,7 +48,7 @@ var GetHotelsByTrip = func(tripID uuid.UUID) ([]Hotel, error) {
 var GetHotelsByRequest = func(params url.Values) ([]Hotel, error) {
 	stringArgs := []string{"name", "city_name", "address"}
 	numberArgs := []string{"class", "capacity", "rooms_left", "floors", "max_price"}
-	request, args, err := SqlGenerator("hotels", stringArgs, numberArgs, params)
+	request, args, err := SQLGenerator("hotels", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}

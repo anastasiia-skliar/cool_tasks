@@ -94,7 +94,7 @@ var DeleteRestFromDB = func(id uuid.UUID) error {
 var GetRestByQuery = func(params url.Values) ([]Restaurant, error) {
 	stringArgs := []string{"name", "location"}
 	numberArgs := []string{"stars", "prices"}
-	request, args, err := SqlGenerator("restaurants", stringArgs, numberArgs, params)
+	request, args, err := SQLGenerator("restaurants", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}

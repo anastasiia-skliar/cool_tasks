@@ -9,7 +9,7 @@ import (
 func TestSqlGenerator(t *testing.T) {
 	var expects = "SELECT * FROM museums WHERE (1=1)"
 	r, _ := http.NewRequest(http.MethodGet, "/v1/museums", nil)
-	request, _, err := SqlGenerator("museums", nil, nil, r.URL.Query())
+	request, _, err := SQLGenerator("museums", nil, nil, r.URL.Query())
 	if err != nil {
 		t.Errorf("error while generating query: %s", err)
 	}

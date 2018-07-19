@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-func Contains(array []string, value string) bool {
+func contains(array []string, value string) bool {
 	for _, v := range array {
 		if v == value {
 			return true
@@ -15,18 +15,19 @@ func Contains(array []string, value string) bool {
 	return false
 }
 
-func SqlGenerator(findType string, stringArgs []string, numberArgs []string, params url.Values) (string, []interface{}, error) {
+//SQLGenerator is universal function for dynamic SQL queries
+func SQLGenerator(findType string, stringArgs []string, numberArgs []string, params url.Values) (string, []interface{}, error) {
 	req := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From(findType)
 	var (
 		request string
 		err     error
-		and     sq.And = nil
+		and     sq.And
 	)
 	for key, value := range params {
 		switch {
-		case Contains(stringArgs, key):
+		case contains(stringArgs, key):
 			if len(value) > 1 {
-				var or sq.Or = nil
+				var or sq.Or
 				for _, v := range value {
 					or = append(or, sq.Eq{key: v})
 				}
@@ -34,7 +35,7 @@ func SqlGenerator(findType string, stringArgs []string, numberArgs []string, par
 			} else {
 				and = append(and, sq.Eq{key: value[0]})
 			}
-		case Contains(numberArgs, key):
+		case contains(numberArgs, key):
 			if len(value) == 2 {
 				and = append(and, sq.And{sq.GtOrEq{key: value[1]}, sq.LtOrEq{key: value[0]}})
 			} else {

@@ -30,7 +30,7 @@ type Train struct {
 var GetTrains = func(params url.Values) ([]Train, error) {
 	stringArgs := []string{"departure_city", "arrival_city"}
 	numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
-	request, args, err := SqlGenerator("trains", stringArgs, numberArgs, params)
+	request, args, err := SQLGenerator("trains", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}

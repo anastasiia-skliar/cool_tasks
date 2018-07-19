@@ -49,7 +49,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 	stringArgs := []string{"departure_city", "arrival_city"}
 	numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
-	request, args, err := SqlGenerator("flights", stringArgs, numberArgs, params)
+	request, args, err := SQLGenerator("flights", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}

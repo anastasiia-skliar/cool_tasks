@@ -46,7 +46,7 @@ var GetEventsByTrip = func(tripID uuid.UUID) ([]Event, error) {
 var GetEventsByRequest = func(params url.Values) ([]Event, error) {
 	stringArgs := []string{"title", "category", "town"}
 	numberArgs := []string{"price", "date"}
-	request, args, err := SqlGenerator("events", stringArgs, numberArgs, params)
+	request, args, err := SQLGenerator("events", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
 	}
