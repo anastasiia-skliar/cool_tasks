@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/go-redis/redis"
+	_ "github.com/lib/pq"
 	"log"
 )
 

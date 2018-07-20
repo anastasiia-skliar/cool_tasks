@@ -95,11 +95,11 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
-	http.MethodGet:  http.HandlerFunc(restaurants.Get),
-	http.MethodPost: http.HandlerFunc(restaurants.SaveRest),
+		http.MethodGet:  http.HandlerFunc(restaurants.Get),
+		http.MethodPost: http.HandlerFunc(restaurants.SaveRestaurant),
 	}))
 	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
-	http.MethodGet: http.HandlerFunc(restaurants.GetRestFromTrip),
+		http.MethodGet: http.HandlerFunc(restaurants.GetRestaurantFromTrip),
 	}))
 
 	apiV1.Handle("/users/trips/{id}", common.MethodHandler(map[string]http.Handler{

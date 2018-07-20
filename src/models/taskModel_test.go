@@ -36,8 +36,10 @@ func TestCreateTask(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", taskMockErr)
 	}
 
-	mock.ExpectExec("INSERT INTO tasks").WithArgs(UserID, "TaskOne",
-		until, currentTime, currentTime, "Do smth").WillReturnResult(sqlmock.NewResult(1, 1))
+	rows := sqlmock.NewRows([]string{"ID"}).AddRow(ID.Bytes())
+
+	mock.ExpectQuery("INSERT INTO tasks").WithArgs(UserID, "TaskOne",
+		until, currentTime, currentTime, "Do smth").WillReturnRows(rows)
 
 	if _, err := CreateTask(task); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

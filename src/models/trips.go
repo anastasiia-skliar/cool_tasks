@@ -77,7 +77,7 @@ var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 	}
 	trip.Trains = trains
 
-	restaurants, err = GetRestFromTrip(id)
+	restaurants, err = GetRestaurantFromTrip(id)
 	if err != nil {
 		return trip, err
 	}
