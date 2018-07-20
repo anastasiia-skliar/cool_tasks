@@ -1,11 +1,14 @@
 package models
 
 import (
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/satori/go.uuid"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"time"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+
+	"github.com/satori/go.uuid"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+
 )
 
 var taskMockErr error

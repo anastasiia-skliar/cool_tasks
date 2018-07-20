@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/satori/go.uuid"
 	"net/url"
+
+	"github.com/satori/go.uuid"
 )
 
 func MockedGetEvents() {
