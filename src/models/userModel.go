@@ -3,12 +3,12 @@ package models
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
+	"regexp"
 )
 
 const (
 	createUser     = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
 	getUser        = "SELECT * FROM users WHERE id = $1"
-	getUserByID    = "SELECT ID, Password FROM users WHERE Login = $1"
 	getUserByLogin = "SELECT * FROM users WHERE login = $1"
 	deleteUser     = "DELETE FROM users WHERE id = $1"
 	getUsers       = "SELECT * FROM users"
@@ -35,6 +35,7 @@ var GetUser = func(id uuid.UUID) (User, error) {
 	var user User
 	err := database.DB.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 
+	user.encryptPass("*")
 	return user, err
 }
 
@@ -66,7 +67,13 @@ var GetUsers = func() ([]User, error) {
 		if err := rows.Scan(&u.ID, &u.Name, &u.Login, &u.Password); err != nil {
 			return []User{}, err
 		}
+		u.encryptPass("*")
 		users = append(users, u)
 	}
 	return users, nil
+}
+
+func (user *User) encryptPass(r string) {
+	re := regexp.MustCompile(".")
+	user.Password = re.ReplaceAllString(user.Password, r)
 }

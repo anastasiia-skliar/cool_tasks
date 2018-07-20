@@ -7,10 +7,18 @@ packages = \
     ./services/auth \
     ./services/usersCRUD \
     ./services/tasksCRUD \
+    ./services/events \
+    ./services/flights \
+    ./services/museums \
+    ./services/restaurants \
     ./services/trains \
     ./services/events \
+    ./services/hotels \
 
 all: test format go-build dc-build dc-up
+
+setup:
+	go get -u gopkg.in/alecthomas/gometalinter.v2
 
 test:
 	@$(foreach package,$(packages), set -e; \

@@ -9,16 +9,10 @@ price INT ,
 PRIMARY KEY (id)
 );
 
-CREATE TABLE trips (
-trips_id uuid DEFAULT uuid_generate_v1(),
-users_id uuid REFERENCES users (id) ON DELETE CASCADE,
-PRIMARY KEY (trips_id)
-);
-
 CREATE TABLE trips_events (
 id uuid DEFAULT uuid_generate_v1(),
-events_id uuid REFERENCES events(id) ON  DELETE  CASCADE,
-trips_id uuid REFERENCES trips(trips_id) ON  DELETE  CASCADE,
+event_id uuid REFERENCES events(id) ON  DELETE  CASCADE,
+trip_id uuid REFERENCES trips(trip_id) ON  DELETE  CASCADE,
 PRIMARY KEY (id)
 );
 

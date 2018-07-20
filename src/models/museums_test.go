@@ -9,18 +9,18 @@ import (
 	"time"
 )
 
-var err error
+var museumMockErr error
 
 func TestGetMuseumsByRequest(t *testing.T) {
 	originalDB := database.DB
-	database.DB, mock, err = sqlmock.New()
+	database.DB, mock, museumMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 	testTime, _ := time.Parse("15:04:05", "12:00:00")
-	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	MuseumID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	var expects = []Museum{
 		{
-			ID:         MuseumId,
+			ID:         MuseumID,
 			Name:       "Ermitage",
 			Location:   "Peterburg",
 			Price:      1111,
@@ -30,7 +30,7 @@ func TestGetMuseumsByRequest(t *testing.T) {
 			Info:       "Cool",
 		},
 		{
-			ID:         MuseumId,
+			ID:         MuseumID,
 			Name:       "Luvre",
 			Location:   "Paris",
 			Price:      1110,
@@ -41,9 +41,13 @@ func TestGetMuseumsByRequest(t *testing.T) {
 		},
 	}
 
+	if museumMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", museumMockErr)
+	}
+
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
-		AddRow(MuseumId.Bytes(), "Ermitage", "Peterburg", 1111, testTime, testTime, "Gallery", "Cool").
-		AddRow(MuseumId.Bytes(), "Luvre", "Paris", 1110, testTime, testTime, "Gallery", "Cool")
+		AddRow(MuseumID.Bytes(), "Ermitage", "Peterburg", 1111, testTime, testTime, "Gallery", "Cool").
+		AddRow(MuseumID.Bytes(), "Luvre", "Paris", 1110, testTime, testTime, "Gallery", "Cool")
 
 	mock.ExpectQuery("SELECT (.+) FROM museums").WillReturnRows(rows)
 
@@ -67,18 +71,18 @@ func TestGetMuseumsByRequest(t *testing.T) {
 
 func TestAddMuseumToTrip(t *testing.T) {
 	originalDB := database.DB
-	database.DB, mock, err = sqlmock.New()
+	database.DB, mock, museumMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
-	TripId, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	TripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	MuseumID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if museumMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", museumMockErr)
 	}
 
-	mock.ExpectExec("INSERT INTO trips_museums").WithArgs(MuseumId, TripId).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := AddMuseumToTrip(MuseumId, TripId); err != nil {
+	mock.ExpectExec("INSERT INTO trips_museums").WithArgs(MuseumID, TripID).WillReturnResult(sqlmock.NewResult(1, 1))
+	if err := AddMuseumToTrip(MuseumID, TripID); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -89,15 +93,15 @@ func TestAddMuseumToTrip(t *testing.T) {
 
 func TestGetMuseumByTrip(t *testing.T) {
 	originalDB := database.DB
-	database.DB, mock, err = sqlmock.New()
+	database.DB, mock, museumMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
 	testTime, _ := time.Parse("15:04:05", "12:00:00")
-	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	MuseumID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	expected := Museum{
 
-		MuseumId,
+		MuseumID,
 		"Louvre",
 		"Paris",
 		1111,
@@ -107,16 +111,16 @@ func TestGetMuseumByTrip(t *testing.T) {
 		"Cool",
 	}
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if museumMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", museumMockErr)
 	}
 
-	rows := sqlmock.NewRows([]string{"MuseumId", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
-		AddRow(MuseumId.Bytes(), "Louvre", "Paris", 1111, testTime, testTime, "History", "Cool")
+	rows := sqlmock.NewRows([]string{"MuseumID", "Name", "Location", "Price", "OpenedAt", "ClosedAt", "MuseumType", "additional_info"}).
+		AddRow(MuseumID.Bytes(), "Louvre", "Paris", 1111, testTime, testTime, "History", "Cool")
 
 	mock.ExpectQuery("SELECT (.+) FROM museums INNER JOIN trips_museums ON museums.id=trips_museums.museum_id AND trips_museums.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)
 
-	result, err := GetMuseumsByTrip(MuseumId)
+	result, err := GetMuseumsByTrip(MuseumID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	createTask   = "INSERT INTO tasks (user_id, name, time, created_at, updated_at, description) VALUES ($1, $2, $3, $4, $5, $6)"
+	createTask   = "INSERT INTO tasks (user_id, name, time, created_at, updated_at, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id"
 	getTask      = "SELECT * FROM tasks WHERE id = $1"
 	deleteTask   = "DELETE FROM tasks WHERE id = $1"
 	getTasks     = "SELECT * FROM tasks"
@@ -27,7 +27,8 @@ type Task struct {
 
 //CreateTask used for creation task in DB
 var CreateTask = func(task Task) (Task, error) {
-	_, err := database.DB.Exec(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc)
+	err := database.DB.QueryRow(createTask, &task.UserID, task.Name,
+		task.Time, task.CreatedAt, task.UpdatedAt, task.Desc).Scan(&task.ID)
 
 	return task, err
 }

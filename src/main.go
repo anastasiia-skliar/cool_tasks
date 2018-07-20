@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("error while reading config: %s", err)
 	}
 
-	f, err := os.OpenFile(config.Config.LogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(config.Config.LogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}

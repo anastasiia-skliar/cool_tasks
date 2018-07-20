@@ -5,6 +5,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"net/url"
 	"testing"
 	"time"
 )
@@ -20,6 +21,9 @@ func TestGetTrains(t *testing.T) {
 	database.DB, mock, mockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
+	rawUrl, _ := url.Parse("localhost:8080/hello?departure_city=Lviv&arrival_city=Kyiv")
+	params := rawUrl.Query()
+
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	departureTime, _ := time.Parse("15:04:05", "12:00:00")
@@ -29,28 +33,28 @@ func TestGetTrains(t *testing.T) {
 
 	expects := []models.Train{
 		{
-			ID,
-			departureTime,
-			departureDate,
-			arrivalTime,
-			arrivalDate,
-			"Lviv",
-			"Kyiv",
-			"el",
-			"coupe",
-			"200uah",
+			ID:            ID,
+			DepartureTime: departureTime,
+			DepartureDate: departureDate,
+			ArrivalTime:   arrivalTime,
+			ArrivalDate:   arrivalDate,
+			DepartureCity: "Lviv",
+			ArrivalCity:   "Kyiv",
+			TrainType:     "el",
+			CarType:       "coupe",
+			Price:         "200uah",
 		},
 		{
-			ID,
-			departureTime,
-			departureDate,
-			arrivalTime,
-			arrivalDate,
-			"Lviv",
-			"Kharkiv",
-			"el",
-			"coupe",
-			"250uah",
+			ID:            ID,
+			DepartureTime: departureTime,
+			DepartureDate: departureDate,
+			ArrivalTime:   arrivalTime,
+			ArrivalDate:   arrivalDate,
+			DepartureCity: "Lviv",
+			ArrivalCity:   "Kyiv",
+			TrainType:     "el",
+			CarType:       "coupe",
+			Price:         "250uah",
 		},
 	}
 
@@ -62,11 +66,11 @@ func TestGetTrains(t *testing.T) {
 		"departure_city", "arrival_city", "train_type", "car_type", "price"}).
 		AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
 			"Lviv", "Kyiv", "el", "coupe", "200uah").AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
-		"Lviv", "Kharkiv", "el", "coupe", "250uah")
+		"Lviv", "Kyiv", "el", "coupe", "250uah")
 
 	mock.ExpectQuery("SELECT (.+) FROM trains").WillReturnRows(rows)
 
-	result, err := models.GetTrains("SELECT (.+) FROM trains")
+	result, err := models.GetTrains(params)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
@@ -82,7 +86,7 @@ func TestGetTrains(t *testing.T) {
 	}
 }
 
-func TestSaveToTrip(t *testing.T) {
+func TestSaveTrainToTrip(t *testing.T) {
 
 	originalDB := database.DB
 	database.DB, mock, mockErr = sqlmock.New()
@@ -105,7 +109,7 @@ func TestSaveToTrip(t *testing.T) {
 	}
 }
 
-func TestGetFromTrip(t *testing.T) {
+func TestGetTrainFromTrip(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, mockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
@@ -123,28 +127,28 @@ func TestGetFromTrip(t *testing.T) {
 
 	expects := []models.Train{
 		{
-			ID,
-			departureTime,
-			departureDate,
-			arrivalTime,
-			arrivalDate,
-			"Lviv",
-			"Kyiv",
-			"el",
-			"coupe",
-			"200uah",
+			ID:            ID,
+			DepartureTime: departureTime,
+			DepartureDate: departureDate,
+			ArrivalTime:   arrivalTime,
+			ArrivalDate:   arrivalDate,
+			DepartureCity: "Lviv",
+			ArrivalCity:   "Kyiv",
+			TrainType:     "el",
+			CarType:       "coupe",
+			Price:         "200uah",
 		},
 		{
-			ID,
-			departureTime,
-			departureDate,
-			arrivalTime,
-			arrivalDate,
-			"Lviv",
-			"Kharkiv",
-			"el",
-			"coupe",
-			"250uah",
+			ID:            ID,
+			DepartureTime: departureTime,
+			DepartureDate: departureDate,
+			ArrivalTime:   arrivalTime,
+			ArrivalDate:   arrivalDate,
+			DepartureCity: "Lviv",
+			ArrivalCity:   "Kharkiv",
+			TrainType:     "el",
+			CarType:       "coupe",
+			Price:         "250uah",
 		},
 	}
 
@@ -153,9 +157,9 @@ func TestGetFromTrip(t *testing.T) {
 		AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
 			"Lviv", "Kyiv", "el", "coupe", "200uah")
 
-	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.trains_id = trains.id AND trips_trains.trips").WithArgs(ID).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id").WithArgs(ID).WillReturnRows(rows)
 
-	result, err := models.GetFromTrip(ID)
+	result, err := models.GetTrainFromTrip(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

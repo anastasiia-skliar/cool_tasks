@@ -9,10 +9,12 @@ import (
 	"time"
 )
 
+var flightMockErr error
+
 func TestGetFlightsByRequest(t *testing.T) {
 
 	originalDB := database.DB
-	database.DB, mock, err = sqlmock.New()
+	database.DB, mock, flightMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
 	departureTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
@@ -43,8 +45,8 @@ func TestGetFlightsByRequest(t *testing.T) {
 		},
 	}
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if flightMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", flightMockErr)
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}).
@@ -74,14 +76,14 @@ func TestGetFlightsByRequest(t *testing.T) {
 
 func TestAddFlightToTrip(t *testing.T) {
 	originalDB := database.DB
-	database.DB, mock, err = sqlmock.New()
+	database.DB, mock, flightMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
 	flightID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 	tripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if flightMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", flightMockErr)
 	}
 
 	mock.ExpectExec("INSERT INTO trips_flights").WithArgs(flightID, tripID).WillReturnResult(sqlmock.NewResult(1, 1))
@@ -96,7 +98,7 @@ func TestAddFlightToTrip(t *testing.T) {
 
 func TestGetFlightsByTrip(t *testing.T) {
 	originalDB := database.DB
-	database.DB, mock, err = sqlmock.New()
+	database.DB, mock, flightMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
 	departureTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
@@ -116,8 +118,8 @@ func TestGetFlightsByTrip(t *testing.T) {
 		100,
 	}
 
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	if flightMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", flightMockErr)
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}).

@@ -18,6 +18,7 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
+//GetTasks is...
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 
 	tasks, err := models.GetTasks()
@@ -30,6 +31,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, tasks)
 }
 
+//GetTasksByID is...
 func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -50,6 +52,7 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, task)
 }
 
+//CreateTask is...
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	var newTask models.Task
@@ -96,6 +99,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", Result: resultTask})
 }
 
+//DeleteTasks is...
 func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -116,9 +120,16 @@ func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
+//GetUserTasks is...
 func GetUserTasks(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
 	idUser, err := uuid.FromString(params["id"])
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get user", err)
+		return
+	}
+
 	tasks, err := models.GetUserTasks(idUser)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get user", err)
