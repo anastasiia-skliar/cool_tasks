@@ -4,14 +4,39 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"net/http"
+	"net/url"
 	"testing"
 	"time"
 )
 
 var eventMockErr error
 
+type eventsTestCase struct {
+	name string
+	url  string
+}
+
 func TestGetEventsByRequest(t *testing.T) {
+	testCase := []eventsTestCase{
+		{"test with ID param",
+			"localhost:8080/v1/events?id=00000000-0000-0000-0000-000000000001",
+		},
+		{"test with date price #1",
+			"localhost:8080/v1/events?date=12:00:00&price=50",
+		},
+		{"test with 2 price params",
+			"localhost:8080/v1/events?&price=50&price=300",
+		},
+		{
+			"test with town, title, category",
+			"localhost:8080/v1/events?&town=Kiev&title=Careerday&category=work",
+		},
+		{
+			"test with 2 town, title, category",
+			"localhost:8080/v1/events?&town=Kiev&town=Lviv&title=Careerday&category=work",
+		},
+	}
+
 	originalDB := database.DB
 	database.DB, mock, eventMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
@@ -37,31 +62,35 @@ func TestGetEventsByRequest(t *testing.T) {
 		},
 	}
 
-	if eventMockErr != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", eventMockErr)
-	}
+	for _, tc := range testCase {
+		rawUrl, _ := url.Parse(tc.url)
+		params := rawUrl.Query()
 
-	rows := sqlmock.NewRows([]string{"ID", "Title", "Category", "Town", "Date", "Price"}).
-		AddRow(EventID.Bytes(), "Careerday", "work", "Kiev", testTime, 50).
-		AddRow(EventID.Bytes(), "ProjectX", "entertaiment", "Lviv", testTime, 300)
-
-	mock.ExpectQuery("SELECT (.+) FROM events").WillReturnRows(rows)
-
-	req, _ := http.NewRequest(http.MethodGet, "/v1/events", nil)
-
-	result, err := GetEventsByRequest(req.URL.Query())
-
-	if err != nil {
-		t.Errorf("error was not expected while updating stats: %s", err)
-	}
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
-
-	for i := 0; i < len(result); i++ {
-		if expects[i] != result[i] {
-			t.Error("Expected:", expects[i], "Was:", result[i])
+		if eventMockErr != nil {
+			t.Fatalf("an error '%s' was not expected when opening a stub database connection", eventMockErr)
 		}
+
+		rows := sqlmock.NewRows([]string{"ID", "Title", "Category", "Town", "Date", "Price"}).
+			AddRow(EventID.Bytes(), "Careerday", "work", "Kiev", testTime, 50).
+			AddRow(EventID.Bytes(), "ProjectX", "entertaiment", "Lviv", testTime, 300)
+
+		mock.ExpectQuery("SELECT (.+) FROM events").WillReturnRows(rows)
+
+		result, err := GetEventsByRequest(params)
+
+		if err != nil {
+			t.Errorf("error was not expected while updating stats: %s", err)
+		}
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("there were unfulfilled expectations: %s", err)
+		}
+
+		for i := 0; i < len(result); i++ {
+			if expects[i] != result[i] {
+				t.Error("Expected:", expects[i], "Was:", result[i])
+			}
+		}
+
 	}
 }
 
