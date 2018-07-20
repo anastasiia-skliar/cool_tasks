@@ -11,7 +11,7 @@ import (
 
 const (
 	addEventToTrip = "INSERT INTO trips_events (event_id, trip_id) VALUES ($1, $2)"
-	getEventByTrip = "SELECT * FROM events INNER JOIN trips_events ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
+	getEventByTrip = "SELECT events.* FROM events INNER JOIN trips_events ON events.id=trips_events.event_id AND trips_events.trip_id=$1"
 )
 
 type Event struct {
@@ -74,11 +74,12 @@ var GetEventsByRequest = func(params url.Values) ([]Event, error) {
 		}
 	}
 	req := events.Where(and)
-	request, _, err := req.ToSql()
+	var args []interface{}
+	request, args, err := req.ToSql()
 	if err != nil {
 		return []Event{}, errors.New("ERROR: Bad request")
 	}
-	rows, err := DB.Query(request)
+	rows, err := DB.Query(request, args...)
 	if err != nil {
 		return []Event{}, err
 	}

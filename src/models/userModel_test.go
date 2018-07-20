@@ -82,7 +82,9 @@ func TestGetUser(t *testing.T) {
 func TestGetUserByLogin(t *testing.T) {
 
 	originalDB := database.DB
+
 	database.DB, mock, mockErr = sqlmock.New()
+
 	defer func() { database.DB = originalDB }()
 
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")

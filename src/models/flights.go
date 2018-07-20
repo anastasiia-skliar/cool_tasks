@@ -11,18 +11,18 @@ import (
 
 const (
 	addFlightToTrip = "INSERT INTO trips_flights (flight_id, trip_id) VALUES ($1, $2)"
-	getFlightByTrip = "SELECT * FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
+	getFlightByTrip = "SELECT flights.* FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=$1"
 )
 
 type Flight struct {
 	ID            uuid.UUID
-	departureCity string
-	departureTime time.Time
-	departureDate time.Time
-	arrivalCity   string
-	arrivalTime   time.Time
-	arrivalDate   time.Time
-	price         int
+	DepartureCity string
+	DepartureTime time.Time
+	DepartureDate time.Time
+	ArrivalCity   string
+	ArrivalTime   time.Time
+	ArrivalDate   time.Time
+	Price         int
 }
 
 var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) error {
@@ -40,7 +40,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 
 	for rows.Next() {
 		var f Flight
-		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
+		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
 			return nil, err
 		}
 		flights = append(flights, f)
@@ -79,11 +79,11 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	req := flights.Where(and)
 
-	request, _, err := req.ToSql()
+	request, args, err := req.ToSql()
 	if err != nil {
 		return nil, errors.New("ERROR: Bad request")
 	}
-	rows, err := DB.Query(request)
+	rows, err := DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 
 	for rows.Next() {
 		var f Flight
-		if err := rows.Scan(&f.ID, &f.departureCity, &f.departureTime, &f.departureDate, &f.arrivalCity, &f.arrivalDate, &f.arrivalTime, &f.price); err != nil {
+		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
 			return nil, err
 		}
 		flightsArray = append(flightsArray, f)

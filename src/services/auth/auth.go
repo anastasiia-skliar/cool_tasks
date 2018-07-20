@@ -28,16 +28,16 @@ type User struct {
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
-	userSession, err := r.Cookie("user_session")
-	if err != nil {
-		log.Println(err)
-	}
-	//proceeding user session
-	if redis.Get(userSession.Value) != nil {
-		userSession.Expires.Add(time.Hour)
-		common.RenderJSON(w, r, userSession.Value)
-		return
-	}
+	//userSession, err := r.Cookie("user_session")
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	////proceeding user session
+	//if redis.Get(userSession.Value) != nil {
+	//	userSession.Expires.Add(time.Hour)
+	//	common.RenderJSON(w, r, userSession.Value)
+	//	return
+	//}
 
 	var newLogin login
 
@@ -46,10 +46,12 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 	newLogin.pass = r.Form.Get("password")
 
 	var userInDB models.User
+
 	userInDB, er := GetUserByLogin(newLogin.login)
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
 		return
+
 	}
 
 	if newLogin.pass == userInDB.Password {
