@@ -1,31 +1,30 @@
 package events_test
 
 import (
-	"testing"
-	"net/http/httptest"
-	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"net/url"
 	"bytes"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"testing"
 )
-
 
 var router = services.NewRouter()
 
 type EventsTestCase struct {
-	name             string
-	url              string
-	want             int
+	name            string
+	url             string
+	want            int
 	mockedGetEvents []models.Event
 }
 
 func TestGetByRequestHandler(t *testing.T) {
 	tests := []EventsTestCase{
 		{
-			name:             "Get_Events_200",
-			url:              "/v1/events",
-			want:             200,
+			name:            "Get_Events_200",
+			url:             "/v1/events",
+			want:            200,
 			mockedGetEvents: []models.Event{},
 		},
 	}
@@ -43,7 +42,6 @@ func TestGetByRequestHandler(t *testing.T) {
 		})
 	}
 }
-
 
 func TestAddToTripHandler(t *testing.T) {
 	tests := []EventsTestCase{
@@ -75,9 +73,9 @@ func TestAddToTripHandler(t *testing.T) {
 func TestGetByTripHandler(t *testing.T) {
 	tests := []EventsTestCase{
 		{
-			name:             "Get_Events_200",
-			url:              "/v1/events/trip/00000000-0000-0000-0000-000000000001",
-			want:             200,
+			name:            "Get_Events_200",
+			url:             "/v1/events/trip/00000000-0000-0000-0000-000000000001",
+			want:            200,
 			mockedGetEvents: []models.Event{},
 		},
 	}
