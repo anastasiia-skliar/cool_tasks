@@ -2,6 +2,7 @@ package models
 
 import (
 	"net/url"
+
 	"github.com/satori/go.uuid"
 )
 
