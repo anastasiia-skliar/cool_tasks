@@ -69,28 +69,28 @@ func parseResult(rows *sql.Rows) ([]Restaurant, error) {
 	return res, nil
 }
 
-//SaveRest saves Restaurant to Trip
-var SaveRest = func(tripsID, restaurantsID uuid.UUID) error {
+//SaveRestaurant saves Restaurant to Trip
+var SaveRestaurant = func(tripsID, restaurantsID uuid.UUID) error {
 	_, err := database.DB.Exec(saveRestToTrip, tripsID, restaurantsID)
 
 	return err
 }
 
-//GetRestByID gets Restaurants from Trip by tripID
-var GetRestByID = func(id uuid.UUID) (Restaurant, error) {
+//GetRestaurantByID gets Restaurants from Trip by tripID
+var GetRestaurantByID = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
 	err := database.DB.QueryRow(recGen("id"), id).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
 
-//DeleteRestFromDB deletes Restaurant from DB
-var DeleteRestFromDB = func(id uuid.UUID) error {
+//DeleteRestaurantFromDB deletes Restaurant from DB
+var DeleteRestaurantFromDB = func(id uuid.UUID) error {
 	_, err := database.DB.Exec(deleteRequest, id)
 	return err
 }
 
-//GetRestByQuery gets Restaurants from Trip by incoming query
-var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
+//GetRestaurantByQuery gets Restaurants from Trip by incoming query
+var GetRestaurantByQuery = func(query url.Values) ([]Restaurant, error) {
 
 	paramNames := make([]string, 0)
 	paramVals := make([]string, 0)
@@ -125,8 +125,8 @@ var GetRestByQuery = func(query url.Values) ([]Restaurant, error) {
 	return res, nil
 }
 
-//GetRestFromTrip gets Restaurants from Trip by tripID
-var GetRestFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
+//GetRestaurantFromTrip gets Restaurants from Trip by tripID
+var GetRestaurantFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
 	rows, err := database.DB.Query(getRestFromTrip, tripsID)
 	if err != nil {
 		return nil, err
