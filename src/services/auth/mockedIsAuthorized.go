@@ -1,6 +1,9 @@
 package auth
 
-import "github.com/alicebob/miniredis"
+import (
+	"github.com/alicebob/miniredis"
+	"log"
+)
 
 func mockedIsExistRedis() {
 	IsExistRedis = func(key string) bool {
@@ -14,6 +17,7 @@ func mockedIsExistRedis() {
 
 		redErr := s.Set(redisKey, "")
 		if redErr != nil {
+			log.Println(redErr)
 			return false
 		}
 

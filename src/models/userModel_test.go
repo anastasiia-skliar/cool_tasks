@@ -118,7 +118,6 @@ func TestGetUserByLogin(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-
 	originalDB := database.DB
 	database.DB, mock, userMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
@@ -141,7 +140,6 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestGetUsers(t *testing.T) {
-
 	originalDB := database.DB
 	database.DB, mock, userMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()

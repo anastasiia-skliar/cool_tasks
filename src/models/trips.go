@@ -31,8 +31,8 @@ var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 	return id, err
 }
 
-//GetTripsByTripID gets Trips from DB by tripID
-var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
+//GetTripByTripID gets Trips from DB by tripID
+var GetTripByTripID = func(id uuid.UUID) (Trip, error) {
 
 	var (
 		trip        Trip

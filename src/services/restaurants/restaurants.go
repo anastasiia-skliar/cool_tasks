@@ -47,7 +47,6 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 //SaveRestaurant saves Restaurant to Trip
 func SaveRestaurant(w http.ResponseWriter, r *http.Request) {
-
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -77,7 +76,6 @@ func SaveRestaurant(w http.ResponseWriter, r *http.Request) {
 
 //Delete deletes Restaurant from DB
 func Delete(w http.ResponseWriter, r *http.Request) {
-
 	params := mux.Vars(r)
 	itemID, err := uuid.FromString(params["id"])
 

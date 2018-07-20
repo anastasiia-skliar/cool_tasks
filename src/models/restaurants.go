@@ -91,7 +91,6 @@ var DeleteRestaurantFromDB = func(id uuid.UUID) error {
 
 //GetRestaurantByQuery gets Restaurants from Trip by incoming query
 var GetRestaurantByQuery = func(query url.Values) ([]Restaurant, error) {
-
 	paramNames := make([]string, 0)
 	paramVals := make([]string, 0)
 	for key, value := range query {
@@ -100,10 +99,7 @@ var GetRestaurantByQuery = func(query url.Values) ([]Restaurant, error) {
 				paramNames = append(paramNames, key)
 				paramVals = append(paramVals, v)
 			}
-		} else {
-			continue
 		}
-
 	}
 
 	s := make([]interface{}, len(paramVals))
@@ -114,7 +110,6 @@ var GetRestaurantByQuery = func(query url.Values) ([]Restaurant, error) {
 	rows, err := database.DB.Query(recGen(paramNames...), s...)
 
 	if err != nil {
-		fmt.Println(err)
 		return []Restaurant{}, err
 	}
 	res, err := parseResult(rows)

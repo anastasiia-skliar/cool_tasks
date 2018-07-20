@@ -36,7 +36,7 @@ func CreateTrip(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
-//GetTripsByTripID is a handler for getting Trip from DB bu tripID
+//GetTripByTripID is a handler for getting Trip from DB bu tripID
 func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
@@ -46,7 +46,7 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := models.GetTripsByTripID(tripID)
+	result, err := models.GetTripByTripID(tripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
 		return

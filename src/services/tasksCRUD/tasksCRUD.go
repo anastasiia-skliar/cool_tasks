@@ -18,7 +18,7 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
-//GetTasks is...
+//GetTasks gets Tasks from DB
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 
 	tasks, err := models.GetTasks()
@@ -31,7 +31,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, tasks)
 }
 
-//GetTasksByID is...
+//GetTasksByID gets Task from DB by traskID
 func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -52,7 +52,7 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, task)
 }
 
-//CreateTask is...
+//CreateTask creates and saves Task in DB
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	var newTask models.Task
@@ -99,7 +99,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", Result: resultTask})
 }
 
-//DeleteTasks is...
+//DeleteTasks deletes Task from DB
 func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -120,7 +120,7 @@ func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
-//GetUserTasks is...
+//GetUserTasks gets Tasks related to current User
 func GetUserTasks(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
