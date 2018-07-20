@@ -2,11 +2,12 @@ package models
 
 import (
 	"errors"
-	sq "github.com/Masterminds/squirrel"
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/satori/go.uuid"
 	"net/url"
 	"time"
+	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+
+	sq "github.com/Masterminds/squirrel"
+	"github.com/satori/go.uuid"
 )
 
 const (
