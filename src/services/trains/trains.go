@@ -12,21 +12,8 @@ type successAdd struct {
 	Status string `json:"message"`
 }
 
-//GetTrains is a handler for getting Train from Trip by request
-func GetTrains(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-
-	trains, err := models.GetTrains(params)
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
-		return
-	}
-
-	common.RenderJSON(w, r, trains)
-}
-
-//SaveTrain is a handler for saving Train to Trip
-func SaveTrain(w http.ResponseWriter, r *http.Request) {
+//AddTrainToTripHandler is a handler for saving Train to Trip
+func AddTrainToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -45,7 +32,7 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.SaveTrain(tripID, trainID)
+	err = models.AddTrainToTrip(tripID, trainID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		return
@@ -54,8 +41,8 @@ func SaveTrain(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
-//GetTrainFromTrip is a handler for getting Trains from Trip
-func GetTrainFromTrip(w http.ResponseWriter, r *http.Request) {
+//GetTrainsFromTrip is a handler for getting Trains from Trip
+func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -64,9 +51,22 @@ func GetTrainFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetTrainFromTrip(tripID)
+	trains, err := models.GetTrainsFromTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
+		return
+	}
+
+	common.RenderJSON(w, r, trains)
+}
+
+//GetTrainsHandler is a handler for getting Train from Trip by request
+func GetTrainsHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+
+	trains, err := models.GetTrains(params)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
 		return
 	}
 

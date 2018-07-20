@@ -53,7 +53,7 @@ func TestGetMuseumsByRequest(t *testing.T) {
 
 	req, _ := http.NewRequest(http.MethodGet, "/v1/museums", nil)
 
-	result, err := GetMuseumsByRequest(req.URL.Query())
+	result, err := GetMuseums(req.URL.Query())
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

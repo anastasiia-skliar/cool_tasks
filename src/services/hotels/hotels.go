@@ -12,8 +12,8 @@ type success struct {
 	Status string `json:"message"`
 }
 
-//AddToTripHandler is a handler for adding Hotel to Trip
-func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
+//AddHotelToTripHandler is a handler for adding Hotel to Trip
+func AddHotelToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -40,8 +40,8 @@ func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, success{Status: "201 Created"})
 }
 
-//GetByTripHandler is a handler for getting Hotels from Trip
-func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
+//GetHotelsByTripHandler is a handler for getting Hotels from Trip
+func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -58,11 +58,11 @@ func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, hotels)
 }
 
-//GetByRequestHandler is a handler for getting Hotels from Trip by request
-func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+//GetHotelsHandler is a handler for getting Hotels from Trip by request
+func GetHotelsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	hotels, err := models.GetHotelsByRequest(params)
+	hotels, err := models.GetHotels(params)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find hotels with such parameters", err)
 		return

@@ -7,7 +7,7 @@ import (
 
 //MockedGetMuseums is mocked GetMuseums func
 func MockedGetMuseums() {
-	GetMuseumsByRequest = func(values url.Values) ([]Museum, error) {
+	GetMuseums = func(values url.Values) ([]Museum, error) {
 		return []Museum{}, nil
 	}
 }

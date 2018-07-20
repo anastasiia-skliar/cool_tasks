@@ -13,8 +13,8 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
-//CreateTrip is a handler for creating Trips
-func CreateTrip(w http.ResponseWriter, r *http.Request) {
+//CreateTripHandler is a handler for creating Trips
+func CreateTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -36,8 +36,8 @@ func CreateTrip(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
-//GetTripByTripID is a handler for getting Trip from DB bu tripID
-func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
+//GetTrip is a handler for getting Trip from DB bu tripID
+func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -46,7 +46,7 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := models.GetTripByTripID(tripID)
+	result, err := models.GetTrip(tripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
 		return
@@ -55,8 +55,8 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, result)
 }
 
-//GetTripIDByUserID is a handler for getting tripID from DB by userID
-func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
+//GetTripIDsByUserIDHandler is a handler for getting tripID from DB by userID
+func GetTripIDsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	userID, err := uuid.FromString(params["id"])
@@ -65,7 +65,7 @@ func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := models.GetTripIDByUserID(userID)
+	result, err := models.GetTripIDsByUserID(userID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
 		return

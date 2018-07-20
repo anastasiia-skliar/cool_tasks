@@ -12,16 +12,16 @@ func MockedGetTrains() {
 	}
 }
 
-//MockedSaveTrain is mocked SaveTrain func
+//MockedSaveTrain is mocked AddTrainToTrip func
 func MockedSaveTrain() {
-	SaveTrain = func(tripsID, trainsID uuid.UUID) error {
+	AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
 		return nil
 	}
 }
 
 //MockedGetTrainsFromTrip is mocked GetTrainsFromTrip func
 func MockedGetTrainsFromTrip() {
-	GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
+	GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 		return []Train{}, nil
 	}
 }

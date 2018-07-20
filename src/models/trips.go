@@ -31,8 +31,8 @@ var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 	return id, err
 }
 
-//GetTripByTripID gets Trips from DB by tripID
-var GetTripByTripID = func(id uuid.UUID) (Trip, error) {
+//GetTrip gets Trips from DB by tripID
+var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	var (
 		trip        Trip
@@ -71,7 +71,7 @@ var GetTripByTripID = func(id uuid.UUID) (Trip, error) {
 	}
 	trip.Hotels = hotels
 
-	trains, err = GetTrainFromTrip(id)
+	trains, err = GetTrainsFromTrip(id)
 	if err != nil {
 		return trip, err
 	}
@@ -91,8 +91,8 @@ var GetTripByTripID = func(id uuid.UUID) (Trip, error) {
 	return trip, nil
 }
 
-//GetTripIDByUserID gets Trips from DB by userID
-var GetTripIDByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
+//GetTripIDsByUserID gets Trips from DB by userID
+var GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 
 	var (
 		tripIDs []uuid.UUID

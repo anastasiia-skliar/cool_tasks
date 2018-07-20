@@ -49,7 +49,7 @@ func TestGetEventsByRequest(t *testing.T) {
 
 	req, _ := http.NewRequest(http.MethodGet, "/v1/events", nil)
 
-	result, err := GetEventsByRequest(req.URL.Query())
+	result, err := GetEvents(req.URL.Query())
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

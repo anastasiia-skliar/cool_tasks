@@ -57,7 +57,7 @@ func TestGetFlightsByRequest(t *testing.T) {
 
 	req, _ := http.NewRequest(http.MethodGet, "/v1/flights", nil)
 
-	result, err := GetFlightsByRequest(req.URL.Query())
+	result, err := GetFlights(req.URL.Query())
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

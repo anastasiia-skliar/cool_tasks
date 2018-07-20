@@ -50,8 +50,8 @@ var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
 	return museums, nil
 }
 
-//GetMuseumsByRequest gets Museums from Trip by incoming request
-var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
+//GetMuseums gets Museums from Trip by incoming request
+var GetMuseums = func(params url.Values) ([]Museum, error) {
 	museums := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("museums")
 	var (
 		request string

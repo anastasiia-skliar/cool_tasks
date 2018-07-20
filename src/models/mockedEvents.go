@@ -7,7 +7,7 @@ import (
 
 //MockedGetEvents is mocked GetEvents func
 func MockedGetEvents() {
-	GetEventsByRequest = func(values url.Values) ([]Event, error) {
+	GetEvents = func(values url.Values) ([]Event, error) {
 		return []Event{}, nil
 	}
 }

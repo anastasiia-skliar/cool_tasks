@@ -48,8 +48,8 @@ var GetEventsByTrip = func(tripID uuid.UUID) ([]Event, error) {
 	return events, nil
 }
 
-//GetEventsByRequest gets Events by incoming request
-var GetEventsByRequest = func(params url.Values) ([]Event, error) {
+//GetEvents gets Events by incoming request
+var GetEvents = func(params url.Values) ([]Event, error) {
 
 	var and sq.And = nil
 	events := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("events")

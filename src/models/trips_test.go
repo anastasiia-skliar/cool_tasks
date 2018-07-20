@@ -57,7 +57,7 @@ func TestGetTripsByUserID(t *testing.T) {
 
 	mock.ExpectQuery("SELECT trips.trip_id FROM trips WHERE trips.user_id").WithArgs(ID).WillReturnRows(rows)
 
-	_, err := models.GetTripIDByUserID(ID)
+	_, err := models.GetTripIDsByUserID(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)

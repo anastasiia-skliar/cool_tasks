@@ -56,42 +56,42 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(events.GetByRequestHandler),
-		http.MethodPost: http.HandlerFunc(events.AddToTripHandler),
+		http.MethodGet:  http.HandlerFunc(events.GetEventsHandler),
+		http.MethodPost: http.HandlerFunc(events.AddEventToTripHandler),
 	}))
 	apiV1.Handle("/events/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(events.GetByTripHandler),
+		http.MethodGet: http.HandlerFunc(events.GetEventsByTripHandler),
 	}))
 
 	apiV1.Handle("/flights", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(flights.GetByRequestHandler),
-		http.MethodPost: http.HandlerFunc(flights.AddToTripHandler),
+		http.MethodGet:  http.HandlerFunc(flights.GetFlightsHandler),
+		http.MethodPost: http.HandlerFunc(flights.AddFlightToTripHandler),
 	}))
 	apiV1.Handle("/flights/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(flights.GetByTripHandler),
+		http.MethodGet: http.HandlerFunc(flights.GetFlightsByTripHandler),
 	}))
 
 	apiV1.Handle("/museums", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsByRequestHandler),
+		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsHandler),
 		http.MethodPost: http.HandlerFunc(museums.AddMuseumToTripHandler),
 	}))
 	apiV1.Handle("/museums/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(museums.GetMuseumByTripHandler),
+		http.MethodGet: http.HandlerFunc(museums.GetMuseumsByTripHandler),
 	}))
 
 	apiV1.Handle("/trains", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(trains.GetTrains),
-		http.MethodPost: http.HandlerFunc(trains.SaveTrain),
+		http.MethodGet:  http.HandlerFunc(trains.GetTrainsHandler),
+		http.MethodPost: http.HandlerFunc(trains.AddTrainToTripHandler),
 	}))
 	apiV1.Handle("/trains/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(trains.GetTrainFromTrip),
+		http.MethodGet: http.HandlerFunc(trains.GetTrainsFromTripHandler),
 	}))
 	apiV1.Handle("/hotels", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(hotels.GetByRequestHandler),
-		http.MethodPost: http.HandlerFunc(hotels.AddToTripHandler),
+		http.MethodGet:  http.HandlerFunc(hotels.GetHotelsHandler),
+		http.MethodPost: http.HandlerFunc(hotels.AddHotelToTripHandler),
 	}))
 	apiV1.Handle("/hotels/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(hotels.GetByTripHandler),
+		http.MethodGet: http.HandlerFunc(hotels.GetHotelsByTripHandler),
 	}))
 
 	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
@@ -103,13 +103,13 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/users/trips/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(trips.GetTripIDByUserID),
+		http.MethodGet:  http.HandlerFunc(trips.GetTripIDsByUserIDHandler),
 	}))
 	apiV1.Handle("/trips", common.MethodHandler(map[string]http.Handler{
-		http.MethodPost: http.HandlerFunc(trips.CreateTrip),
+		http.MethodPost: http.HandlerFunc(trips.CreateTripHandler),
 	}))
 	apiV1.Handle("/trips/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(trips.GetTripsByTripID),
+		http.MethodGet: http.HandlerFunc(trips.GetTripHandler),
 	}))
 
 	return router

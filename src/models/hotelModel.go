@@ -49,8 +49,8 @@ var GetHotelsByTrip = func(tripID uuid.UUID) ([]Hotel, error) {
 	return hotels, nil
 }
 
-//GetHotelsByRequest gets Hotels from Trip by incoming request
-var GetHotelsByRequest = func(params url.Values) ([]Hotel, error) {
+//GetHotels gets Hotels from Trip by incoming request
+var GetHotels = func(params url.Values) ([]Hotel, error) {
 
 	var (
 		cond    sq.And

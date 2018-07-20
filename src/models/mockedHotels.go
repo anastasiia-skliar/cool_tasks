@@ -7,7 +7,7 @@ import (
 
 //GetHotelsMocked is mocked GetHotels func
 func GetHotelsMocked() {
-	GetHotelsByRequest = func(params url.Values) ([]Hotel, error) {
+	GetHotels = func(params url.Values) ([]Hotel, error) {
 		return []Hotel{}, nil
 	}
 }

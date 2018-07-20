@@ -76,15 +76,15 @@ var GetTrains = func(params url.Values) ([]Train, error) {
 	return trains, nil
 }
 
-//SaveTrain used for saving Trains to Trip
-var SaveTrain = func(tripsID, trainsID uuid.UUID) error {
+//AddTrainToTrip used for saving Trains to Trip
+var AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
 	_, err := database.DB.Exec(saveTrainToTrip, tripsID, trainsID)
 
 	return err
 }
 
-//GetTrainFromTrip used for getting Trains from Trip
-var GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
+//GetTrainsFromTrip used for getting Trains from Trip
+var GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 	rows, err := database.DB.Query(getTrainFromTrip, tripsID)
 	if err != nil {
 		return nil, err

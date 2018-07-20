@@ -51,8 +51,8 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 	return flights, nil
 }
 
-//GetFlightsByRequest gets Flights from Trip by incoming request
-var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
+//GetFlights gets Flights from Trip by incoming request
+var GetFlights = func(params url.Values) ([]Flight, error) {
 
 	var and sq.And = nil
 	flights := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("flights")

@@ -14,7 +14,7 @@ func MockedAddToTrip() {
 
 //MockedGetByRequest is mocked GetByRequest func
 func MockedGetByRequest() {
-	GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
+	GetFlights = func(params url.Values) ([]Flight, error) {
 		return []Flight{}, nil
 	}
 }

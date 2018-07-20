@@ -18,7 +18,6 @@ func mockedIsExistRedis() {
 		redErr := s.Set(redisKey, "")
 		if redErr != nil {
 			log.Println(redErr)
-			return false
 		}
 
 		if s.Exists(key) {

@@ -12,8 +12,8 @@ type success struct {
 	Status string `json:"message"`
 }
 
-//AddToTripHandler is a handler for adding Flight to Trip
-func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
+//AddFlightToTripHandler is a handler for adding Flight to Trip
+func AddFlightToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -40,8 +40,8 @@ func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, success{Status: "201 Created"})
 }
 
-//GetByTripHandler is a handler for getting Flight from Trip
-func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
+//GetFlightsByTripHandler is a handler for getting Flight from Trip
+func GetFlightsByTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -58,11 +58,11 @@ func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, flights)
 }
 
-//GetByRequestHandler is a handler for getting Flight from Trip by request
-func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+//GetFlightsHandler is a handler for getting Flight from Trip by request
+func GetFlightsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	flights, err := models.GetFlightsByRequest(params)
+	flights, err := models.GetFlights(params)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't find flights with such parameters", err)
 		return

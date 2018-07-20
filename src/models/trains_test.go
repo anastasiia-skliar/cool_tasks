@@ -100,7 +100,7 @@ func TestSaveTrainToTrip(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO trips_trains").WithArgs(trainID, tripID).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := models.SaveTrain(trainID, tripID); err != nil {
+	if err := models.AddTrainToTrip(trainID, tripID); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -159,7 +159,7 @@ func TestGetTrainFromTrip(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id").WithArgs(ID).WillReturnRows(rows)
 
-	result, err := models.GetTrainFromTrip(ID)
+	result, err := models.GetTrainsFromTrip(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
