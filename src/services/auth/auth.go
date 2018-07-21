@@ -2,13 +2,15 @@ package auth
 
 import (
 	"errors"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
+	"github.com/satori/go.uuid"
 )
 
 //Login stores info for logging
@@ -30,22 +32,22 @@ type User struct {
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
-	//userSession, err := r.Cookie("user_session")
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	////proceeding user session
-	//if redis.Get(userSession.Value) != nil {
-	//	userSession.Expires.Add(time.Hour)
-	//	common.RenderJSON(w, r, userSession.Value)
-	//	return
-	//}
 
-	var newLogin login
-
-	err := r.ParseForm()
+	userSession, err := r.Cookie("user_session")
 	if err != nil {
 		log.Println(err)
+	}
+	//proceeding user session
+	if redis.Get(userSession.Value) != nil {
+		userSession.Expires.Add(time.Hour)
+		common.RenderJSON(w, r, userSession.Value)
+		return
+	}
+
+	var newLogin login
+	parseErr := r.ParseForm()
+	if parseErr != nil {
+		log.Println(parseErr)
 	}
 
 	newLogin.login = r.Form.Get("login")

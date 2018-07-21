@@ -2,13 +2,15 @@ package tasksCRUD_test
 
 import (
 	"bytes"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+
+	"github.com/satori/go.uuid"
 )
 
 var router = services.NewRouter()

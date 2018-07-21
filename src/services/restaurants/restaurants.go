@@ -16,8 +16,8 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
-//Get used for getting restaurants
-func Get(w http.ResponseWriter, r *http.Request) {
+//GetRestaurantHandler used for getting restaurants
+func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if val, ok := query["id"]; ok {
 		id, err := uuid.FromString(val[0])
@@ -25,28 +25,28 @@ func Get(w http.ResponseWriter, r *http.Request) {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		items, err := models.GetRestaurantByID(id)
+		restaurant, err := models.GetRestaurant(id)
 
 		if err != nil {
-			common.SendNotFound(w, r, "ERROR: Can't get items", err)
+			common.SendNotFound(w, r, "ERROR: Can't get restaurant", err)
 			return
 		}
 
-		common.RenderJSON(w, r, items)
+		common.RenderJSON(w, r, restaurant)
 	}
 
-	items, err := models.GetRestaurantByQuery(query)
+	restaurants, err := models.GetRestaurantByQuery(query)
 
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get items", err)
+		common.SendNotFound(w, r, "ERROR: Can't get restaurants", err)
 		return
 	}
 
-	common.RenderJSON(w, r, items)
+	common.RenderJSON(w, r, restaurants)
 }
 
-//SaveRestaurant saves Restaurant to Trip
-func SaveRestaurant(w http.ResponseWriter, r *http.Request) {
+//AddRestaurantToTrip saves Restaurant to Trip
+func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -65,7 +65,7 @@ func SaveRestaurant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.SaveRestaurant(tripID, restaurantID)
+	err = models.AddRestaurantToTrip(tripID, restaurantID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new restaurant to trip", err)
 		return
@@ -74,8 +74,8 @@ func SaveRestaurant(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
-//Delete deletes Restaurant from DB
-func Delete(w http.ResponseWriter, r *http.Request) {
+//DeleteRestaurantHandler deletes Restaurant from DB
+func DeleteRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	itemID, err := uuid.FromString(params["id"])
 
@@ -84,7 +84,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.DeleteRestaurantFromDB(itemID)
+	err = models.DeleteRestaurant(itemID)
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't delete this item", err)

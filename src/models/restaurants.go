@@ -69,22 +69,22 @@ func parseResult(rows *sql.Rows) ([]Restaurant, error) {
 	return res, nil
 }
 
-//SaveRestaurant saves Restaurant to Trip
-var SaveRestaurant = func(tripsID, restaurantsID uuid.UUID) error {
+//AddRestaurantToTrip saves Restaurant to Trip
+var AddRestaurantToTrip = func(tripsID, restaurantsID uuid.UUID) error {
 	_, err := database.DB.Exec(saveRestToTrip, tripsID, restaurantsID)
 
 	return err
 }
 
-//GetRestaurantByID gets Restaurants from Trip by tripID
-var GetRestaurantByID = func(id uuid.UUID) (Restaurant, error) {
+//GetRestaurant gets Restaurants from Trip by tripID
+var GetRestaurant = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
 	err := database.DB.QueryRow(recGen("id"), id).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
 
-//DeleteRestaurantFromDB deletes Restaurant from DB
-var DeleteRestaurantFromDB = func(id uuid.UUID) error {
+//DeleteRestaurant deletes Restaurant from DB
+var DeleteRestaurant = func(id uuid.UUID) error {
 	_, err := database.DB.Exec(deleteRequest, id)
 	return err
 }

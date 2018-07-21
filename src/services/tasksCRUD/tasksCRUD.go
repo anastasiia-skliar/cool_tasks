@@ -1,12 +1,14 @@
 package tasksCRUD
 
 import (
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
+	"github.com/gorilla/mux"
+	"github.com/satori/go.uuid"
 )
 
 type successCreate struct {
@@ -18,8 +20,8 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
-//GetTasks gets Tasks from DB
-func GetTasks(w http.ResponseWriter, r *http.Request) {
+//GetTasksHandler gets Tasks from DB
+func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 
 	tasks, err := models.GetTasks()
 
@@ -31,8 +33,8 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, tasks)
 }
 
-//GetTasksByID gets Task from DB by traskID
-func GetTasksByID(w http.ResponseWriter, r *http.Request) {
+//GetTaskHandler gets Task from DB by taskID
+func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	taskID, err := uuid.FromString(params["id"])
@@ -52,8 +54,8 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, task)
 }
 
-//CreateTask creates and saves Task in DB
-func CreateTask(w http.ResponseWriter, r *http.Request) {
+//CreateTaskHandler creates and saves Task in DB
+func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	var newTask models.Task
 	var resultTask models.Task
@@ -99,8 +101,8 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", Result: resultTask})
 }
 
-//DeleteTasks deletes Task from DB
-func DeleteTasks(w http.ResponseWriter, r *http.Request) {
+//DeleteTaskHandler deletes Task from DB
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	taskID, err := uuid.FromString(params["id"])
@@ -120,8 +122,8 @@ func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
-//GetUserTasks gets Tasks related to current User
-func GetUserTasks(w http.ResponseWriter, r *http.Request) {
+//GetUserTasksHandler gets Tasks related to current User
+func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	idUser, err := uuid.FromString(params["id"])

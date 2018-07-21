@@ -1,11 +1,13 @@
 package trains
 
 import (
+	"net/http"
+
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	"net/http"
 )
 
 type successAdd struct {

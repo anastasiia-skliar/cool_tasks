@@ -35,53 +35,41 @@ var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	var (
-		trip        Trip
-		err         error
-		events      []Event
-		flights     []Flight
-		museums     []Museum
-		hotels      []Hotel
-		trains      []Train
-		restaurants []Restaurant
+		trip Trip
+		err  error
 	)
 
 	trip.TripID = id
 
-	events, err = GetEventsByTrip(id)
+	trip.Events, err = GetEventsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Events = events
 
-	flights, err = GetFlightsByTrip(id)
+	trip.Flights, err = GetFlightsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Flights = flights
 
-	museums, err = GetMuseumsByTrip(id)
+	trip.Museums, err = GetMuseumsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Museums = museums
 
-	hotels, err = GetHotelsByTrip(id)
+	trip.Hotels, err = GetHotelsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Hotels = hotels
 
-	trains, err = GetTrainsFromTrip(id)
+	trip.Trains, err = GetTrainsFromTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Trains = trains
 
-	restaurants, err = GetRestaurantFromTrip(id)
+	trip.Restaurants, err = GetRestaurantFromTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Restaurants = restaurants
 
 	errDB := database.DB.QueryRow(getTripsByTripID, id).Scan(&trip.UserID)
 	if err != nil {

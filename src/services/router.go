@@ -35,24 +35,24 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsers),
-		http.MethodPost: http.HandlerFunc(usersCRUD.CreateUser),
+		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsersHandler),
+		http.MethodPost: http.HandlerFunc(usersCRUD.CreateUserHandler),
 	}))
 	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:    http.HandlerFunc(usersCRUD.GetUserByID),
-		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUser),
+		http.MethodGet:    http.HandlerFunc(usersCRUD.GetUserHandler),
+		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUserHandler),
 	}))
 	apiV1.Handle("/users/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(tasksCRUD.GetUserTasks),
+		http.MethodGet: http.HandlerFunc(tasksCRUD.GetUserTasksHandler),
 	}))
 
 	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(tasksCRUD.GetTasks),
-		http.MethodPost: http.HandlerFunc(tasksCRUD.CreateTask),
+		http.MethodGet:  http.HandlerFunc(tasksCRUD.GetTasksHandler),
+		http.MethodPost: http.HandlerFunc(tasksCRUD.CreateTaskHandler),
 	}))
 	apiV1.Handle("/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTasksByID),
-		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTasks),
+		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTaskHandler),
+		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTaskHandler),
 	}))
 
 	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
@@ -95,8 +95,8 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(restaurants.Get),
-		http.MethodPost: http.HandlerFunc(restaurants.SaveRestaurant),
+		http.MethodGet:  http.HandlerFunc(restaurants.GetRestaurantHandler),
+		http.MethodPost: http.HandlerFunc(restaurants.AddRestaurantToTripHandler),
 	}))
 	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(restaurants.GetRestaurantFromTrip),

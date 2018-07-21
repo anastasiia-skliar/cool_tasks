@@ -1,10 +1,12 @@
 package trips
 
 import (
+	"net/http"
+
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
 	"github.com/satori/go.uuid"
-	"net/http"
 	"github.com/gorilla/mux"
 )
 
