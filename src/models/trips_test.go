@@ -89,27 +89,27 @@ func TestGetTrip(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			testTrip, _ := models.GetTrip(TripID)
 
-			 models.GetEventsByTrip = func(tripID uuid.UUID) ([]models.Event, error) {
-				 return []models.Event{},nil
-			 }
-			 models.GetFlightsByTrip = func(tripID uuid.UUID) ([]models.Flight, error) {
-				 return []models.Flight{},nil
-			 }
-			 models.GetMuseumsByTrip = func(trip_id uuid.UUID) ([]models.Museum, error) {
-				 return []models.Museum{},nil
-			 }
-			 models.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]models.Restaurant, error) {
-				 return []models.Restaurant{},nil
-			 }
-			 models.GetHotelsByTrip = func(tripID uuid.UUID) ([]models.Hotel, error) {
-				 return []models.Hotel{},nil
-			 }
-			 models.GetTrainsFromTrip = func(tripsID uuid.UUID) ([]models.Train, error) {
-				 return []models.Train{},nil
-			 }
-			 models.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
-				 return nil,nil
-			 }
+			models.GetEventsByTrip = func(tripID uuid.UUID) ([]models.Event, error) {
+				return []models.Event{}, nil
+			}
+			models.GetFlightsByTrip = func(tripID uuid.UUID) ([]models.Flight, error) {
+				return []models.Flight{}, nil
+			}
+			models.GetMuseumsByTrip = func(trip_id uuid.UUID) ([]models.Museum, error) {
+				return []models.Museum{}, nil
+			}
+			models.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]models.Restaurant, error) {
+				return []models.Restaurant{}, nil
+			}
+			models.GetHotelsByTrip = func(tripID uuid.UUID) ([]models.Hotel, error) {
+				return []models.Hotel{}, nil
+			}
+			models.GetTrainsFromTrip = func(tripsID uuid.UUID) ([]models.Train, error) {
+				return []models.Train{}, nil
+			}
+			models.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
+				return nil, nil
+			}
 			if testTrip.TripID != tc.expectedTripId {
 				t.Errorf("Expected: %s", tc.name)
 			}
