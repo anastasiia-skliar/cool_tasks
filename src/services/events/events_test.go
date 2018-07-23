@@ -55,7 +55,6 @@ func TestGetByRequestHandler(t *testing.T) {
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 			tc.mock()
 			router.ServeHTTP(rec, req)
-			fmt.Println(rec.Code)
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}
