@@ -30,7 +30,6 @@ type User struct {
 
 //Login login new User
 var Login = func(w http.ResponseWriter, r *http.Request) {
-	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
 
 	var newLogin login
@@ -44,7 +43,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 
 	var userInDB models.User
 
-	userInDB, er := GetUserByLogin(newLogin.login)
+	userInDB, er := models.GetUserByLogin(newLogin.login)
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
 		return

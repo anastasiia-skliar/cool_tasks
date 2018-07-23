@@ -17,8 +17,6 @@ type authTestCase struct {
 	want int
 }
 
-var GetUserByLogin = models.GetUserByLogin
-
 func TestLogin(t *testing.T) {
 	tests := []authTestCase{
 		{
@@ -35,7 +33,7 @@ func TestLogin(t *testing.T) {
 	data.Add("login", expetedLogin)
 	data.Add("password", expetedPass)
 
-	GetUserByLogin = func(login string) (models.User, error) {
+	models.GetUserByLogin = func(login string) (models.User, error) {
 		UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 		expected := models.User{
