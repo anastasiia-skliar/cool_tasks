@@ -142,7 +142,7 @@ func TestGetByTripHandler(t *testing.T) {
 			},
 		},
 		{
-			name:            "Get_Events_200",
+			name:            "Get_Events_400",
 			url:             "/v1/events/trip/sadsad",
 			want:            400,
 			mockedGetEvents: []models.Event{},
