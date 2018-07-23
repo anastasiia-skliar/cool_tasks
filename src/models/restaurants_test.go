@@ -108,8 +108,8 @@ func TestRequestGenerator(t *testing.T) {
 	}
 	for _, tc := range generatorTests {
 		var request = ""
-		if tc.paramName==""{
-			request=recGen()
+		if tc.paramName == "" {
+			request = recGen()
 		} else {
 			request = recGen(tc.paramName)
 		}
@@ -118,4 +118,3 @@ func TestRequestGenerator(t *testing.T) {
 		}
 	}
 }
-
