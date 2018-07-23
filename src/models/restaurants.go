@@ -21,7 +21,7 @@ const (
 
 var deleteRequest string
 
-//Task representation in DB
+//Restaurant representation in DB
 type Restaurant struct {
 	ID          uuid.UUID
 	Name        string
@@ -33,7 +33,6 @@ type Restaurant struct {
 
 func init() {
 	deleteRequest = fmt.Sprintf(deleteTempl, datalocation)
-
 }
 
 func recGen(params ...string) string {
@@ -69,53 +68,59 @@ func parseResult(rows *sql.Rows) ([]Restaurant, error) {
 	return res, nil
 }
 
-//CreateTask used for creation task in DB
-var SaveRest = func(tripsID, restaurantsID uuid.UUID) error {
+//AddRestaurantToTrip saves Restaurant to Trip
+var AddRestaurantToTrip = func(tripsID, restaurantsID uuid.UUID) error {
 	_, err := database.DB.Exec(saveRestToTrip, tripsID, restaurantsID)
 
 	return err
 }
 
-//GetTask used for getting task from DB
-var GetRestByID = func(id uuid.UUID) (Restaurant, error) {
+//GetRestaurant gets Restaurants from Trip by tripID
+var GetRestaurant = func(id uuid.UUID) (Restaurant, error) {
 	var item Restaurant
 	err := database.DB.QueryRow(recGen("id"), id).Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description)
 	return item, err
 }
 
-//DeleteTask used for deleting task from DB
-var DeleteRestFromDB = func(id uuid.UUID) error {
+//DeleteRestaurant deletes Restaurant from DB
+var DeleteRestaurant = func(id uuid.UUID) error {
 	_, err := database.DB.Exec(deleteRequest, id)
 	return err
 }
 
-//GetTasks used for getting tasks from DB
-
-var GetRestByQuery = func(params url.Values) ([]Restaurant, error) {
-	stringArgs := []string{"name", "location"}
-	numberArgs := []string{"stars", "prices"}
-	request, args, err := SQLGenerator("restaurants", stringArgs, numberArgs, params)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := database.DB.Query(request, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	restaurant := make([]Restaurant, 0)
-	for rows.Next() {
-		var r Restaurant
-		if err := rows.Scan(&r.ID, &r.Name, &r.Location, &r.Stars, &r.Prices, &r.Description); err != nil {
-			return nil, err
+//GetRestaurants gets Restaurants from Trip by incoming query
+var GetRestaurants = func(query url.Values) ([]Restaurant, error) {
+	paramNames := make([]string, 0)
+	paramVals := make([]string, 0)
+	for key, value := range query {
+		if len(value) > 0 {
+			for _, v := range value {
+				paramNames = append(paramNames, key)
+				paramVals = append(paramVals, v)
+			}
 		}
-		restaurant = append(restaurant, r)
 	}
-	return restaurant, nil
+
+	s := make([]interface{}, len(paramVals))
+	for i, v := range paramVals {
+		s[i] = v
+	}
+
+	rows, err := database.DB.Query(recGen(paramNames...), s...)
+
+	if err != nil {
+		return []Restaurant{}, err
+	}
+	res, err := parseResult(rows)
+	if err != nil {
+		fmt.Println(err)
+		return []Restaurant{}, err
+	}
+	return res, nil
 }
 
-var GetRestFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
+//GetRestaurantsFromTrip gets Restaurants from Trip by tripID
+var GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
 	rows, err := database.DB.Query(getRestFromTrip, tripsID)
 	if err != nil {
 		return nil, err

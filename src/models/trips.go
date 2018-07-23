@@ -11,6 +11,7 @@ const (
 	getTripsByTripID  = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
 )
 
+//Trip is a representation of Event Trip in DB
 type Trip struct {
 	TripID      uuid.UUID
 	UserID      uuid.UUID
@@ -22,63 +23,53 @@ type Trip struct {
 	Trains      []Train
 }
 
-var CreateTrip = func(trip Trip) (uuid.UUID, error) {
+//AddTrip creates Trip and saves it to DB
+var AddTrip = func(trip Trip) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createTrip, trip.UserID).Scan(&id)
 
 	return id, err
 }
 
-var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
+//GetTrip gets Trips from DB by tripID
+var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	var (
-		trip        Trip
-		err         error
-		events      []Event
-		flights     []Flight
-		museums     []Museum
-		hotels      []Hotel
-		trains      []Train
-		restaurants []Restaurant
+		trip Trip
+		err  error
 	)
 
 	trip.TripID = id
 
-	events, err = GetEventsByTrip(id)
+	trip.Events, err = GetEventsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Events = events
 
-	flights, err = GetFlightsByTrip(id)
+	trip.Flights, err = GetFlightsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Flights = flights
 
-	museums, err = GetMuseumsByTrip(id)
+	trip.Museums, err = GetMuseumsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Museums = museums
 
-	hotels, err = GetHotelsByTrip(id)
+	trip.Hotels, err = GetHotelsByTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Hotels = hotels
 
-	trains, err = GetTrainFromTrip(id)
+	trip.Trains, err = GetTrainsFromTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Trains = trains
 
-	restaurants, err = GetRestFromTrip(id)
+	trip.Restaurants, err = GetRestaurantsFromTrip(id)
 	if err != nil {
 		return trip, err
 	}
-	trip.Restaurants = restaurants
 
 	errDB := database.DB.QueryRow(getTripsByTripID, id).Scan(&trip.UserID)
 	if err != nil {
@@ -88,7 +79,8 @@ var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
 	return trip, nil
 }
 
-var GetTripIDByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
+//GetTripIDsByUserID gets Trips from DB by userID
+var GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 
 	var (
 		tripIDs []uuid.UUID

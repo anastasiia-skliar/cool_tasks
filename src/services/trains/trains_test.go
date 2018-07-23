@@ -2,12 +2,13 @@ package trains_test
 
 import (
 	"bytes"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 )
 
 var router = services.NewRouter()

@@ -1,6 +1,7 @@
 package models
 
 import (
+	sq "github.com/Masterminds/squirrel"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
@@ -12,7 +13,7 @@ const (
 	getTrainFromTrip = "SELECT trains.* FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id = $1;"
 )
 
-//Task representation in DB
+//Train representation in DB
 type Train struct {
 	ID            uuid.UUID
 	DepartureTime time.Time
@@ -26,14 +27,38 @@ type Train struct {
 	Price         string
 }
 
-//GetTrains used for getting trains from DB
+//GetTrains used for getting Trains from DB
 var GetTrains = func(params url.Values) ([]Train, error) {
-	stringArgs := []string{"departure_city", "arrival_city"}
-	numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
-	request, args, err := SQLGenerator("trains", stringArgs, numberArgs, params)
+
+	var (
+		cond    sq.And
+		request string
+	)
+
+	selectTrains := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("trains")
+
+	for k, v := range params {
+		switch k {
+		case "id", "departure_time", "departure_date", "arrival_time", "arrival_date", "price":
+			if len(params[k]) == 2 {
+				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
+			} else {
+				cond = append(cond, sq.Eq{k: v[0]})
+			}
+		case "departure_city", "arrival_city":
+			cond = append(cond, sq.Eq{k: v[0]})
+		}
+	}
+
+	request, args, err := selectTrains.Where(cond).ToSql()
 	if err != nil {
 		return nil, err
 	}
+
+	if len(params) == 0 {
+		request = "SELECT * FROM trains;"
+	}
+
 	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return nil, err
@@ -51,16 +76,17 @@ var GetTrains = func(params url.Values) ([]Train, error) {
 	return trains, nil
 }
 
-//SaveTrain used for saving trains to Trip
-var SaveTrain = func(tripsID, trainsID uuid.UUID) error {
+//AddTrainToTrip used for saving Trains to Trip
+var AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
 	_, err := database.DB.Exec(saveTrainToTrip, tripsID, trainsID)
 
 	return err
 }
 
-//GetTrainFromTrip used for getting trains from Trip
-var GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
+//GetTrainsFromTrip used for getting Trains from Trip
+var GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 	rows, err := database.DB.Query(getTrainFromTrip, tripsID)
+
 	if err != nil {
 		return nil, err
 	}

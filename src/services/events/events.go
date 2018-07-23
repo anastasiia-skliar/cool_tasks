@@ -12,7 +12,8 @@ type success struct {
 	Status string `json:"message"`
 }
 
-func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
+//AddEventToTripHandler is a handler for adding Event to Trip
+func AddEventToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -39,7 +40,8 @@ func AddToTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, success{Status: "201 Created"})
 }
 
-func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
+//GetEventsByTripHandler is a handler for getting Events from Trip
+func GetEventsByTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -56,10 +58,11 @@ func GetByTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, events)
 }
 
-func GetByRequestHandler(w http.ResponseWriter, r *http.Request) {
+//GetEventsHandler is a handler for getting Events from Trip by request
+func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	events, err := models.GetEventsByRequest(params)
+	events, err := models.GetEvents(params)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find events with such parameters", err)
 		return

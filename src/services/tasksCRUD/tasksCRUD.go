@@ -1,12 +1,14 @@
 package tasksCRUD
 
 import (
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
+	"github.com/gorilla/mux"
+	"github.com/satori/go.uuid"
 )
 
 type successCreate struct {
@@ -18,7 +20,8 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
-func GetTasks(w http.ResponseWriter, r *http.Request) {
+//GetTasksHandler gets Tasks from DB
+func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 
 	tasks, err := models.GetTasks()
 
@@ -30,7 +33,8 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, tasks)
 }
 
-func GetTasksByID(w http.ResponseWriter, r *http.Request) {
+//GetTaskHandler gets Task from DB by taskID
+func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	taskID, err := uuid.FromString(params["id"])
@@ -50,7 +54,8 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, task)
 }
 
-func CreateTask(w http.ResponseWriter, r *http.Request) {
+//AddTaskHandler creates and saves Task in DB
+func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	var newTask models.Task
 	var resultTask models.Task
@@ -86,7 +91,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	newTask.Time = parsedTime
 
-	resultTask, err = models.CreateTask(newTask)
+	resultTask, err = models.AddTask(newTask)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new task", err)
@@ -96,7 +101,8 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", Result: resultTask})
 }
 
-func DeleteTasks(w http.ResponseWriter, r *http.Request) {
+//DeleteTaskHandler deletes Task from DB
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	taskID, err := uuid.FromString(params["id"])
@@ -116,9 +122,16 @@ func DeleteTasks(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
-func GetUserTasks(w http.ResponseWriter, r *http.Request) {
+//GetUserTasksHandler gets Tasks related to current User
+func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
 	idUser, err := uuid.FromString(params["id"])
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get user", err)
+		return
+	}
+
 	tasks, err := models.GetUserTasks(idUser)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get user", err)

@@ -2,9 +2,9 @@ package models
 
 import "github.com/satori/go.uuid"
 
-//MockedCreateUser is mocked CreateUser func
+//MockedCreateUser is mocked AddUser func
 func MockedCreateUser(user User) {
-	CreateUser = func(user User) (uuid.UUID, error) {
+	AddUser = func(user User) (uuid.UUID, error) {
 		return user.ID, nil
 	}
 }

@@ -16,20 +16,37 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
-func Get(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
+//GetRestaurantHandler used for getting restaurants
+func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	if val, ok := query["id"]; ok {
+		id, err := uuid.FromString(val[0])
+		if err != nil {
+			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
+			return
+		}
+		restaurant, err := models.GetRestaurant(id)
 
-	restaurants, err := models.GetRestByQuery(params)
+		if err != nil {
+			common.SendNotFound(w, r, "ERROR: Can't get restaurant", err)
+			return
+		}
+
+		common.RenderJSON(w, r, restaurant)
+	}
+
+	restaurants, err := models.GetRestaurants(query)
+
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't find any restaurants", err)
+		common.SendNotFound(w, r, "ERROR: Can't get restaurants", err)
 		return
 	}
 
 	common.RenderJSON(w, r, restaurants)
 }
 
-func SaveRest(w http.ResponseWriter, r *http.Request) {
-
+//AddRestaurantToTrip saves Restaurant to Trip
+func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -48,7 +65,7 @@ func SaveRest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.SaveRest(tripID, restaurantID)
+	err = models.AddRestaurantToTrip(tripID, restaurantID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new restaurant to trip", err)
 		return
@@ -57,8 +74,8 @@ func SaveRest(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
 }
 
-func Delete(w http.ResponseWriter, r *http.Request) {
-
+//DeleteRestaurantHandler deletes Restaurant from DB
+func DeleteRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	itemID, err := uuid.FromString(params["id"])
 
@@ -67,7 +84,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.DeleteRestFromDB(itemID)
+	err = models.DeleteRestaurant(itemID)
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't delete this item", err)
@@ -77,7 +94,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
-func GetRestFromTrip(w http.ResponseWriter, r *http.Request) {
+//GetRestaurantFromTrip gets Restaurant from Trip by tripID
+func GetRestaurantFromTrip(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -86,7 +104,7 @@ func GetRestFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetRestFromTrip(tripID)
+	trains, err := models.GetRestaurantsFromTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants by trip ID", err)
 		return

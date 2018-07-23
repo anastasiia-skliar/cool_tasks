@@ -36,10 +36,10 @@ func TestLogin(t *testing.T) {
 	data.Add("password", expetedPass)
 
 	GetUserByLogin = func(login string) (models.User, error) {
-		UserId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+		UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 		expected := models.User{
-			ID:       UserId,
+			ID:       UserID,
 			Name:     "John",
 			Login:    expetedLogin,
 			Password: expetedPass,
