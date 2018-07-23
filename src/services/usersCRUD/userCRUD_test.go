@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
@@ -22,6 +23,9 @@ type usersCRUDTestCase struct {
 	mockedGetUsers    []models.User
 	mockedUserError   error
 	mockedDeleteUsers uuid.UUID
+	mock              func()
+	error             string
+	testUser          models.User
 }
 
 func TestGetUsers(t *testing.T) {
@@ -32,6 +36,13 @@ func TestGetUsers(t *testing.T) {
 			want:            200,
 			mockedGetUsers:  []models.User{},
 			mockedUserError: nil,
+		},
+		{
+			name:            "Get_Users_404",
+			url:             "/v1/users",
+			want:            404,
+			mockedGetUsers:  []models.User{},
+			mockedUserError: http.ErrBodyNotAllowed,
 		},
 	}
 	for _, tc := range tests {
@@ -58,6 +69,20 @@ func TestGetUserByID(t *testing.T) {
 			mockedGetUser:   models.User{},
 			mockedUserError: nil,
 		},
+		{
+			name:            "Get_Users_400",
+			url:             "/v1/users/asdad",
+			want:            400,
+			mockedGetUser:   models.User{},
+			mockedUserError: nil,
+		},
+		{
+			name:            "Get_Users_404",
+			url:             "/v1/users/a7264252-6ef4-11e8-9982-0242ac110002",
+			want:            404,
+			mockedGetUser:   models.User{},
+			mockedUserError: http.ErrNoLocation,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -83,11 +108,36 @@ func TestDeleteUser(t *testing.T) {
 			want:              200,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			mock: func() {
+			},
+		},
+		{
+			name:              "Delete_Users_404",
+			url:               "/v1/users/00000000-0000-0000-0000-000000000001",
+			want:              404,
+			mockedDeleteUsers: userId,
+			mockedUserError:   nil,
+			mock: func() {
+				var err = http.ErrBodyNotAllowed
+				models.DeleteUser = func(id uuid.UUID) error {
+					return err
+				}
+			},
+		},
+		{
+			name:              "Delete_Users_400",
+			url:               "/v1/users/sadsad",
+			want:              400,
+			mockedDeleteUsers: userId,
+			mockedUserError:   nil,
+			mock: func() {
+			},
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			models.MockedDeleteUser(userId, nil)
+			tc.mock()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodDelete, tc.url, nil)
 
@@ -125,6 +175,52 @@ func TestCreateUser(t *testing.T) {
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
+			}
+		})
+	}
+}
+
+func TestIsValid(t *testing.T) {
+	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	tests := []usersCRUDTestCase{
+		{
+			name:  "Valid data",
+			error: "",
+			testUser: models.User{
+				ID:       id,
+				Name:     "Validname",
+				Login:    "Validlogin",
+				Password: "Validpassword",
+			},
+		},
+		{
+			name:  "Invalid Password",
+			error: "Invalid Password",
+			testUser: models.User{
+				ID:       id,
+				Name:     "Validname",
+				Login:    "Validlogin",
+				Password: "1234",
+			},
+		},
+		{
+			name:  "Invalid username",
+			error: " Invalid Name",
+			testUser: models.User{
+				ID:       id,
+				Name:     "invalidname",
+				Login:    "Validlogin",
+				Password: "Validpassword",
+			},
+		},
+	}
+
+	for _, tc := range tests {
+
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := usersCRUD.IsValid(tc.testUser)
+			if err != tc.error {
+				t.Errorf("Expected: %s , got %s", tc.error, err)
 			}
 		})
 	}
