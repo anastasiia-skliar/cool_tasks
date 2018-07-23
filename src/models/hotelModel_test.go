@@ -160,7 +160,7 @@ func TestGetHotelByRequest(t *testing.T) {
 
 		mock.ExpectQuery("SELECT (.+) FROM hotels").WillReturnRows(rows)
 
-		result, err := GetHotelsByRequest(params)
+		result, err := GetHotels(params)
 
 		if err != nil {
 			t.Errorf("error was not expected while updating stats: %s", err)

@@ -41,7 +41,7 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 			mockedGetMuseums: []models.Museum{},
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
-				models.GetMuseumsByRequest = func(values url.Values) ([]models.Museum, error) {
+				models.GetMuseums = func(values url.Values) ([]models.Museum, error) {
 					return []models.Museum{}, err
 				}
 			},

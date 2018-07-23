@@ -82,7 +82,7 @@ func TestGetMuseumsByRequest(t *testing.T) {
 		rawUrl, _ := url.Parse(tc.url)
 		params := rawUrl.Query()
 
-		result, err := GetMuseumsByRequest(params)
+		result, err := GetMuseums(params)
 
 		if err != nil {
 			t.Errorf("error was not expected while updating stats: %s", err)

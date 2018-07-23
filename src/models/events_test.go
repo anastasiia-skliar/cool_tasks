@@ -76,7 +76,7 @@ func TestGetEventsByRequest(t *testing.T) {
 
 		mock.ExpectQuery("SELECT (.+) FROM events").WillReturnRows(rows)
 
-		result, err := GetEventsByRequest(params)
+		result, err := GetEvents(params)
 
 		if err != nil {
 			t.Errorf("error was not expected while updating stats: %s", err)

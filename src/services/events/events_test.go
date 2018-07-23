@@ -42,7 +42,7 @@ func TestGetByRequestHandler(t *testing.T) {
 			mockedGetEvents: []models.Event{},
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
-				models.GetEventsByRequest = func(values url.Values) ([]models.Event, error) {
+				models.GetEvents = func(values url.Values) ([]models.Event, error) {
 					return []models.Event{}, err
 				}
 			},

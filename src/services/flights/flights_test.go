@@ -40,7 +40,7 @@ func TestGetByRequestHandler(t *testing.T) {
 			mockedGetFlights: []models.Flight{},
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
-				models.GetFlightsByRequest = func(values url.Values) ([]models.Flight, error) {
+				models.GetFlights = func(values url.Values) ([]models.Flight, error) {
 					return []models.Flight{}, err
 				}
 			},

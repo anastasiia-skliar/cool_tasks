@@ -85,7 +85,7 @@ func TestGetFlightsByRequest(t *testing.T) {
 
 		mock.ExpectQuery("SELECT (.+) FROM flights").WillReturnRows(rows)
 
-		result, err := GetFlightsByRequest(params)
+		result, err := GetFlights(params)
 
 		if err != nil {
 			t.Errorf("error was not expected while updating stats: %s", err)

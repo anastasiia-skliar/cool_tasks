@@ -33,7 +33,7 @@ func TestAddRestaurantToTrip(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO trips_restaurants").WithArgs(restaurantID, tripID).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := SaveRest(restaurantID, tripID); err != nil {
+	if err := AddRestaurantToTrip(restaurantID, tripID); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -76,7 +76,7 @@ func TestGetRestaurantByTripID(t *testing.T) {
 
 	mock.ExpectQuery("SELECT (.+) FROM restaurants").WithArgs(ID).WillReturnRows(rows)
 
-	result, err := GetRestFromTrip(ID)
+	result, err := GetRestaurantsFromTrip(ID)
 	fmt.Println(result)
 
 	if err != nil {

@@ -102,7 +102,7 @@ func TestSaveTrain(t *testing.T) {
 			testDataTr: "00000000-0000-0000-0000-000000000001",
 			mock: func() {
 				var err = error(new(http.ProtocolError))
-				models.SaveTrain = func(train_id uuid.UUID, trip_id uuid.UUID) error {
+				models.AddTrainToTrip = func(train_id uuid.UUID, trip_id uuid.UUID) error {
 					return err
 				}
 			},
@@ -159,7 +159,7 @@ func TestGetTrainFromTrip(t *testing.T) {
 			mockedGetTrains: []models.Train{},
 			mock: func() {
 				var err = http.ErrNoLocation
-				models.GetTrainFromTrip = func(trip_id uuid.UUID) ([]models.Train, error) {
+				models.GetTrainsFromTrip = func(trip_id uuid.UUID) ([]models.Train, error) {
 					return []models.Train{}, err
 				}
 			},

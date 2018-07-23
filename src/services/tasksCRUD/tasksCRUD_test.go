@@ -25,9 +25,9 @@ type tasksCRUDTestCase struct {
 	mockedDeleteTask uuid.UUID
 	mockedCreateTask models.Task
 	mockedTasksError error
-	mock 			func()
-	userId          string
-	testTime		string
+	mock             func()
+	userId           string
+	testTime         string
 }
 
 func TestGetTasks(t *testing.T) {
@@ -77,10 +77,10 @@ func TestGetTasksByID(t *testing.T) {
 			want: 400,
 		},
 		{
-			name: "Get_TaskByWithWrongTaskID",
-			url:  "/v1/tasks/00000000-0000-0000-0000-000000000001",
-			want: 404,
-			mockedTasksError:http.ErrLineTooLong,
+			name:             "Get_TaskByWithWrongTaskID",
+			url:              "/v1/tasks/00000000-0000-0000-0000-000000000001",
+			want:             404,
+			mockedTasksError: http.ErrLineTooLong,
 		},
 	}
 
@@ -108,20 +108,20 @@ func TestDeleteTasks(t *testing.T) {
 			want: 200,
 		},
 		{
-			name:              "Delete_Task_400",
-			url:               "/v1/tasks/asda",
-			want:              400,
+			name:             "Delete_Task_400",
+			url:              "/v1/tasks/asda",
+			want:             400,
 			mockedDeleteTask: id,
-			mockedTasksError:   nil,
+			mockedTasksError: nil,
 			mock: func() {
 			},
 		},
 		{
-			name:              "Delete_Task_404",
-			url:               "/v1/tasks/00000000-0000-0000-0000-000000000001",
-			want:              404,
+			name:             "Delete_Task_404",
+			url:              "/v1/tasks/00000000-0000-0000-0000-000000000001",
+			want:             404,
 			mockedDeleteTask: id,
-			mockedTasksError:   http.ErrAbortHandler,
+			mockedTasksError: http.ErrAbortHandler,
 		},
 	}
 
@@ -143,29 +143,27 @@ func TestDeleteTasks(t *testing.T) {
 func TestCreateTasks(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
-			name: "Add_Task_200",
-			url:  "/v1/tasks",
-			want: 200,
-			userId:"00000000-0000-0000-0000-000000000001",
-			testTime:"Mon Jan 2 15:04:05 MST 2006",
+			name:     "Add_Task_200",
+			url:      "/v1/tasks",
+			want:     200,
+			userId:   "00000000-0000-0000-0000-000000000001",
+			testTime: "Mon Jan 2 15:04:05 MST 2006",
 		},
 		{
-			name: "Add_Task_WrongID",
-			url:  "/v1/tasks",
-			want: 400,
-			userId:"sadsadsad",
-			testTime:"Mon Jan 2 15:04:05 MST 2006",
+			name:     "Add_Task_WrongID",
+			url:      "/v1/tasks",
+			want:     400,
+			userId:   "sadsadsad",
+			testTime: "Mon Jan 2 15:04:05 MST 2006",
 		},
 
 		{name: "Add_Task_WrongTime",
-		url:  "/v1/tasks",
-		want: 415,
-		userId:"00000000-0000-0000-0000-000000000001",
-		testTime: "sdadasd",
-	},
+			url:      "/v1/tasks",
+			want:     415,
+			userId:   "00000000-0000-0000-0000-000000000001",
+			testTime: "sdadasd",
+		},
 	}
-
-
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -195,25 +193,25 @@ func TestCreateTasks(t *testing.T) {
 func TestGetUserTasks(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
-			name: "GetUserTasks",
-			url:  "/v1/users/tasks/00000000-0000-0000-0000-000000000001",
-			want: 200,
-			mockedTasksError:nil,
-			mockedGetTasks:[]models.Task{},
+			name:             "GetUserTasks",
+			url:              "/v1/users/tasks/00000000-0000-0000-0000-000000000001",
+			want:             200,
+			mockedTasksError: nil,
+			mockedGetTasks:   []models.Task{},
 		},
 		{
-			name: "GetUserTasks",
-			url:  "/v1/users/tasks/00000000-0000-0000-0000-000000000001",
-			want: 404,
-			mockedTasksError:http.ErrLineTooLong,
-			mockedGetTasks:[]models.Task{},
+			name:             "GetUserTasks",
+			url:              "/v1/users/tasks/00000000-0000-0000-0000-000000000001",
+			want:             404,
+			mockedTasksError: http.ErrLineTooLong,
+			mockedGetTasks:   []models.Task{},
 		},
 		{
-			name: "GetUserTasks",
-			url:  "/v1/users/tasks/wrongid",
-			want: 404,
-			mockedTasksError:http.ErrLineTooLong,
-			mockedGetTasks:[]models.Task{},
+			name:             "GetUserTasks",
+			url:              "/v1/users/tasks/wrongid",
+			want:             404,
+			mockedTasksError: http.ErrLineTooLong,
+			mockedGetTasks:   []models.Task{},
 		},
 	}
 	for _, tc := range tests {

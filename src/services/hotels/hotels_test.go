@@ -41,7 +41,7 @@ func TestGetHotels(t *testing.T) {
 			mockedGetHotels: []models.Hotel{},
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
-				models.GetHotelsByRequest = func(values url.Values) ([]models.Hotel, error) {
+				models.GetHotels = func(values url.Values) ([]models.Hotel, error) {
 					return []models.Hotel{}, err
 				}
 			},
