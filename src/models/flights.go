@@ -1,7 +1,7 @@
 package models
 
 import (
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
 	"time"
@@ -24,12 +24,12 @@ type Flight struct {
 }
 
 var AddFlightToTrip = func(flightID uuid.UUID, tripID uuid.UUID) error {
-	_, err := DB.Exec(addFlightToTrip, flightID, tripID)
+	_, err := database.DB.Exec(addFlightToTrip, flightID, tripID)
 	return err
 }
 
 var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
-	rows, err := DB.Query(getFlightByTrip, tripID)
+	rows, err := database.DB.Query(getFlightByTrip, tripID)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ var GetFlightsByRequest = func(params url.Values) ([]Flight, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := DB.Query(request, args...)
+	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}

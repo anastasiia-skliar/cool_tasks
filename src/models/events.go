@@ -1,7 +1,7 @@
 package models
 
 import (
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
 	"time"
@@ -22,13 +22,13 @@ type Event struct {
 }
 
 var AddEventToTrip = func(eventID uuid.UUID, tripID uuid.UUID) error {
-	_, err := DB.Exec(addEventToTrip, eventID, tripID)
+	_, err := database.DB.Exec(addEventToTrip, eventID, tripID)
 	return err
 }
 
 var GetEventsByTrip = func(tripID uuid.UUID) ([]Event, error) {
 
-	rows, err := DB.Query(getEventByTrip, tripID)
+	rows, err := database.DB.Query(getEventByTrip, tripID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ var GetEventsByRequest = func(params url.Values) ([]Event, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := DB.Query(request, args...)
+	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return []Event{}, err
 	}

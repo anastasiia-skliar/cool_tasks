@@ -1,7 +1,7 @@
 package models
 
 import (
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
 )
@@ -24,13 +24,13 @@ type Hotel struct {
 }
 
 var AddHotelToTrip = func(tripID, hotelID uuid.UUID) error {
-	_, err := DB.Exec(addHotelToTrip, tripID, hotelID)
+	_, err := database.DB.Exec(addHotelToTrip, tripID, hotelID)
 	return err
 }
 
 var GetHotelsByTrip = func(tripID uuid.UUID) ([]Hotel, error) {
 
-	rows, err := DB.Query(getHotelByTrip, tripID)
+	rows, err := database.DB.Query(getHotelByTrip, tripID)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ var GetHotelsByRequest = func(params url.Values) ([]Hotel, error) {
 		return nil, err
 	}
 
-	rows, err := DB.Query(request, args...)
+	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}

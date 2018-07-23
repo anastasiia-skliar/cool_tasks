@@ -1,7 +1,7 @@
 package models
 
 import (
-	. "github.com/Nastya-Kruglikova/cool_tasks/src/database"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
 	"time"
@@ -24,12 +24,12 @@ type Museum struct {
 }
 
 var AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) error {
-	_, err := DB.Exec(addMuseumToTrip, museum_id, trip_id)
+	_, err := database.DB.Exec(addMuseumToTrip, museum_id, trip_id)
 	return err
 }
 
 var GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
-	rows, err := DB.Query(getMuseumsByTrip, trip_id)
+	rows, err := database.DB.Query(getMuseumsByTrip, trip_id)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ var GetMuseumsByRequest = func(params url.Values) ([]Museum, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := DB.Query(request, args...)
+	rows, err := database.DB.Query(request, args...)
 	if err != nil {
 		return nil, err
 	}
