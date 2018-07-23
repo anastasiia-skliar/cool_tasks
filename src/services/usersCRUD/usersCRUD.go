@@ -1,13 +1,15 @@
 package usersCRUD
 
 import (
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
 	"regexp"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
+	"github.com/gorilla/mux"
+	"github.com/satori/go.uuid"
 )
 
 type successCreate struct {
@@ -19,18 +21,34 @@ type successDelete struct {
 	Status string `json:"status"`
 }
 
-var tempID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
+type userResponse struct {
+	ID    uuid.UUID `json:"ID"`
+	Name  string    `json:"Name"`
+	Login string    `json:"Login"`
+}
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
+//GetUsersHandler is a handler for getting all Users from DB
+func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	users, err := models.GetUsers()
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get users", err)
 		return
 	}
-	common.RenderJSON(w, r, users)
+
+	var uResponse userResponse
+	var uResponses []userResponse
+	for _, u := range users {
+		uResponse.ID = u.ID
+		uResponse.Name = u.Name
+		uResponse.Login = u.Login
+		uResponses = append(uResponses, uResponse)
+	}
+
+	common.RenderJSON(w, r, uResponses)
 }
 
-func GetUserByID(w http.ResponseWriter, r *http.Request) {
+//GetUserHandler is a handler for getting User from DB by ID
+func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
 	if err != nil {
@@ -42,17 +60,23 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		common.SendNotFound(w, r, "ERROR: Can't find user with such ID", err)
 		return
 	}
-	common.RenderJSON(w, r, user)
+
+	var uResponse userResponse
+	uResponse.ID = user.ID
+	uResponse.Name = user.Name
+	uResponse.Login = user.Login
+
+	common.RenderJSON(w, r, uResponse)
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+//AddUserHandler is a handler for creating User
+func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 	var newUser models.User
-	newUser.ID = tempID
 	newUser.Login = r.Form.Get("login")
 	newUser.Name = r.Form.Get("name")
 	newUser.Password = r.Form.Get("password")
@@ -60,7 +84,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if !valid {
 		log.Print(errMessage)
 	}
-	id, err := models.CreateUser(newUser)
+	id, err := models.AddUser(newUser)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add this user", err)
 		return
@@ -68,6 +92,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
+//IsValid checks if password is valid
 func IsValid(user models.User) (bool, string) {
 	errMessage := ""
 	var checkPass = regexp.MustCompile(`^[[:graph:]]*$`)
@@ -92,7 +117,8 @@ func IsValid(user models.User) (bool, string) {
 	return validName && validLogin && validPass, errMessage
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
+//DeleteUserHandler is a handler for deleting User from DB
+func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
 	if err != nil {

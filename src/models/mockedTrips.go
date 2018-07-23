@@ -2,8 +2,9 @@ package models
 
 import "github.com/satori/go.uuid"
 
+//MockedGetTripsByTripID is mocked GetTrip func
 func MockedGetTripsByTripID(trip Trip) {
-	GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
+	GetTrip = func(id uuid.UUID) (Trip, error) {
 
 		return trip, nil
 	}
