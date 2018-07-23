@@ -1,61 +1,19 @@
 package hotels
 
 import (
-	sq "github.com/Masterminds/squirrel"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	"log"
 	"net/http"
 )
 
-const selectAllHotels = "SELECT * FROM hotels;"
-
-type successAdd struct {
-	Status string       `json:"message"`
-	Result models.Hotel `json:"result"`
+type success struct {
+	Status string `json:"message"`
 }
 
-func GetHotels(w http.ResponseWriter, r *http.Request) {
-	var cond sq.And
-	var request string
-	var err error
-
-	params := r.URL.Query()
-	hotels := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From("hotels")
-
-	for k, v := range params {
-		switch k {
-		case "id", "name", "class", "capacity", "room_left", "floors", "max_price", "city_name", "address":
-			if len(params[k]) == 2 {
-				cond = append(cond, sq.And{sq.GtOrEq{k: v[0]}, sq.LtOrEq{k: v[1]}})
-			} else {
-				cond = append(cond, sq.Eq{k: v[0]})
-			}
-		default:
-			common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
-		}
-	}
-
-	request, _, err = hotels.Where(cond).ToSql()
-	if err != nil {
-		log.Println(err)
-	}
-
-	if len(params) == 0 {
-		request = selectAllHotels
-	}
-
-	result, err := models.GetHotels(request)
-	if err != nil {
-		common.SendError(w, r, 400, "ERROR: Empty or invalid req", nil)
-	}
-
-	common.RenderJSON(w, r, result)
-}
-
-func AddHotel(w http.ResponseWriter, r *http.Request) {
+//AddHotelToTripHandler is a handler for adding Hotel to Trip
+func AddHotelToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -64,38 +22,50 @@ func AddHotel(w http.ResponseWriter, r *http.Request) {
 
 	hotelID, err := uuid.FromString(r.Form.Get("hotel_id"))
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong hotel ID (can't convert string to uuid)", err)
+		common.SendBadRequest(w, r, "ERROR: Wrong hotelID (can't convert string to uuid)", err)
 		return
 	}
 
 	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+		common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 		return
 	}
 
-	err = models.AddHotelToTrip(hotelID, tripID)
+	err = models.AddHotelToTrip(tripID, hotelID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new hotel to trip", err)
 		return
 	}
-	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
+	common.RenderJSON(w, r, success{Status: "201 Created"})
 }
 
-func GetFromTrip(w http.ResponseWriter, r *http.Request) {
+//GetHotelsByTripHandler is a handler for getting Hotels from Trip
+func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
+		common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 		return
 	}
 
-	hotels, err := models.GetHotelFromTrip(tripID)
+	hotels, err := models.GetHotelsByTrip(tripID)
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't get hotels by trip ID", err)
+		common.SendNotFound(w, r, "ERROR: Can't get hotels by tripID", err)
 		return
 	}
+	common.RenderJSON(w, r, hotels)
+}
 
+//GetHotelsHandler is a handler for getting Hotels from Trip by request
+func GetHotelsHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+
+	hotels, err := models.GetHotels(params)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't find hotels with such parameters", err)
+		return
+	}
 	common.RenderJSON(w, r, hotels)
 }

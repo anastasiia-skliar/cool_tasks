@@ -2,12 +2,13 @@ package trains_test
 
 import (
 	"bytes"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 )
 
 var router = services.NewRouter()
@@ -69,7 +70,7 @@ func TestSaveTrain(t *testing.T) {
 	}
 }
 
-func TestGetFromTrip(t *testing.T) {
+func TestGetTrainFromTrip(t *testing.T) {
 	tests := []TrainsTestCase{
 		{
 			name: "Get_train_200",
@@ -79,7 +80,7 @@ func TestGetFromTrip(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetFromTrip()
+			models.MockedGetTrainsFromTrip()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

@@ -2,22 +2,26 @@ package models
 
 import (
 	"github.com/satori/go.uuid"
+	"net/url"
 )
 
+//GetHotelsMocked is mocked GetHotels func
 func GetHotelsMocked() {
-	GetHotels = func(query string) ([]Hotel, error) {
+	GetHotels = func(params url.Values) ([]Hotel, error) {
 		return []Hotel{}, nil
 	}
 }
 
+//AddHotelMocked is mocked AddHotel func
 func AddHotelMocked() {
 	AddHotelToTrip = func(tripsID, hotelsID uuid.UUID) error {
 		return nil
 	}
 }
 
-func GetHotelByTripIdMocked() {
-	GetHotelFromTrip = func(tripsID uuid.UUID) ([]Hotel, error) {
+//GetHotelByTripIDMocked is mocked GetHotelByTripID func
+func GetHotelByTripIDMocked() {
+	GetHotelsByTrip = func(tripsID uuid.UUID) ([]Hotel, error) {
 		return []Hotel{}, nil
 	}
 }

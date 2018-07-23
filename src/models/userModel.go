@@ -2,13 +2,13 @@ package models
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+
 	"github.com/satori/go.uuid"
 )
 
 const (
 	createUser     = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
 	getUser        = "SELECT * FROM users WHERE id = $1"
-	getUserByID    = "SELECT ID, Password FROM users WHERE Login = $1"
 	getUserByLogin = "SELECT * FROM users WHERE login = $1"
 	deleteUser     = "DELETE FROM users WHERE id = $1"
 	getUsers       = "SELECT * FROM users"
@@ -22,8 +22,8 @@ type User struct {
 	Password string
 }
 
-//CreateUser used for creation user in DB
-var CreateUser = func(user User) (uuid.UUID, error) {
+//AddUser used for creation user in DB
+var AddUser = func(user User) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password).Scan(&id)
 
