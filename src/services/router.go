@@ -3,12 +3,15 @@ package services
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
+
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/events"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/flights"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/hotels"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/restaurantsCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trips"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
@@ -54,7 +57,16 @@ func NewRouter() *mux.Router {
 		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTaskHandler),
 		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTaskHandler),
 	}))
-
+	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
+		http.MethodPost: http.HandlerFunc(restaurantsCRUD.Post),
+		http.MethodGet:  http.HandlerFunc(restaurantsCRUD.Get),
+	}))
+	apiV1.Handle("/restaurants/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodDelete: http.HandlerFunc(restaurantsCRUD.Delete),
+	}))
+	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(restaurantsCRUD.GetFromTrip),
+	}))
 	apiV1.Handle("/events", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(events.GetEventsHandler),
 		http.MethodPost: http.HandlerFunc(events.AddEventToTripHandler),
@@ -70,7 +82,6 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/flights/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(flights.GetFlightsByTripHandler),
 	}))
-
 	apiV1.Handle("/museums", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet:  http.HandlerFunc(museums.GetMuseumsHandler),
 		http.MethodPost: http.HandlerFunc(museums.AddMuseumToTripHandler),

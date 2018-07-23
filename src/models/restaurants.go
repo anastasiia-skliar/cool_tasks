@@ -33,7 +33,6 @@ type Restaurant struct {
 
 func init() {
 	deleteRequest = fmt.Sprintf(deleteTempl, datalocation)
-
 }
 
 func recGen(params ...string) string {

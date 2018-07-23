@@ -86,6 +86,7 @@ var AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
 //GetTrainsFromTrip used for getting Trains from Trip
 var GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 	rows, err := database.DB.Query(getTrainFromTrip, tripsID)
+
 	if err != nil {
 		return nil, err
 	}

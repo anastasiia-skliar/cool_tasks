@@ -54,10 +54,12 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 	newLogin.pass = r.Form.Get("password")
 
 	var userInDB models.User
+
 	userInDB, er := GetUserByLogin(newLogin.login)
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
 		return
+
 	}
 
 	if newLogin.pass == userInDB.Password {
