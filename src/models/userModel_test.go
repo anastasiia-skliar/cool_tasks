@@ -32,7 +32,7 @@ func TestCreateUser(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserID.Bytes())
 
 	mock.ExpectQuery("INSERT INTO users").WithArgs("John", "john", "1111").WillReturnRows(rows)
-	if _, err := CreateUser(user); err != nil {
+	if _, err := AddUser(user); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 

@@ -33,17 +33,6 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
 
-	userSession, err := r.Cookie("user_session")
-	if err != nil {
-		log.Println(err)
-	}
-	//proceeding user session
-	if redis.Get(userSession.Value) != nil {
-		userSession.Expires.Add(time.Hour)
-		common.RenderJSON(w, r, userSession.Value)
-		return
-	}
-
 	var newLogin login
 	parseErr := r.ParseForm()
 	if parseErr != nil {

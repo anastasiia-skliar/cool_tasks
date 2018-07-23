@@ -41,7 +41,7 @@ func TestCreateTask(t *testing.T) {
 	mock.ExpectQuery("INSERT INTO tasks").WithArgs(UserID, "TaskOne",
 		until, currentTime, currentTime, "Do smth").WillReturnRows(rows)
 
-	if _, err := CreateTask(task); err != nil {
+	if _, err := AddTask(task); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 

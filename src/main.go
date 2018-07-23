@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	configFile := flag.String("config", "./config.json", "Configuration file in JSON-format")
+	configFile := flag.String("config", "src/config.json", "Configuration file in JSON-format")
 	flag.Parse()
 
 	if len(*configFile) > 0 {

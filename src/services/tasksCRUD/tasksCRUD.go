@@ -54,8 +54,8 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, task)
 }
 
-//CreateTaskHandler creates and saves Task in DB
-func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
+//AddTaskHandler creates and saves Task in DB
+func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	var newTask models.Task
 	var resultTask models.Task
@@ -91,7 +91,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	newTask.Time = parsedTime
 
-	resultTask, err = models.CreateTask(newTask)
+	resultTask, err = models.AddTask(newTask)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new task", err)

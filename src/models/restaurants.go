@@ -88,8 +88,8 @@ var DeleteRestaurant = func(id uuid.UUID) error {
 	return err
 }
 
-//GetRestaurantByQuery gets Restaurants from Trip by incoming query
-var GetRestaurantByQuery = func(query url.Values) ([]Restaurant, error) {
+//GetRestaurants gets Restaurants from Trip by incoming query
+var GetRestaurants = func(query url.Values) ([]Restaurant, error) {
 	paramNames := make([]string, 0)
 	paramVals := make([]string, 0)
 	for key, value := range query {
@@ -119,8 +119,8 @@ var GetRestaurantByQuery = func(query url.Values) ([]Restaurant, error) {
 	return res, nil
 }
 
-//GetRestaurantFromTrip gets Restaurants from Trip by tripID
-var GetRestaurantFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
+//GetRestaurantsFromTrip gets Restaurants from Trip by tripID
+var GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]Restaurant, error) {
 	rows, err := database.DB.Query(getRestFromTrip, tripsID)
 	if err != nil {
 		return nil, err

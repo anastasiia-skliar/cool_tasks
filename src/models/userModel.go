@@ -22,8 +22,8 @@ type User struct {
 	Password string
 }
 
-//CreateUser used for creation user in DB
-var CreateUser = func(user User) (uuid.UUID, error) {
+//AddUser used for creation user in DB
+var AddUser = func(user User) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password).Scan(&id)
 

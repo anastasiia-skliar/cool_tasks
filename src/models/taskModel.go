@@ -25,8 +25,8 @@ type Task struct {
 	Desc      string
 }
 
-//CreateTask used for creation task in DB
-var CreateTask = func(task Task) (Task, error) {
+//AddTask used for creation task in DB
+var AddTask = func(task Task) (Task, error) {
 	err := database.DB.QueryRow(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc).Scan(&task.ID)
 
 	return task, err

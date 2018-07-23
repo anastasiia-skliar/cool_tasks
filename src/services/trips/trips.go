@@ -15,8 +15,8 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
-//CreateTripHandler is a handler for creating Trips
-func CreateTripHandler(w http.ResponseWriter, r *http.Request) {
+//AddTripHandler is a handler for creating Trips
+func AddTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -30,7 +30,7 @@ func CreateTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := models.CreateTrip(trip)
+	id, err := models.AddTrip(trip)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add this trip", err)
 		return

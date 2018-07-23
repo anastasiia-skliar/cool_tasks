@@ -23,8 +23,8 @@ type Trip struct {
 	Trains      []Train
 }
 
-//CreateTrip creates Trip and saves it to DB
-var CreateTrip = func(trip Trip) (uuid.UUID, error) {
+//AddTrip creates Trip and saves it to DB
+var AddTrip = func(trip Trip) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createTrip, trip.UserID).Scan(&id)
 
@@ -66,7 +66,7 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		return trip, err
 	}
 
-	trip.Restaurants, err = GetRestaurantFromTrip(id)
+	trip.Restaurants, err = GetRestaurantsFromTrip(id)
 	if err != nil {
 		return trip, err
 	}

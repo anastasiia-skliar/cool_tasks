@@ -69,22 +69,22 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, uResponse)
 }
 
-//CreateUserHandler is a handler for creating User
-func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+//AddUserHandler is a handler for creating User
+func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 	var newUser models.User
-	newUser.Login = r.Form.Get("Login")
-	newUser.Name = r.Form.Get("Name")
+	newUser.Login = r.Form.Get("login")
+	newUser.Name = r.Form.Get("name")
 	newUser.Password = r.Form.Get("password")
 	valid, errMessage := IsValid(newUser)
 	if !valid {
 		log.Print(errMessage)
 	}
-	id, err := models.CreateUser(newUser)
+	id, err := models.AddUser(newUser)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add this user", err)
 		return
