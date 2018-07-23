@@ -4,23 +4,23 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"github.com/satori/go.uuid"
 )
 
 var router = services.NewRouter()
 
 type FlightsTestCase struct {
-	name       string
-	url        string
-	want       int
+	name             string
+	url              string
+	want             int
 	mockedGetFlights []models.Flight
-	testDataId string
-	testDataFl string
-	mock       func()
+	testDataId       string
+	testDataFl       string
+	mock             func()
 }
 
 func TestGetByRequestHandler(t *testing.T) {
@@ -34,9 +34,9 @@ func TestGetByRequestHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "Get_Flights_400",
-			url:  "/v1/flights?mock=890",
-			want: 400,
+			name:             "Get_Flights_400",
+			url:              "/v1/flights?mock=890",
+			want:             400,
 			mockedGetFlights: []models.Flight{},
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
@@ -65,9 +65,9 @@ func TestGetByRequestHandler(t *testing.T) {
 func TestAddToTripHandler(t *testing.T) {
 	tests := []FlightsTestCase{
 		{
-			name: "Add_To_Trip_200",
-			url:  "/v1/flights",
-			want: 200,
+			name:       "Add_To_Trip_200",
+			url:        "/v1/flights",
+			want:       200,
 			testDataId: "00000000-0000-0000-0000-000000000001",
 			testDataFl: "00000000-0000-0000-0000-000000000001",
 			mock: func() {
@@ -75,9 +75,9 @@ func TestAddToTripHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "Add_To_Trip_400",
-			url:  "/v1/flights",
-			want: 400,
+			name:       "Add_To_Trip_400",
+			url:        "/v1/flights",
+			want:       400,
 			testDataId: "00000000-0000-0000-0000-000000000001",
 			testDataFl: "asdas",
 			mock: func() {
@@ -95,11 +95,11 @@ func TestAddToTripHandler(t *testing.T) {
 			},
 		},
 		{
-			name:       "Add_Flights_400_3",
-			url:        "/v1/flights",
-			want:       400,
-			testDataId: "00000000-0000-0000-0000-000000000001",
-			testDataFl: "00000000-0000-0000-0000-000000000001",
+			name:             "Add_Flights_400_3",
+			url:              "/v1/flights",
+			want:             400,
+			testDataId:       "00000000-0000-0000-0000-000000000001",
+			testDataFl:       "00000000-0000-0000-0000-000000000001",
 			mockedGetFlights: []models.Flight{},
 			mock: func() {
 				var err = http.ErrLineTooLong
@@ -136,27 +136,27 @@ func TestAddToTripHandler(t *testing.T) {
 func TestGetByTripHandler(t *testing.T) {
 	tests := []FlightsTestCase{
 		{
-			name: "Get_flight_200",
-			url:  "/v1/flights/trip/00000000-0000-0000-0000-000000000001",
-			want: 200,
+			name:             "Get_flight_200",
+			url:              "/v1/flights/trip/00000000-0000-0000-0000-000000000001",
+			want:             200,
 			mockedGetFlights: []models.Flight{},
 			mock: func() {
 
 			},
 		},
 		{
-			name: "Get_flight_400",
-			url:  "/v1/flights/trip/asdas",
-			want: 400,
+			name:             "Get_flight_400",
+			url:              "/v1/flights/trip/asdas",
+			want:             400,
 			mockedGetFlights: []models.Flight{},
 			mock: func() {
 
 			},
 		},
 		{
-			name:            "Get_Flights_404",
-			url:             "/v1/flights/trip/00000000-0000-0000-0000-000000000009",
-			want:            404,
+			name:             "Get_Flights_404",
+			url:              "/v1/flights/trip/00000000-0000-0000-0000-000000000009",
+			want:             404,
 			mockedGetFlights: []models.Flight{},
 			mock: func() {
 				var err = http.ErrLineTooLong
