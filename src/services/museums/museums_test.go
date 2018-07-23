@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"github.com/satori/go.uuid"
 )
 
 var router = services.NewRouter()
@@ -18,9 +18,9 @@ type MuseumsTestCase struct {
 	url              string
 	want             int
 	mockedGetMuseums []models.Museum
-	testDataId      string
-	testDataMu     string
-	mock            func()
+	testDataId       string
+	testDataMu       string
+	mock             func()
 }
 
 func TestGetMuseumsByRequestHandler(t *testing.T) {
@@ -35,13 +35,13 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 			},
 		},
 		{
-			name:            "Get_Museums_404",
-			url:             "/v1/museums?mock=890",
-			want:            404,
+			name:             "Get_Museums_404",
+			url:              "/v1/museums?mock=890",
+			want:             404,
 			mockedGetMuseums: []models.Museum{},
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
-				models.GetMuseumsByRequest  = func(values url.Values) ([]models.Museum, error) {
+				models.GetMuseumsByRequest = func(values url.Values) ([]models.Museum, error) {
 					return []models.Museum{}, err
 				}
 			},
@@ -66,9 +66,9 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 func TestAddMuseumToTripHandler(t *testing.T) {
 	tests := []MuseumsTestCase{
 		{
-			name: "Add_Museum_200",
-			url:  "/v1/museums",
-			want: 200,
+			name:       "Add_Museum_200",
+			url:        "/v1/museums",
+			want:       200,
 			testDataId: "00000000-0000-0000-0000-000000000001",
 			testDataMu: "00000000-0000-0000-0000-000000000001",
 			mock: func() {
@@ -94,7 +94,6 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 			mock: func() {
 
 			},
-
 		},
 		{
 			name:       "Add_Museums_400_3",
@@ -104,12 +103,11 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 			testDataMu: "00000000-0000-0000-0000-000000000001",
 			mock: func() {
 				var err = error(new(http.ProtocolError))
-				models.AddMuseumToTrip  = func(museum_id uuid.UUID, trip_id uuid.UUID) error {
+				models.AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) error {
 					return err
 				}
 			},
 		},
-
 	}
 
 	for _, tc := range tests {
@@ -146,22 +144,22 @@ func TestGetMuseumByTripHandler(t *testing.T) {
 			},
 		},
 		{
-			name:            "Get_Museums_200",
-			url:             "/v1/museums/trip/sadsad",
-			want:            400,
+			name:             "Get_Museums_200",
+			url:              "/v1/museums/trip/sadsad",
+			want:             400,
 			mockedGetMuseums: []models.Museum{},
 			mock: func() {
 
 			},
 		},
 		{
-			name:            "Get_Museums_404",
-			url:             "/v1/museums/trip/00000000-0000-0000-0000-000000000009",
-			want:            404,
+			name:             "Get_Museums_404",
+			url:              "/v1/museums/trip/00000000-0000-0000-0000-000000000009",
+			want:             404,
 			mockedGetMuseums: []models.Museum{},
 			mock: func() {
 				var err = http.ErrLineTooLong
-				models.GetMuseumsByTrip  = func(trip_id uuid.UUID) ([]models.Museum, error) {
+				models.GetMuseumsByTrip = func(trip_id uuid.UUID) ([]models.Museum, error) {
 					return []models.Museum{}, err
 				}
 			},
