@@ -41,28 +41,42 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+-- Name: chkpass; Type: EXTENSION; Schema: -; Owner:
+--
+
+CREATE EXTENSION IF NOT EXISTS chkpass WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION chkpass; Type: COMMENT; Schema: -; Owner:
+--
+
+COMMENT ON EXTENSION chkpass IS 'data type for auto-encrypted passwords';
+
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
@@ -294,7 +308,7 @@ CREATE TABLE public.users (
     id uuid DEFAULT public.uuid_generate_v1() NOT NULL,
     name character varying(34) NOT NULL,
     login character varying(34) NOT NULL,
-    password character varying(16) NOT NULL
+    password public.chkpass
 );
 
 
@@ -305,13 +319,13 @@ ALTER TABLE public.users OWNER TO postgres;
 --
 
 COPY public.events (id, title, category, town, date, price) FROM stdin;
-9badbade-85cb-11e8-b86f-c01885c5bc39	Good Traditions of Galicia Fair	fair	Pustomyty District, Viniava village	2018-08-19	0
-9badbadf-85cb-11e8-b86f-c01885c5bc39	ZaxidFest	festival	Horodok district, Rodatychi village	2018-08-24	700
-9badbae0-85cb-11e8-b86f-c01885c5bc39	 IT Arena	conference	Lviv	2018-09-28	3405
-9badbae1-85cb-11e8-b86f-c01885c5bc39	Kacheli	entertaiment	Kyiv	2018-07-16	150
-9badbae2-85cb-11e8-b86f-c01885c5bc39	Jazz on the beach	concert	Kyiv	2018-08-09	350
-9badbae3-85cb-11e8-b86f-c01885c5bc39	Hey, you, hello	theatre	Kyiv	2018-07-22	100
-9badbae4-85cb-11e8-b86f-c01885c5bc39	Zedd	concert	Kyiv	2018-07-19	649
+27d5131a-8b33-11e8-9c6b-4cbb58667662	Good Traditions of Galicia Fair	fair	Pustomyty District, Viniava village	2018-08-19	0
+27d5131b-8b33-11e8-9c6b-4cbb58667662	ZaxidFest	festival	Horodok district, Rodatychi village	2018-08-24	700
+27d5131c-8b33-11e8-9c6b-4cbb58667662	 IT Arena	conference	Lviv	2018-09-28	3405
+27d5131d-8b33-11e8-9c6b-4cbb58667662	Kacheli	entertaiment	Kyiv	2018-07-16	150
+27d5131e-8b33-11e8-9c6b-4cbb58667662	Jazz on the beach	concert	Kyiv	2018-08-09	350
+27d5131f-8b33-11e8-9c6b-4cbb58667662	Hey, you, hello	theatre	Kyiv	2018-07-22	100
+27d51320-8b33-11e8-9c6b-4cbb58667662	Zedd	concert	Kyiv	2018-07-19	649
 \.
 
 
@@ -320,10 +334,10 @@ COPY public.events (id, title, category, town, date, price) FROM stdin;
 --
 
 COPY public.flights (id, departure_city, departure_time, departure_date, arrival_city, arrival_time, arrival_date, price) FROM stdin;
-7640e5dc-85cb-11e8-b86f-c01885c5bc39	Lviv	10:11:26	2018-06-16	Kyiv	10:12:22	2018-07-19	300
-7640e5dd-85cb-11e8-b86f-c01885c5bc39	Sokal	11:11:16	2018-05-12	Lviv	09:10:16	2018-05-13	150
-7640e5de-85cb-11e8-b86f-c01885c5bc39	Kovel	09:08:10	2018-06-01	Germany	08:11:12	2018-06-02	700
-7640e5df-85cb-11e8-b86f-c01885c5bc39	Tokyo	06:02:18	2018-06-03	Kyiv	08:10:10	2018-06-04	1200
+0d9d139e-8b33-11e8-9c6b-4cbb58667662	Lviv	10:11:26	2018-06-16	Kyiv	10:12:22	2018-07-19	300
+0d9d139f-8b33-11e8-9c6b-4cbb58667662	Sokal	11:11:16	2018-05-12	Lviv	09:10:16	2018-05-13	150
+0d9d13a0-8b33-11e8-9c6b-4cbb58667662	Kovel	09:08:10	2018-06-01	Germany	08:11:12	2018-06-02	700
+0d9d13a1-8b33-11e8-9c6b-4cbb58667662	Tokyo	06:02:18	2018-06-03	Kyiv	08:10:10	2018-06-04	1200
 \.
 
 
@@ -332,11 +346,11 @@ COPY public.flights (id, departure_city, departure_time, departure_date, arrival
 --
 
 COPY public.hotels (id, name, class, capacity, rooms_left, floors, max_price, city_name, address) FROM stdin;
-5e25825a-85cb-11e8-b86f-c01885c5bc39	Hotel Ukraine	3	1000	218	12	3200uah	Kyiv	Vulytsya Instytutsʹka 4
-5e25825b-85cb-11e8-b86f-c01885c5bc39	Lviv	4	1450	200	9	3480uah	Lviv	Prospect V. Chornovil, 7
-5e25825c-85cb-11e8-b86f-c01885c5bc39	Citadel Inn	5	1234	0	9	4000uah	Lviv	Hrabovskoho Street, 11
-5e25825d-85cb-11e8-b86f-c01885c5bc39	Nota bene	3	750	49	4	1380uah	Lviv	Valer'yana Polishchuka St, 78
-5e25825e-85cb-11e8-b86f-c01885c5bc39	Astoria Hotel	4	900	390	6	4000uah	Lviv	Hrabovskoho Street, 11
+f9bdcc38-8b32-11e8-9c6b-4cbb58667662	Hotel Ukraine	3	1000	218	12	3200uah	Kyiv	Vulytsya Instytutsʹka 4
+f9bdcc39-8b32-11e8-9c6b-4cbb58667662	Lviv	4	1450	200	9	3480uah	Lviv	Prospect V. Chornovil, 7
+f9bdcc3a-8b32-11e8-9c6b-4cbb58667662	Citadel Inn	5	1234	0	9	4000uah	Lviv	Hrabovskoho Street, 11
+f9bdcc3b-8b32-11e8-9c6b-4cbb58667662	Nota bene	3	750	49	4	1380uah	Lviv	Valer'yana Polishchuka St, 78
+f9bdcc3c-8b32-11e8-9c6b-4cbb58667662	Astoria Hotel	4	900	390	6	4000uah	Lviv	Hrabovskoho Street, 11
 \.
 
 
@@ -345,12 +359,12 @@ COPY public.hotels (id, name, class, capacity, rooms_left, floors, max_price, ci
 --
 
 COPY public.museums (id, name, location, price, opened_at, closed_at, museum_type, additional_info) FROM stdin;
-45caf12c-85cb-11e8-b86f-c01885c5bc39	Arsenal museum	Lviv	40	10:00:00	20:00:00	History	Half-price for students
-45caf12d-85cb-11e8-b86f-c01885c5bc39	Art gallery	Lviv	50	09:00:00	18:00:00	Art	Closed on Monday
-45caf12e-85cb-11e8-b86f-c01885c5bc39	Chocolate museum	Lviv	0	10:30:00	20:00:00	Specialty	You can buy chocolate
-45caf12f-85cb-11e8-b86f-c01885c5bc39	Aviation museum	Kiev	100	12:00:00	18:00:00	Specialty	Open air
-45caf130-85cb-11e8-b86f-c01885c5bc39	St. Michael's Cathedrale	Kiev	0	08:00:00	21:00:00	Sacred & Religious Sites	Can climb the bell tower
-45caf131-85cb-11e8-b86f-c01885c5bc39	Golden gate	Kiev	60	10:00:00	20:00:00	History	Located in the center of the city
+f0a56552-8b32-11e8-9c6b-4cbb58667662	Arsenal museum	Lviv	40	10:00:00	20:00:00	History	Half-price for students
+f0a56553-8b32-11e8-9c6b-4cbb58667662	Art gallery	Lviv	50	09:00:00	18:00:00	Art	Closed on Monday
+f0a56554-8b32-11e8-9c6b-4cbb58667662	Chocolate museum	Lviv	0	10:30:00	20:00:00	Specialty	You can buy chocolate
+f0a56555-8b32-11e8-9c6b-4cbb58667662	Aviation museum	Kiev	100	12:00:00	18:00:00	Specialty	Open air
+f0a56556-8b32-11e8-9c6b-4cbb58667662	St. Michael's Cathedrale	Kiev	0	08:00:00	21:00:00	Sacred & Religious Sites	Can climb the bell tower
+f0a56557-8b32-11e8-9c6b-4cbb58667662	Golden gate	Kiev	60	10:00:00	20:00:00	History	Located in the center of the city
 \.
 
 
@@ -359,10 +373,10 @@ COPY public.museums (id, name, location, price, opened_at, closed_at, museum_typ
 --
 
 COPY public.restaurants (id, name, location, stars, prices, description) FROM stdin;
-a3b6d6f8-86a6-11e8-9a39-d4bed959082a	Крива липа	Lviv	4	3	Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи
-a3b6d6f9-86a6-11e8-9a39-d4bed959082a	Криівка	Lviv	5	5	Автентичний заклад, оздоблений у вигляді польової криївки УПА, знаходиться у підвалі одного з будинків
-a3b6d6fa-86a6-11e8-9a39-d4bed959082a	Живий хліб	Lviv	5	3	Хліб та булочки тут готують на натуральних заквасках з італійського борошна. Для круасанів використовують французьке масло.
-a3b6d6fb-86a6-11e8-9a39-d4bed959082a	Фан-бар Банка	Lviv	5	4	Концептуальний демократичний бар, де вперше в Україні всі страви та напої подаються виключно у традиційних скляних банках. Все повинно бути в банках – в барі заборонені пляшки, тарілки, чарки, склянки й інший подібний посуд.
+dcb8b5ee-8b32-11e8-9c6b-4cbb58667662	Kryva Lypa	Lviv	4	3	Culinary studio "Krivaya Lipa" is an author's cuisine without GMOs. True culinary masterpieces of only the best quality and fresh produce from well-known masters.
+dcb8b5ef-8b32-11e8-9c6b-4cbb58667662	Kryivka	Lviv	5	5	The authentic institution, decorated in the form of a field shelter UPA, is in the basement of one of the houses
+dcb8b5f0-8b32-11e8-9c6b-4cbb58667662	Zhyvyi hlib	Lviv	5	3	Bread and rolls are cooked here on natural starter from Italian flour. For croissants, use French butter.
+dcb8b5f1-8b32-11e8-9c6b-4cbb58667662	Fun-bar Banka	Lviv	5	4	Conceptual Democratic Bar, where for the first time in Ukraine all meals and drinks are served exclusively in traditional glass jars. Everything should be in the cans - bottles, plates, glasses and other similar dishes are forbidden in the bar.
 \.
 
 
@@ -379,10 +393,10 @@ COPY public.tasks (id, user_id, name, "time", created_at, updated_at, descriptio
 --
 
 COPY public.trains (id, departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price) FROM stdin;
-2ee64f92-85cb-11e8-b86f-c01885c5bc39	11:23:54	2018-07-20	18:23:54	2018-07-22	Lviv	Odessa	electric	coupe	200uah
-2ee64f93-85cb-11e8-b86f-c01885c5bc39	10:23:54	2018-07-21	17:23:54	2018-07-24	Kyiv	Moscow	electric	coupe	190uah
-2ee64f94-85cb-11e8-b86f-c01885c5bc39	12:23:54	2018-07-22	16:23:54	2018-07-23	Lviv	Kyiv	electric	coupe	225uah
-2ee64f95-85cb-11e8-b86f-c01885c5bc39	15:23:54	2018-07-23	20:23:54	2018-07-25	Lviv	Kharkiv	electric	coupe	320uah
+cc6e0d88-8b32-11e8-9c6b-4cbb58667662	11:23:54	2018-07-20	18:23:54	2018-07-22	Lviv	Odessa	electric	coupe	200uah
+cc6e0d89-8b32-11e8-9c6b-4cbb58667662	10:23:54	2018-07-21	17:23:54	2018-07-24	Kyiv	Moscow	electric	coupe	190uah
+cc6e0d8a-8b32-11e8-9c6b-4cbb58667662	12:23:54	2018-07-22	16:23:54	2018-07-23	Lviv	Kyiv	electric	coupe	225uah
+cc6e0d8b-8b32-11e8-9c6b-4cbb58667662	15:23:54	2018-07-23	20:23:54	2018-07-25	Lviv	Kharkiv	electric	coupe	320uah
 \.
 
 
@@ -447,7 +461,7 @@ COPY public.trips_trains (id, trip_id, train_id) FROM stdin;
 --
 
 COPY public.users (id, name, login, password) FROM stdin;
-03dc3258-86a7-11e8-9a39-d4bed959082a	John	admin	admin
+708cf49c-8b33-11e8-9c6b-4cbb58667662	admen	admin	:zEXMP61NtmuEw
 \.
 
 
@@ -686,4 +700,3 @@ ALTER TABLE ONLY public.trips
 --
 -- PostgreSQL database dump complete
 --
-
