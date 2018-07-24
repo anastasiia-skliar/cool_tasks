@@ -5,6 +5,7 @@ id uuid DEFAULT uuid_generate_v1(),
 name VARCHAR(34) NOT NULL,
 login VARCHAR(34) NOT NULL,
 password VARCHAR(16) NOT NULL,
+role VARCHAR (16)
 PRIMARY KEY (id)
 );
 CREATE TABLE tasks (
