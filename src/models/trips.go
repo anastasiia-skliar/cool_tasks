@@ -45,36 +45,43 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 	trip.Events, err = GetEventsByTrip(id)
 	if err != nil {
 		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Flights, err = GetFlightsByTrip(id)
 	if err != nil {
 		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Museums, err = GetMuseumsByTrip(id)
 	if err != nil {
 		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Hotels, err = GetHotelsByTrip(id)
 	if err != nil {
 		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Trains, err = GetTrainsFromTrip(id)
 	if err != nil {
 		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Restaurants, err = GetRestaurantsFromTrip(id)
 	if err != nil {
 		log.Println(err)
+		return Trip{}, err
 	}
 
 	errDB := database.DB.QueryRow(getTripsByTripID, id).Scan(&trip.UserID)
 	if err != nil {
 		log.Println(errDB)
+		return Trip{}, err
 	}
 
 	return trip, nil
