@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -14,13 +13,13 @@ import (
 var router = services.NewRouter()
 
 type TrainsTestCase struct {
-	name            string
-	url             string
-	want            int
-	mockedGetTrains []models.Train
-	testDataId      string
-	testDataTr      string
-	mock            func()
+	name             string
+	url              string
+	want             int
+	mockedGetTrains  []models.Train
+	testDataId       string
+	testDataTr       string
+	mockedTrainError error
 }
 
 func TestGetTrains(t *testing.T) {
@@ -29,27 +28,18 @@ func TestGetTrains(t *testing.T) {
 			name: "Get_Trains_200",
 			url:  "/v1/trains?departure_city=lviv&arrival_city=kyiv&price=300uah",
 			want: 200,
-			mock: func() {
-
-			},
 		},
 		{
-			name:            "Get_Trains_404",
-			url:             "/v1/trains?mcok=890",
-			want:            404,
-			mockedGetTrains: []models.Train{},
-			mock: func() {
-				var err = http.ErrBodyNotAllowed
-				models.GetTrains = func(values url.Values) ([]models.Train, error) {
-					return []models.Train{}, err
-				}
-			},
+			name:             "Get_Trains_404",
+			url:              "/v1/trains?mcok=890",
+			want:             404,
+			mockedGetTrains:  []models.Train{},
+			mockedTrainError: http.ErrLineTooLong,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetTrains()
-			tc.mock()
+			models.MockedGetTrains(tc.mockedGetTrains, tc.mockedTrainError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -65,47 +55,39 @@ func TestGetTrains(t *testing.T) {
 func TestSaveTrain(t *testing.T) {
 	tests := []TrainsTestCase{
 		{
-			name:       "Add_To_Trip_200",
-			url:        "/v1/trains",
-			want:       200,
-			testDataId: "00000000-0000-0000-0000-000000000001",
-			testDataTr: "00000000-0000-0000-0000-000000000001",
-			mock: func() {
-
-			},
+			name:             "Add_To_Trip_200",
+			url:              "/v1/trains",
+			want:             200,
+			testDataId:       "00000000-0000-0000-0000-000000000001",
+			testDataTr:       "00000000-0000-0000-0000-000000000001",
+			mockedGetTrains:  []models.Train{},
+			mockedTrainError: nil,
 		},
 		{
-			name:       "Add_Trains_400",
-			url:        "/v1/trains",
-			want:       400,
-			testDataId: "00000000-0000-0000-0000-000000000001",
-			testDataTr: "asdsad",
-			mock: func() {
-
-			},
+			name:             "Add_Trains_400",
+			url:              "/v1/trains",
+			want:             400,
+			testDataId:       "00000000-0000-0000-0000-000000000001",
+			testDataTr:       "asdsad",
+			mockedGetTrains:  []models.Train{},
+			mockedTrainError: nil,
 		},
 		{
-			name:       "Add_Trains_400_2",
-			url:        "/v1/trains",
-			want:       400,
-			testDataId: "asdasd",
-			testDataTr: "00000000-0000-0000-0000-000000000001",
-			mock: func() {
-
-			},
+			name:             "Add_Trains_400_2",
+			url:              "/v1/trains",
+			want:             400,
+			testDataId:       "asdasd",
+			testDataTr:       "00000000-0000-0000-0000-000000000001",
+			mockedGetTrains:  []models.Train{},
+			mockedTrainError: nil,
 		},
 		{
-			name:       "Add_Events_400_3",
-			url:        "/v1/trains",
-			want:       400,
-			testDataId: "00000000-0000-0000-0000-000000000001",
-			testDataTr: "00000000-0000-0000-0000-000000000001",
-			mock: func() {
-				var err = error(new(http.ProtocolError))
-				models.AddTrainToTrip = func(train_id uuid.UUID, trip_id uuid.UUID) error {
-					return err
-				}
-			},
+			name:             "Add_Events_400_3",
+			url:              "/v1/trains",
+			want:             400,
+			testDataId:       "00000000-0000-0000-0000-000000000001",
+			testDataTr:       "00000000-0000-0000-0000-000000000001",
+			mockedTrainError: error(new(http.ProtocolError)),
 		},
 	}
 
@@ -114,8 +96,8 @@ func TestSaveTrain(t *testing.T) {
 			data := url.Values{}
 			data.Add("train_id", tc.testDataId)
 			data.Add("trip_id", tc.testDataTr)
-			models.MockedSaveTrain()
-			tc.mock()
+			models.MockedSaveTrain(tc.mockedTrainError)
+
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
@@ -139,36 +121,24 @@ func TestGetTrainFromTrip(t *testing.T) {
 			url:             "/v1/trains/trip/00000000-0000-0000-0000-000000000001",
 			want:            200,
 			mockedGetTrains: []models.Train{},
-			mock: func() {
-
-			},
 		},
 		{
 			name:            "Get_Trains_400",
 			url:             "/v1/trains/trip/sadsad",
 			want:            400,
 			mockedGetTrains: []models.Train{},
-			mock: func() {
-
-			},
 		},
 		{
-			name:            "Get_Events_404",
-			url:             "/v1/trains/trip/00000000-0000-0000-0000-000000000009",
-			want:            404,
-			mockedGetTrains: []models.Train{},
-			mock: func() {
-				var err = http.ErrNoLocation
-				models.GetTrainsFromTrip = func(trip_id uuid.UUID) ([]models.Train, error) {
-					return []models.Train{}, err
-				}
-			},
+			name:             "Get_Events_404",
+			url:              "/v1/trains/trip/00000000-0000-0000-0000-000000000009",
+			want:             404,
+			mockedGetTrains:  []models.Train{},
+			mockedTrainError: http.ErrNoLocation,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetTrainsFromTrip()
-			tc.mock()
+			models.MockedGetTrainsFromTrip(tc.mockedGetTrains, tc.mockedTrainError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

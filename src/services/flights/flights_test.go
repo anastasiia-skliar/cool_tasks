@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -20,36 +19,29 @@ type FlightsTestCase struct {
 	mockedGetFlights []models.Flight
 	testDataId       string
 	testDataFl       string
-	mock             func()
+	mockedFlightsErr error
 }
 
 func TestGetByRequestHandler(t *testing.T) {
 	tests := []FlightsTestCase{
 		{
-			name: "Get_Flights_200",
-			url:  "/v1/flights?departure_city=lviv&arrival_city=kyiv",
-			want: 200,
-			mock: func() {
-
-			},
+			name:             "Get_Flights_200",
+			url:              "/v1/flights?departure_city=lviv&arrival_city=kyiv",
+			want:             200,
+			mockedGetFlights: []models.Flight{},
+			mockedFlightsErr: nil,
 		},
 		{
 			name:             "Get_Flights_400",
 			url:              "/v1/flights?mock=890",
 			want:             400,
 			mockedGetFlights: []models.Flight{},
-			mock: func() {
-				var err = http.ErrBodyNotAllowed
-				models.GetFlights = func(values url.Values) ([]models.Flight, error) {
-					return []models.Flight{}, err
-				}
-			},
+			mockedFlightsErr: http.ErrBodyNotAllowed,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetByRequest()
-			tc.mock()
+			models.MockedGetByRequest(tc.mockedGetFlights, tc.mockedFlightsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -65,34 +57,28 @@ func TestGetByRequestHandler(t *testing.T) {
 func TestAddToTripHandler(t *testing.T) {
 	tests := []FlightsTestCase{
 		{
-			name:       "Add_To_Trip_200",
-			url:        "/v1/flights",
-			want:       200,
-			testDataId: "00000000-0000-0000-0000-000000000001",
-			testDataFl: "00000000-0000-0000-0000-000000000001",
-			mock: func() {
-
-			},
+			name:             "Add_To_Trip_200",
+			url:              "/v1/flights",
+			want:             200,
+			testDataId:       "00000000-0000-0000-0000-000000000001",
+			testDataFl:       "00000000-0000-0000-0000-000000000001",
+			mockedFlightsErr: nil,
 		},
 		{
-			name:       "Add_To_Trip_400",
-			url:        "/v1/flights",
-			want:       400,
-			testDataId: "00000000-0000-0000-0000-000000000001",
-			testDataFl: "asdas",
-			mock: func() {
-
-			},
+			name:             "Add_To_Trip_400",
+			url:              "/v1/flights",
+			want:             400,
+			testDataId:       "00000000-0000-0000-0000-000000000001",
+			testDataFl:       "asdas",
+			mockedFlightsErr: nil,
 		},
 		{
-			name:       "Add_Flights_400_2",
-			url:        "/v1/flights",
-			want:       400,
-			testDataId: "asdasd",
-			testDataFl: "00000000-0000-0000-0000-000000000001",
-			mock: func() {
-
-			},
+			name:             "Add_Flights_400_2",
+			url:              "/v1/flights",
+			want:             400,
+			testDataId:       "asdasd",
+			testDataFl:       "00000000-0000-0000-0000-000000000001",
+			mockedFlightsErr: nil,
 		},
 		{
 			name:             "Add_Flights_400_3",
@@ -100,13 +86,7 @@ func TestAddToTripHandler(t *testing.T) {
 			want:             400,
 			testDataId:       "00000000-0000-0000-0000-000000000001",
 			testDataFl:       "00000000-0000-0000-0000-000000000001",
-			mockedGetFlights: []models.Flight{},
-			mock: func() {
-				var err = http.ErrLineTooLong
-				models.AddFlightToTrip = func(flightID uuid.UUID, trip_id uuid.UUID) error {
-					return err
-				}
-			},
+			mockedFlightsErr: http.ErrLineTooLong,
 		},
 	}
 
@@ -116,8 +96,7 @@ func TestAddToTripHandler(t *testing.T) {
 			data.Add("flight_id", tc.testDataFl)
 			data.Add("trip_id", tc.testDataId)
 
-			models.MockedAddToTrip()
-			tc.mock()
+			models.MockedAddToTrip(tc.mockedFlightsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
@@ -140,36 +119,26 @@ func TestGetByTripHandler(t *testing.T) {
 			url:              "/v1/flights/trip/00000000-0000-0000-0000-000000000001",
 			want:             200,
 			mockedGetFlights: []models.Flight{},
-			mock: func() {
-
-			},
+			mockedFlightsErr: nil,
 		},
 		{
 			name:             "Get_flight_400",
 			url:              "/v1/flights/trip/asdas",
 			want:             400,
 			mockedGetFlights: []models.Flight{},
-			mock: func() {
-
-			},
+			mockedFlightsErr: nil,
 		},
 		{
 			name:             "Get_Flights_404",
 			url:              "/v1/flights/trip/00000000-0000-0000-0000-000000000009",
 			want:             404,
 			mockedGetFlights: []models.Flight{},
-			mock: func() {
-				var err = http.ErrLineTooLong
-				models.GetFlightsByTrip = func(trip_id uuid.UUID) ([]models.Flight, error) {
-					return []models.Flight{}, err
-				}
-			},
+			mockedFlightsErr: http.ErrLineTooLong,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetByTrip()
-			tc.mock()
+			models.MockedGetByTrip(tc.mockedGetFlights, tc.mockedFlightsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

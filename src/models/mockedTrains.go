@@ -6,22 +6,22 @@ import (
 )
 
 //MockedGetTrains is mocked GetTrains func
-func MockedGetTrains() {
+func MockedGetTrains(train []Train, err error) {
 	GetTrains = func(params url.Values) ([]Train, error) {
-		return []Train{}, nil
+		return train, err
 	}
 }
 
 //MockedSaveTrain is mocked AddTrainToTrip func
-func MockedSaveTrain() {
+func MockedSaveTrain(err error) {
 	AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
-		return nil
+		return err
 	}
 }
 
 //MockedGetTrainsFromTrip is mocked GetTrainsFromTrip func
-func MockedGetTrainsFromTrip() {
+func MockedGetTrainsFromTrip(train []Train, err error) {
 	GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
-		return []Train{}, nil
+		return train, err
 	}
 }

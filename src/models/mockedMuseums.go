@@ -6,22 +6,22 @@ import (
 )
 
 //MockedGetMuseums is mocked GetMuseums func
-func MockedGetMuseums() {
+func MockedGetMuseums(museum []Museum, err error) {
 	GetMuseums = func(values url.Values) ([]Museum, error) {
-		return []Museum{}, nil
+		return museum, err
 	}
 }
 
 //MockedAddMuseum is mocked AddMuseum func
-func MockedAddMuseum() {
+func MockedAddMuseum(err error) {
 	AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) error {
-		return nil
+		return err
 	}
 }
 
 //MockedGetMuseumsByTrip is mocked GetMuseumsByTrip func
-func MockedGetMuseumsByTrip() {
+func MockedGetMuseumsByTrip(museum []Museum, err error) {
 	GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
-		return []Museum{}, nil
+		return museum, err
 	}
 }
