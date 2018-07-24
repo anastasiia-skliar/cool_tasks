@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
+	"log"
 )
 
 const (
@@ -43,37 +44,44 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	trip.Events, err = GetEventsByTrip(id)
 	if err != nil {
-		return trip, err
+		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Flights, err = GetFlightsByTrip(id)
 	if err != nil {
-		return trip, err
+		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Museums, err = GetMuseumsByTrip(id)
 	if err != nil {
-		return trip, err
+		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Hotels, err = GetHotelsByTrip(id)
 	if err != nil {
-		return trip, err
+		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Trains, err = GetTrainsFromTrip(id)
 	if err != nil {
-		return trip, err
+		log.Println(err)
+		return Trip{}, err
 	}
 
 	trip.Restaurants, err = GetRestaurantsFromTrip(id)
 	if err != nil {
-		return trip, err
+		log.Println(err)
+		return Trip{}, err
 	}
 
 	errDB := database.DB.QueryRow(getTripsByTripID, id).Scan(&trip.UserID)
 	if err != nil {
-		return trip, errDB
+		log.Println(errDB)
+		return Trip{}, err
 	}
 
 	return trip, nil

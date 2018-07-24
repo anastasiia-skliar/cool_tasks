@@ -6,22 +6,22 @@ import (
 )
 
 //GetHotelsMocked is mocked GetHotels func
-func GetHotelsMocked() {
+func GetHotelsMocked(hotels []Hotel, err error) {
 	GetHotels = func(params url.Values) ([]Hotel, error) {
-		return []Hotel{}, nil
+		return hotels, err
 	}
 }
 
 //AddHotelMocked is mocked AddHotel func
-func AddHotelMocked() {
+func AddHotelMocked(err error) {
 	AddHotelToTrip = func(tripsID, hotelsID uuid.UUID) error {
-		return nil
+		return err
 	}
 }
 
 //GetHotelByTripIDMocked is mocked GetHotelByTripID func
-func GetHotelByTripIDMocked() {
+func GetHotelByTripIDMocked(hotels []Hotel, err error) {
 	GetHotelsByTrip = func(tripsID uuid.UUID) ([]Hotel, error) {
-		return []Hotel{}, nil
+		return hotels, err
 	}
 }

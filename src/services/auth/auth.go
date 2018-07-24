@@ -30,9 +30,7 @@ type User struct {
 
 //Login login new User
 var Login = func(w http.ResponseWriter, r *http.Request) {
-	GetUserByLogin := models.GetUserByLogin
 	redis := database.Cache
-
 	var newLogin login
 	parseErr := r.ParseForm()
 	if parseErr != nil {
@@ -44,7 +42,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 
 	var userInDB models.User
 
-	userInDB, er := GetUserByLogin(newLogin.login)
+	userInDB, er := models.GetUserByLogin(newLogin.login)
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
 		return
@@ -73,7 +71,6 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	common.SendError(w, r, 401, "ERROR: ", errors.New("Fail to autorize"))
-
 }
 
 //Logout logout User

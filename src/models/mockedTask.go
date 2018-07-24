@@ -31,3 +31,9 @@ func MockedGetTasks(task []Task, err error) {
 		return task, err
 	}
 }
+
+func MockedGetUserTasks(task []Task, err error) {
+	GetUserTasks = func(id uuid.UUID) ([]Task, error) {
+		return task, err
+	}
+}

@@ -11,6 +11,9 @@ import (
 type TripsTestCase struct {
 	name                   string
 	mockedGetTripsByTripID models.Trip
+	mockedTripError        error
+	expectedTripId         uuid.UUID
+	mock                   func()
 }
 
 func TestCreateTrip(t *testing.T) {
@@ -64,5 +67,52 @@ func TestGetTripsByUserID(t *testing.T) {
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+//with TRIP_ID
+func TestGetTrip(t *testing.T) {
+	originalDB := database.DB
+	database.DB, mock, mockErr = sqlmock.New()
+	defer func() { database.DB = originalDB }()
+
+	TripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	//testTime, _ := time.Parse("15:04:05", "12:00:00")
+	tests := []TripsTestCase{
+		{
+			name:            "GetTripsByTripId_200",
+			mockedTripError: nil,
+			expectedTripId:  TripID,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			testTrip, _ := models.GetTrip(TripID)
+
+			models.GetEventsByTrip = func(tripID uuid.UUID) ([]models.Event, error) {
+				return []models.Event{}, nil
+			}
+			models.GetFlightsByTrip = func(tripID uuid.UUID) ([]models.Flight, error) {
+				return []models.Flight{}, nil
+			}
+			models.GetMuseumsByTrip = func(trip_id uuid.UUID) ([]models.Museum, error) {
+				return []models.Museum{}, nil
+			}
+			models.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]models.Restaurant, error) {
+				return []models.Restaurant{}, nil
+			}
+			models.GetHotelsByTrip = func(tripID uuid.UUID) ([]models.Hotel, error) {
+				return []models.Hotel{}, nil
+			}
+			models.GetTrainsFromTrip = func(tripsID uuid.UUID) ([]models.Train, error) {
+				return []models.Train{}, nil
+			}
+			models.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
+				return nil, nil
+			}
+			if testTrip.TripID != tc.expectedTripId {
+				t.Errorf("Expected: %s", tc.name)
+			}
+		})
 	}
 }
