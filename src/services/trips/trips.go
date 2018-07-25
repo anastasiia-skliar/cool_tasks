@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 type successCreate struct {
@@ -43,8 +44,13 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Wrong tripID", err)
 		return
 	}
-	result, err := models.GetTripsByTripID(tripID)
 
+	result, err := models.GetTripsByTripID(tripID)
+	itemOwner, err:= models.GetUserByID(result.UserID)
+	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	common.RenderJSON(w, r, result)
 }
 
@@ -54,6 +60,11 @@ func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.FromString(params["id"])
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong userID", err)
+		return
+	}
+	itemOwner, err:= models.GetUserByID(userID)
+	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
 	result, err := models.GetTripIDByUserID(userID)
