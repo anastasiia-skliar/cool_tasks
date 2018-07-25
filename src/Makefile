@@ -33,6 +33,9 @@ code-quality-print:
 format:
 	go fmt $(packages)
 
+doc:
+	godoc -http=:6060
+
 go-build:
 	go build -o cool_tasks
 
