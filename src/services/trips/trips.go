@@ -7,6 +7,8 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
 	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
+
 	"github.com/gorilla/mux"
 )
 
@@ -54,6 +56,11 @@ func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	itemOwner, err:= models.GetUserByID(result.UserID)
+	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	common.RenderJSON(w, r, result)
 }
 
@@ -66,6 +73,12 @@ func GetTripIDsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Wrong userID", err)
 		return
 	}
+	itemOwner, err:= models.GetUserByID(userID)
+	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
+
 
 	result, err := models.GetTripIDsByUserID(userID)
 	if err != nil {

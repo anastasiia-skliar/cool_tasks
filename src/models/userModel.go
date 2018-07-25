@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	createUser     = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
-	getUser        = "SELECT * FROM users WHERE id = $1"
+	createUser     = "INSERT INTO users (name, login, password, role) VALUES ($1, $2, $3, $4) RETURNING id"
+	getUserByID    = "SELECT * FROM users WHERE id = $1"
 	getUserByLogin = "SELECT * FROM users WHERE login = $1"
 	deleteUser     = "DELETE FROM users WHERE id = $1"
 	getUsers       = "SELECT * FROM users"
@@ -20,20 +20,22 @@ type User struct {
 	Name     string
 	Login    string
 	Password string
+	Role 	 string
 }
 
 //AddUser used for creation user in DB
 var AddUser = func(user User) (uuid.UUID, error) {
 	var id uuid.UUID
-	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password).Scan(&id)
+
+	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password, user.Role).Scan(&id)
 
 	return id, err
 }
 
-//GetUser used for getting user from DB
-var GetUser = func(id uuid.UUID) (User, error) {
+//GetUserByID used for getting user from DB
+var GetUserByID = func(id uuid.UUID) (User, error) {
 	var user User
-	err := database.DB.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	err := database.DB.QueryRow(getUserByID, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
 
 	return user, err
 }
@@ -41,7 +43,7 @@ var GetUser = func(id uuid.UUID) (User, error) {
 //GetUserByLogin used for getting user from DB by Login
 var GetUserByLogin = func(login string) (User, error) {
 	var user User
-	err := database.DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	err := database.DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
 	return user, err
 }
 
@@ -63,7 +65,7 @@ var GetUsers = func() ([]User, error) {
 
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(&u.ID, &u.Name, &u.Login, &u.Password); err != nil {
+		if err := rows.Scan(&u.ID, &u.Name, &u.Login, &u.Password, &u.Role); err != nil {
 			return []User{}, err
 		}
 		users = append(users, u)

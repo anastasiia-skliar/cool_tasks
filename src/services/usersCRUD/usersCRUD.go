@@ -10,6 +10,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
+<<<<<<< HEAD
+	"log"
+	"net/http"
+	"regexp"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
+=======
+>>>>>>> master
 )
 
 type successCreate struct {
@@ -55,7 +62,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from URL", err)
 		return
 	}
-	user, err := models.GetUser(idUser)
+	user, err := models.GetUserByID(idUser)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find user with such ID", err)
 		return
@@ -69,8 +76,17 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, uResponse)
 }
 
+<<<<<<< HEAD
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	if auth.CheckPermission(r, "admin", "")==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
+
+=======
 //AddUserHandler is a handler for creating User
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
+>>>>>>> master
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -117,8 +133,16 @@ func IsValid(user models.User) (bool, string) {
 	return validName && validLogin && validPass, errMessage
 }
 
+<<<<<<< HEAD
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	if auth.CheckPermission(r, "admin", "")==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
+=======
 //DeleteUserHandler is a handler for deleting User from DB
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+>>>>>>> master
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
 	if err != nil {
