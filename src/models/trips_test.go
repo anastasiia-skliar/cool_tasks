@@ -87,7 +87,6 @@ func TestGetTrip(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			testTrip, _ := models.GetTrip(TripID)
 
 			models.GetEventsByTrip = func(tripID uuid.UUID) ([]models.Event, error) {
 				return []models.Event{}, nil
@@ -110,6 +109,8 @@ func TestGetTrip(t *testing.T) {
 			models.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 				return nil, nil
 			}
+			testTrip, _ := models.GetTrip(TripID)
+			
 			if testTrip.TripID != tc.expectedTripId {
 				t.Errorf("Expected: %s", tc.name)
 			}
