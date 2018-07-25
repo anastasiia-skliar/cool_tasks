@@ -20,18 +20,18 @@ type successDelete struct {
 func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if val, ok := query["id"]; ok {
-		id, err := uuid.FromString(val[0])
+		_, err := uuid.FromString(val[0])
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		restaurant, err := models.GetRestaurant(id)
+		restaurants, err := models.GetRestaurants(query)
 
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Can't get restaurant", err)
 			return
 		}
-
+		restaurant := restaurants[0]
 		common.RenderJSON(w, r, restaurant)
 	}
 
