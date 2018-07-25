@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
+
 	"github.com/satori/go.uuid"
 )
 
@@ -22,8 +23,8 @@ type User struct {
 	Role 	 string
 }
 
-//CreateUser used for creation user in DB
-var CreateUser = func(user User) (uuid.UUID, error) {
+//AddUser used for creation user in DB
+var AddUser = func(user User) (uuid.UUID, error) {
 	var id uuid.UUID
 
 	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password, user.Role).Scan(&id)
@@ -40,7 +41,7 @@ var GetUserByID = func(id uuid.UUID) (User, error) {
 }
 
 //GetUserByLogin used for getting user from DB by Login
-func GetUserByLogin(login string) (User, error) {
+var GetUserByLogin = func(login string) (User, error) {
 	var user User
 	err := database.DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
 	return user, err

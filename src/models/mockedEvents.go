@@ -5,20 +5,23 @@ import (
 	"net/url"
 )
 
-func MockedGetEvents() {
-	GetEventsByRequest = func(values url.Values) ([]Event, error) {
-		return []Event{}, nil
+//MockedGetEvents is mocked GetEvents func
+func MockedGetEvents(events []Event, err error) {
+	GetEvents = func(values url.Values) ([]Event, error) {
+		return events, err
 	}
 }
 
-func MockedAddEventToTrip() {
+//MockedAddEventToTrip is mocked AddEventToTrip func
+func MockedAddEventToTrip(err error) {
 	AddEventToTrip = func(event_id uuid.UUID, trip_id uuid.UUID) error {
-		return nil
+		return err
 	}
 }
 
-func MockedGetEventsByTrip() {
+//MockedGetEventsByTrip is mocked GetEventsByTrip func
+func MockedGetEventsByTrip(events []Event, err error) {
 	GetEventsByTrip = func(trip_id uuid.UUID) ([]Event, error) {
-		return []Event{}, nil
+		return events, err
 	}
 }

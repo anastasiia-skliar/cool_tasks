@@ -1,10 +1,14 @@
 package models
 
-import "github.com/satori/go.uuid"
+import (
+	"github.com/satori/go.uuid"
+)
 
-func MockedGetTripsByTripID(trip Trip) {
-	GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
-
+//MockedGetTripsByTripID is mocked GetTrip func
+func MockedGetTripsByTripID(trip Trip) Trip {
+	GetTrip = func(id uuid.UUID) (Trip, error) {
+		trip := Trip{TripID: id}
 		return trip, nil
 	}
+	return trip
 }

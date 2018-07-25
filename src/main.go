@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	configFile := flag.String("config", "./config.json", "Configuration file in JSON-format")
+	configFile := flag.String("config", "src/config.json", "Configuration file in JSON-format")
 	flag.Parse()
 
 	if len(*configFile) > 0 {
@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("error while reading config: %s", err)
 	}
 
-	f, err := os.OpenFile(config.Config.LogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(config.Config.LogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}

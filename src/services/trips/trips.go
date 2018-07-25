@@ -1,12 +1,15 @@
 package trips
 
 import (
+	"net/http"
+
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-	"github.com/gorilla/mux"
+
 	"github.com/satori/go.uuid"
-	"net/http"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
+
+	"github.com/gorilla/mux"
 )
 
 type successCreate struct {
@@ -14,7 +17,8 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
-func CreateTrip(w http.ResponseWriter, r *http.Request) {
+//AddTripHandler is a handler for creating Trips
+func AddTripHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -28,7 +32,7 @@ func CreateTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := models.CreateTrip(trip)
+	id, err := models.AddTrip(trip)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add this trip", err)
 		return
@@ -36,7 +40,8 @@ func CreateTrip(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
-func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
+//GetTrip is a handler for getting Trip from DB bu tripID
+func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	tripID, err := uuid.FromString(params["id"])
@@ -45,7 +50,12 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := models.GetTripsByTripID(tripID)
+	result, err := models.GetTrip(tripID)
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
+		return
+	}
+
 	itemOwner, err:= models.GetUserByID(result.UserID)
 	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
@@ -54,7 +64,8 @@ func GetTripsByTripID(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, result)
 }
 
-func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
+//GetTripIDsByUserIDHandler is a handler for getting tripID from DB by userID
+func GetTripIDsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	userID, err := uuid.FromString(params["id"])
@@ -67,7 +78,13 @@ func GetTripIDByUserID(w http.ResponseWriter, r *http.Request) {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
-	result, err := models.GetTripIDByUserID(userID)
+
+
+	result, err := models.GetTripIDsByUserID(userID)
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Can't get this trip", err)
+		return
+	}
 
 	common.RenderJSON(w, r, result)
 }

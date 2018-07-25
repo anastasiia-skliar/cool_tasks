@@ -7,18 +7,14 @@ import (
 	"net/http"
 )
 
-//Start Mocked func that check is the key exist on redis and return true is exist
+//IsExistRedis checks if redis exists
 var IsExistRedis = func(key string) bool {
 	_, err := database.Cache.Get(key).Result()
 
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
-//End Mocked func
-
+//IsAuthorized checks authorization
 func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 	if r.URL.Path == "/v1/login" {
@@ -39,5 +35,4 @@ func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		log.Println(err, "ERROR: Not Authorized")
 		common.SendError(w, r, 401, "ERROR: Not Authorized", err)
 	}
-
 }

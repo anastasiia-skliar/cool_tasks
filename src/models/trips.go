@@ -3,68 +3,99 @@ package models
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
+	"log"
 )
 
 const (
-	createTrip       = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
-	getTripsByUserID = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
+	createTrip        = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
+	getTripIDByUserID = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
+	getTripsByTripID  = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
 )
 
+//Trip is a representation of Event Trip in DB
 type Trip struct {
-	TripID  uuid.UUID
-	UserID  uuid.UUID
-	Events  []Event
-	Flights []Flight
-	Museums []Museum
-	Hotels  []Hotel
-	Trains  []Train
+	TripID      uuid.UUID
+	UserID      uuid.UUID
+	Events      []Event
+	Flights     []Flight
+	Museums     []Museum
 	Restaurants []Restaurant
+	Hotels      []Hotel
+	Trains      []Train
 }
 
-var CreateTrip = func(trip Trip) (uuid.UUID, error) {
+//AddTrip creates Trip and saves it to DB
+var AddTrip = func(trip Trip) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createTrip, trip.UserID).Scan(&id)
 
 	return id, err
 }
 
-var GetTripsByTripID = func(id uuid.UUID) (Trip, error) {
+//GetTrip gets Trips from DB by tripID
+var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	var (
-		trip    Trip
-		events  []Event
-		flights []Flight
-		museums []Museum
-		hotels  []Hotel
-		trains  []Train
-		restaurants []Restaurant
+		trip Trip
+		err  error
 	)
 
-	events, _ = GetEventsByTrip(id)
-	flights, _ = GetFlightsByTrip(id)
-	museums, _ = GetMuseumsByTrip(id)
-	hotels, _ = GetHotelsByTrip(id)
-	trains, _ = GetTrainFromTrip(id)
-	restaurants, _=GetRestaurantsFromTrip(id)
+	trip.TripID = id
 
-	trip.Events = events
-	trip.Flights = flights
-	trip.Museums = museums
-	trip.Hotels = hotels
-	trip.Trains = trains
-	trip.Restaurants=restaurants
+	trip.Events, err = GetEventsByTrip(id)
+	if err != nil {
+		log.Println(err)
+		return Trip{}, err
+	}
+
+	trip.Flights, err = GetFlightsByTrip(id)
+	if err != nil {
+		log.Println(err)
+		return Trip{}, err
+	}
+
+	trip.Museums, err = GetMuseumsByTrip(id)
+	if err != nil {
+		log.Println(err)
+		return Trip{}, err
+	}
+
+	trip.Hotels, err = GetHotelsByTrip(id)
+	if err != nil {
+		log.Println(err)
+		return Trip{}, err
+	}
+
+	trip.Trains, err = GetTrainsFromTrip(id)
+	if err != nil {
+		log.Println(err)
+		return Trip{}, err
+	}
+
+	trip.Restaurants, err = GetRestaurantsFromTrip(id)
+	if err != nil {
+		log.Println(err)
+		return Trip{}, err
+	}
+
+	errDB := database.DB.QueryRow(getTripsByTripID, id).Scan(&trip.UserID)
+	if err != nil {
+		log.Println(errDB)
+		return Trip{}, err
+	}
 
 	return trip, nil
 }
 
-var GetTripIDByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
+//GetTripIDsByUserID gets Trips from DB by userID
+var GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 
 	var (
 		tripIDs []uuid.UUID
 		tripID  uuid.UUID
 	)
 
-	rows, err := database.DB.Query(getTripsByUserID, id)
+	rows, err := database.DB.Query(getTripIDByUserID, id)
 	if err != nil {
 		return nil, err
 	}

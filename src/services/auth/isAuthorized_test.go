@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var cookieSession string = "6c3a65d23c5f26fc529f6c5ce01a6b31"
+var cookieSession = "6c3a65d23c5f26fc529f6c5ce01a6b31"
 
 type isAuthorizedTestCase struct {
 	name        string
@@ -45,7 +45,7 @@ func TestIsAuthorized(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 
-			mockedIsExistRedis(tc.cookieValue)
+			mockedIsExistRedis()
 
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)

@@ -27,7 +27,7 @@ ALTER DATABASE cool_tasks OWNER TO postgres;
 \connect cool_tasks
 
 
--- Dumped from database version 10.4 (Debian 10.4-2.pgdg90+1)
+-- Dumped from database version 10.4 (Ubuntu 10.4-0ubuntu0.18.04)
 -- Dumped by pg_dump version 10.4 (Ubuntu 10.4-0ubuntu0.18.04)
 
 SET statement_timeout = 0;
@@ -144,6 +144,22 @@ CREATE TABLE public.museums (
 ALTER TABLE public.museums OWNER TO postgres;
 
 --
+-- Name: restaurants; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.restaurants (
+    id uuid DEFAULT public.uuid_generate_v1() NOT NULL,
+    name character varying(100) NOT NULL,
+    location character varying(100) NOT NULL,
+    stars integer,
+    prices integer,
+    description text
+);
+
+
+ALTER TABLE public.restaurants OWNER TO postgres;
+
+--
 -- Name: tasks; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -245,6 +261,19 @@ CREATE TABLE public.trips_museums (
 ALTER TABLE public.trips_museums OWNER TO postgres;
 
 --
+-- Name: trips_restaurants; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trips_restaurants (
+    id uuid DEFAULT public.uuid_generate_v1() NOT NULL,
+    trip_id uuid,
+    restaurant_id uuid
+);
+
+
+ALTER TABLE public.trips_restaurants OWNER TO postgres;
+
+--
 -- Name: trips_trains; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -326,6 +355,18 @@ COPY public.museums (id, name, location, price, opened_at, closed_at, museum_typ
 
 
 --
+-- Data for Name: restaurants; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.restaurants (id, name, location, stars, prices, description) FROM stdin;
+a3b6d6f8-86a6-11e8-9a39-d4bed959082a	Крива липа	Lviv	4	3	Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи
+a3b6d6f9-86a6-11e8-9a39-d4bed959082a	Криівка	Lviv	5	5	Автентичний заклад, оздоблений у вигляді польової криївки УПА, знаходиться у підвалі одного з будинків
+a3b6d6fa-86a6-11e8-9a39-d4bed959082a	Живий хліб	Lviv	5	3	Хліб та булочки тут готують на натуральних заквасках з італійського борошна. Для круасанів використовують французьке масло.
+a3b6d6fb-86a6-11e8-9a39-d4bed959082a	Фан-бар Банка	Lviv	5	4	Концептуальний демократичний бар, де вперше в Україні всі страви та напої подаються виключно у традиційних скляних банках. Все повинно бути в банках – в барі заборонені пляшки, тарілки, чарки, склянки й інший подібний посуд.
+\.
+
+
+--
 -- Data for Name: tasks; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -378,19 +419,18 @@ COPY public.trips_hotels (id, trip_id, hotels_id) FROM stdin;
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.users (id, name, login, password) FROM stdin;
-7e3e4c0a-85b4-11e8-b3c2-4cbb58667662	admeen	admin	admin
-\.
-
-
---
 -- Data for Name: trips_museums; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.trips_museums (museum_id, trip_id, id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: trips_restaurants; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trips_restaurants (id, trip_id, restaurant_id) FROM stdin;
 \.
 
 
@@ -407,6 +447,7 @@ COPY public.trips_trains (id, trip_id, train_id) FROM stdin;
 --
 
 COPY public.users (id, name, login, password) FROM stdin;
+03dc3258-86a7-11e8-9a39-d4bed959082a	John	admin	admin
 \.
 
 
@@ -440,6 +481,14 @@ ALTER TABLE ONLY public.hotels
 
 ALTER TABLE ONLY public.museums
     ADD CONSTRAINT museums_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: restaurants restaurants_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.restaurants
+    ADD CONSTRAINT restaurants_pkey PRIMARY KEY (id);
 
 
 --
@@ -496,6 +545,14 @@ ALTER TABLE ONLY public.trips_museums
 
 ALTER TABLE ONLY public.trips
     ADD CONSTRAINT trips_pkey PRIMARY KEY (trip_id);
+
+
+--
+-- Name: trips_restaurants trips_restaurants_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trips_restaurants
+    ADD CONSTRAINT trips_restaurants_pkey PRIMARY KEY (id);
 
 
 --
@@ -584,6 +641,22 @@ ALTER TABLE ONLY public.trips_museums
 
 ALTER TABLE ONLY public.trips_museums
     ADD CONSTRAINT trips_museums_trip_id_fkey FOREIGN KEY (trip_id) REFERENCES public.trips(trip_id) ON DELETE CASCADE;
+
+
+--
+-- Name: trips_restaurants trips_restaurants_restaurant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trips_restaurants
+    ADD CONSTRAINT trips_restaurants_restaurant_id_fkey FOREIGN KEY (restaurant_id) REFERENCES public.restaurants(id) ON DELETE CASCADE;
+
+
+--
+-- Name: trips_restaurants trips_restaurants_trip_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trips_restaurants
+    ADD CONSTRAINT trips_restaurants_trip_id_fkey FOREIGN KEY (trip_id) REFERENCES public.trips(trip_id) ON DELETE CASCADE;
 
 
 --

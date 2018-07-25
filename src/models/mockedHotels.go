@@ -5,20 +5,23 @@ import (
 	"net/url"
 )
 
-func GetHotelsMocked() {
-	GetHotelsByRequest = func(params url.Values) ([]Hotel, error) {
-		return []Hotel{}, nil
+//GetHotelsMocked is mocked GetHotels func
+func GetHotelsMocked(hotels []Hotel, err error) {
+	GetHotels = func(params url.Values) ([]Hotel, error) {
+		return hotels, err
 	}
 }
 
-func AddHotelMocked() {
+//AddHotelMocked is mocked AddHotel func
+func AddHotelMocked(err error) {
 	AddHotelToTrip = func(tripsID, hotelsID uuid.UUID) error {
-		return nil
+		return err
 	}
 }
 
-func GetHotelByTripIdMocked() {
+//GetHotelByTripIDMocked is mocked GetHotelByTripID func
+func GetHotelByTripIDMocked(hotels []Hotel, err error) {
 	GetHotelsByTrip = func(tripsID uuid.UUID) ([]Hotel, error) {
-		return []Hotel{}, nil
+		return hotels, err
 	}
 }

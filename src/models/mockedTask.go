@@ -4,9 +4,9 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-//MockedCreateTask is mocked CreateTask func
+//MockedCreateTask is mocked AddTask func
 func MockedCreateTask(task Task, err error) {
-	CreateTask = func(task Task) (Task, error) {
+	AddTask = func(task Task) (Task, error) {
 		return task, err
 	}
 }
@@ -28,6 +28,12 @@ func MockedDeleteTask(id uuid.UUID, err error) {
 //MockedGetTasks is mocked GetTasks func
 func MockedGetTasks(task []Task, err error) {
 	GetTasks = func() ([]Task, error) {
+		return task, err
+	}
+}
+
+func MockedGetUserTasks(task []Task, err error) {
+	GetUserTasks = func(id uuid.UUID) ([]Task, error) {
 		return task, err
 	}
 }

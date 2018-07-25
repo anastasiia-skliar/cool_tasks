@@ -5,20 +5,23 @@ import (
 	"net/url"
 )
 
-func MockedGetTrains() {
+//MockedGetTrains is mocked GetTrains func
+func MockedGetTrains(train []Train, err error) {
 	GetTrains = func(params url.Values) ([]Train, error) {
-		return []Train{}, nil
+		return train, err
 	}
 }
 
-func MockedSaveTrain() {
-	SaveTrain = func(tripsID, trainsID uuid.UUID) error {
-		return nil
+//MockedSaveTrain is mocked AddTrainToTrip func
+func MockedSaveTrain(err error) {
+	AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
+		return err
 	}
 }
 
-func MockedGetTrainsFromTrip() {
-	GetTrainFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
-		return []Train{}, nil
+//MockedGetTrainsFromTrip is mocked GetTrainsFromTrip func
+func MockedGetTrainsFromTrip(train []Train, err error) {
+	GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
+		return train, err
 	}
 }

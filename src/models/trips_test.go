@@ -6,12 +6,14 @@ import (
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
-	"time"
 )
 
 type TripsTestCase struct {
 	name                   string
 	mockedGetTripsByTripID models.Trip
+	mockedTripError        error
+	expectedTripId         uuid.UUID
+	mock                   func()
 }
 
 func TestCreateTrip(t *testing.T) {
@@ -34,69 +36,13 @@ func TestCreateTrip(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserID.Bytes())
 
 	mock.ExpectQuery("INSERT INTO trips").WithArgs(UserID).WillReturnRows(rows)
-	if _, err := models.CreateTrip(trip); err != nil {
+	if _, err := models.AddTrip(trip); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
-}
-
-func TestGetTripsByTripID(t *testing.T) {
-
-	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	TripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
-
-	departureTime, _ := time.Parse("15:04:05", "12:00:00")
-	departureDate, _ := time.Parse("2006-01-02", "2018-07-21")
-	arrivalTime, _ := time.Parse("15:04:05", "15:00:00")
-	arrivalDate, _ := time.Parse("2006-01-02", "2018-07-21")
-	testTime, _ := time.Parse("15:04:05", "12:00:00")
-	MuseumId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-
-	expects := models.Trip{
-		TripID:  TripID,
-		UserID:  UserID,
-		Events:  []models.Event{},
-		Flights: []models.Flight{},
-		Museums: []models.Museum{
-			{
-				ID:         MuseumId,
-				Name:       "Ermitage",
-				Location:   "Peterburg",
-				Price:      1111,
-				OpenedAt:   testTime,
-				ClosedAt:   testTime,
-				MuseumType: "Gallery",
-				Info:       "Cool",
-			},
-		},
-		Trains: []models.Train{
-			{
-				ID:            ID,
-				DepartureTime: departureTime,
-				DepartureDate: departureDate,
-				ArrivalTime:   arrivalTime,
-				ArrivalDate:   arrivalDate,
-				DepartureCity: "Lviv",
-				ArrivalCity:   "Kyiv",
-				TrainType:     "el",
-				CarType:       "coupe",
-				Price:         "200uah",
-			},
-		},
-	}
-
-	tests := TripsTestCase{
-		name: "Get_Trips_OK",
-		mockedGetTripsByTripID: models.Trip{},
-	}
-
-	t.Run(tests.name, func(t *testing.T) {
-		models.MockedGetTripsByTripID(expects)
-	})
 }
 
 func TestGetTripsByUserID(t *testing.T) {
@@ -114,12 +60,60 @@ func TestGetTripsByUserID(t *testing.T) {
 
 	mock.ExpectQuery("SELECT trips.trip_id FROM trips WHERE trips.user_id").WithArgs(ID).WillReturnRows(rows)
 
-	_, err := models.GetTripIDByUserID(ID)
+	_, err := models.GetTripIDsByUserID(ID)
 
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+//with TRIP_ID
+func TestGetTrip(t *testing.T) {
+	originalDB := database.DB
+	database.DB, mock, mockErr = sqlmock.New()
+	defer func() { database.DB = originalDB }()
+
+	TripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	//testTime, _ := time.Parse("15:04:05", "12:00:00")
+	tests := []TripsTestCase{
+		{
+			name:            "GetTripsByTripId_200",
+			mockedTripError: nil,
+			expectedTripId:  TripID,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+
+			models.GetEventsByTrip = func(tripID uuid.UUID) ([]models.Event, error) {
+				return []models.Event{}, nil
+			}
+			models.GetFlightsByTrip = func(tripID uuid.UUID) ([]models.Flight, error) {
+				return []models.Flight{}, nil
+			}
+			models.GetMuseumsByTrip = func(trip_id uuid.UUID) ([]models.Museum, error) {
+				return []models.Museum{}, nil
+			}
+			models.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]models.Restaurant, error) {
+				return []models.Restaurant{}, nil
+			}
+			models.GetHotelsByTrip = func(tripID uuid.UUID) ([]models.Hotel, error) {
+				return []models.Hotel{}, nil
+			}
+			models.GetTrainsFromTrip = func(tripsID uuid.UUID) ([]models.Train, error) {
+				return []models.Train{}, nil
+			}
+			models.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
+				return nil, nil
+			}
+			testTrip, _ := models.GetTrip(TripID)
+			
+			if testTrip.TripID != tc.expectedTripId {
+				t.Errorf("Expected: %s", tc.name)
+			}
+		})
 	}
 }

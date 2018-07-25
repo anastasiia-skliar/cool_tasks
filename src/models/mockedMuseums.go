@@ -5,20 +5,23 @@ import (
 	"net/url"
 )
 
-func MockedGetMuseums() {
-	GetMuseumsByRequest = func(values url.Values) ([]Museum, error) {
-		return []Museum{}, nil
+//MockedGetMuseums is mocked GetMuseums func
+func MockedGetMuseums(museum []Museum, err error) {
+	GetMuseums = func(values url.Values) ([]Museum, error) {
+		return museum, err
 	}
 }
 
-func MockedAddMuseum() {
+//MockedAddMuseum is mocked AddMuseum func
+func MockedAddMuseum(err error) {
 	AddMuseumToTrip = func(museum_id uuid.UUID, trip_id uuid.UUID) error {
-		return nil
+		return err
 	}
 }
 
-func MockedGetMuseumsByTrip() {
+//MockedGetMuseumsByTrip is mocked GetMuseumsByTrip func
+func MockedGetMuseumsByTrip(museum []Museum, err error) {
 	GetMuseumsByTrip = func(trip_id uuid.UUID) ([]Museum, error) {
-		return []Museum{}, nil
+		return museum, err
 	}
 }
