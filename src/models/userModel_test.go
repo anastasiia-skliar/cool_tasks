@@ -32,13 +32,8 @@ func TestCreateUser(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserID.Bytes())
 
-<<<<<<< HEAD
 	mock.ExpectQuery("INSERT INTO users").WithArgs("John", "john", "1111", "Admin").WillReturnRows(rows)
-	if _, err := CreateUser(user); err != nil {
-=======
-	mock.ExpectQuery("INSERT INTO users").WithArgs("John", "john", "1111").WillReturnRows(rows)
 	if _, err := AddUser(user); err != nil {
->>>>>>> master
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -59,25 +54,16 @@ func TestGetUserByID(t *testing.T) {
 		ID:       UserID,
 		Name:     "John",
 		Login:    "john",
-<<<<<<< HEAD
 		Password: "1111",
 		Role: "Admin",
-=======
-		Password: "****",
->>>>>>> master
 	}
 
 	if userMockErr != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", userMockErr)
 	}
 
-<<<<<<< HEAD
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password", "Role"}).
 		AddRow(UserID.Bytes(), "John", "john", "1111", "Admin")
-=======
-	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-		AddRow(UserID.Bytes(), "John", "john", "****")
->>>>>>> master
 
 	mock.ExpectQuery("SELECT (.+) FROM users").WithArgs(UserID).WillReturnRows(rows)
 
@@ -168,37 +154,27 @@ func TestGetUsers(t *testing.T) {
 			ID:       UserID,
 			Name:     "John",
 			Login:    "john_doe",
-<<<<<<< HEAD
 			Password: "1111",
 			Role:"Admin",
-=======
-			Password: "****",
->>>>>>> master
 		},
 		{
 			ID:       UserID,
 			Name:     "Tom",
 			Login:    "hate_jerry",
-<<<<<<< HEAD
 			Password: "2222",
 			Role:"Admin",
 		},
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password", "Role"}).
-		AddRow(UserID.Bytes(), "John", "john_doe", "1111", "Admin").AddRow(UserID.Bytes(), "Tom", "hate_jerry", "2222", "Admin")
-=======
-			Password: "****",
-		},
-	}
+
+
 
 	if userMockErr != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", userMockErr)
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
-		AddRow(UserID.Bytes(), "John", "john_doe", "****").AddRow(UserID.Bytes(), "Tom", "hate_jerry", "****")
->>>>>>> master
+	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password", "Role"}).
+		AddRow(UserID.Bytes(), "John", "john_doe", "****", "Admin").AddRow(UserID.Bytes(), "Tom", "hate_jerry", "****", "Admin")
 
 	mock.ExpectQuery("SELECT (.+) FROM users").WillReturnRows(rows)
 
