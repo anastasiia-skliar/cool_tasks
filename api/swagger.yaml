@@ -76,74 +76,407 @@ paths:
     post:
       summary: Post user to DB
       tags:
-      - post user
+        - post user
       consumes:
         - application/json
       parameters:
-        - in: body
-          name: user
-          description: The user to create.
-          shema:
-            $ref: "#/definitions/User"
+      - in: body
+        name: body
+        description: The user to create
+        required: true
+        schema:
+          $ref: "#/definitions/User"
       responses:
-        200:
-        404:
-  /users{id}:
+        '201':
+          description: User created
+        '400':
+          description: Can't add this user or can't parse POST body
+  /users/{userID}:
     get:
-      summary: Get all users info
+      summary: Get all information about user
       tags:
         - get user
       parameters:
-      - name: task_id
+      - name: userID
+        in: path
         required: true
         type: string
       responses:
-        200:
-          description: All users send to client
-        404:
-          description: Can't get users
+        '200':
+          description: JSON with user is successfully rendered
+          schema:
+            $ref: "#/definitions/User"
+        '404':
+          description: Can't convert userID from URL
+        '400':
+          description: Can't find user with such ID
     delete:
+      summary: Delete user
+      tags:
+        - delete user
+      parameters:
+      - name: userID
+        in: path
+        required: true
+        type: string
+      responses:
+        '204':
+          description: User successfully deleted
+        '404':
+          description: Can't delete this user
+        '400':
+          description: Wrong user ID (can't convert string to int)
+  /users/tasks/{userID}:
+    get:
+      summary: Get all user tasks
+      tags:
+        - get user tasks
+      parameters:
+      - name: userID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with user tasks is successfully rendered
+          schema:
+            $ref: "#/definitions/Task"
+        '404':
+          description: Can't get user
   /tasks:
     get:
-      summary: Get all users info
+      summary: Get all tasks
       tags:
-      - login
+      - tasks
       responses:
-        200:
-          description: All users send to client
-        404:
-          description: Can't get users
+        '200':
+          description: JSON with tasks is successfully rendered
+          schema:
+            $ref: "#/definitions/Task"
+        '404':
+          description: Can't get tasks
     post:
-      summary: Add user
+      summary: Add task
       tags:
-      - login
+      - add task
       responses:
-       200:
-        description: User added
-        shema:
-          required:
-          - user ID
-          - user name
-          - time
-          - creation time
-          - update time
-          - description
-       404:
-        description: Can't add this task
-  /tasks{id}:
+        '200':
+          description: Task added
+        '404':
+          description: Can't add new task
+  /tasks/{taskID}:
     get:
       summary: Get Task by ID
-        tags:
-        - tasks
-        responses:
-          200:
-            description: Send task by it's ID
-            required:
-            - Task ID
-          404:
-          description: Can't find task
+      tags:
+        - task
+      parameters:
+        - name: taskID
+          in: path
+          required: true
+          type: string
+      responses:
+          '200':
+            description: JSON with task is successfully rendered
+            schema:
+              $ref: "#/definitions/Task"
+          '404':
+            description: Can't find task
     delete:
       summary: Delete Task by ID
+      parameters:
+      - name: taskID
+        in: path
+        required: true
+        type: string
+      responses:
+        '204':
+            description: Task successfully deleted
+        '400':
+            description: Wrong task ID (can't convert string to uuid)
+        '404':
+            description: Can't delete task
+  /events:
+    get:
+      summary: Get events by request params
+      tags:
+      - events
+      responses:
+        '200':
+          description: JSON with events is successfully rendered
+          schema:
+            $ref: "#/definitions/Event"
+        '404':
+          description: Can't find events with such parameters
+    post:
+      summary: Add event to trip
+      tags:
+      - add event
+      responses:
+        '201':
+          description: Event added to trip
+        '404':
+          description: Can't add event to trip
+  /events/trip/{tripID}:
+    get:
+      summary: Get events by tripID
+      tags:
+        - events
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with events is successfully rendered
+          schema:
+            $ref: "#/definitions/Event"
+        '400':
+          description: Wrong tripID (can't convert string to uuid)
+        '404':
+          description: Can't get events by tripID
+  /flights:
+    get:
+      summary: Get flights by request params
+      tags:
+        - flights
+      responses:
+        '200':
+          description: JSON with flights is successfully rendered
+          schema:
+            $ref: "#/definitions/Flight"
+        '404':
+          description: Can't find flights with such parameters
+    post:
+      summary: Add flight to trip
+      tags:
+      - add flight
+      responses:
+        '201':
+          description: Flight added to trip
+        '404':
+          description: Can't add flight to trip
+  /flights/trip/{tripID}:
+    get:
+      summary: Get flights by tripID
+      tags:
+        - flights
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with flights is successfully rendered
+          schema:
+            $ref: "#/definitions/Flight"
+        '400':
+          description: Wrong tripID (can't convert string to uuid)
+        '404':
+          description: Can't get flights by tripID
+  /museums:
+    get:
+      summary: Get museums by request params
+      tags:
+        - museums
+      responses:
+        '200':
+          description: JSON with museums is successfully rendered
+          schema:
+            $ref: "#/definitions/Museum"
+        '404':
+          description: Can't find museums with such parameters
+    post:
+      summary: Add museum to trip
+      tags:
+      - add museum
+      responses:
+        '201':
+          description: Museum added to trip
+        '400':
+          description: Can't add museum to trip
+  /museums/trip/{tripID}:
+    get:
+      summary: Get museums by tripID
+      tags:
+        - museums
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with museums is successfully rendered
+          schema:
+            $ref: "#/definitions/Museum"
+        '400':
+          description: Wrong tripID (can't convert string to uuid)
+        '404':
+          description: Can't get museums by tripID
+  /trains:
+    get:
+      summary: Get trains by request params
+      tags:
+       - trains
+      responses:
+        '200':
+          description: JSON with trains is successfully rendered
+          schema:
+            $ref: "#/definitions/Train"
+        '400':
+          description: Empty or invalid req
+    post:
+      summary: Add train to trip
+      tags:
+        - add train
+      responses:
+        '201':
+          description: Train added to trip
+        '400':
+          description: Can't add train to trip
+  /trains/trip/{tripID}:
+    get:
+      summary: Get trains by tripID
+      tags:
+        - trains
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with trains is successfully rendered
+          schema:
+            $ref: "#/definitions/Train"
+        '400':
+          description: Wrong tripID (can't convert string to uuid)
+        '404':
+          description: Can't get trains by tripID
+  /hotels:
+    get:
+      summary: Get hotels by request params
+      tags:
+        - trains
+      responses:
+        '200':
+          description: JSON with hotels is successfully rendered
+          schema:
+            $ref: "#/definitions/Hotel"
+        '400':
+          description: Empty or invalid req
+    post:
+      summary: Add hotel to trip
+      tags:
+        - add hotel
+      responses:
+        '201':
+          description: Hotel added to trip
+        '400':
+          description: Can't add hotel to trip
+  /hotels/trip/{tripID}:
+    get:
+      summary: Get hotels by tripID
+      tags:
+        - hotels
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+            description: JSON with hotels is successfully rendered
+            schema:
+              $ref: "#/definitions/Hotel"
+        '400':
+            description: Wrong tripID (can't convert string to uuid)
+        '404':
+            description: Can't get hotels by tripID
+  /restaurants:
+    get:
+      summary: Get restaurants by request params
+      tags:
+        - restaurants
+      responses:
+        '200':
+          description: JSON with restaurants is successfully rendered
+          schema:
+            $ref: "#/definitions/Restaurant"
+        '404':
+          description: Empty or invalid req
+    post:
+      summary: Add restaurant to trip
+      tags:
+        - add restaurant
+      responses:
+        '201':
+          description: Restaurant added to trip
+        '400':
+          description: Can't add restaurant to trip
+  /restaurants/trip/{tripID}:
+    get:
+      summary: Get restaurants by tripID
+      tags:
+        - restaurants
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with restaurants is successfully rendered
+          schema:
+            $ref: "#/definitions/Restaurant"
+        '400':
+          description: Wrong tripID (can't convert string to uuid)
+        '404':
+          description: Can't get restaurants by tripID
+  /users/trips/{tripID}:
+    get:
+      summary: Get tripID by userID
+      tags:
+        - tripID
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: JSON with tripID is successfully rendered
+        '400':
+          description: Can't get this trip
+  /trips:
+    post:
+      summary: Create new trip
+      tags:
+        - create trip
+      responses:
+        '201':
+          description: Trip added
+        '400':
+          description: Can't add this trip
+  /trips/{tripID}:
+    get:
+      summary: Get trip by tripID
+      tags:
+        - get trip
+      parameters:
+      - name: tripID
+        in: path
+        required: true
+        type: string
+      responses:
+        '201':
+          description: JSON with trip is successfully rendered
+          schema:
+            $ref: "#/definitions/Trip"
+        '400':
+          description: Can't get this trip
 definitions:
   HelloWorldResponse:
     type: object
@@ -152,38 +485,242 @@ definitions:
         type: string
         description: Hello World
   User:
-      type: object
-      required:
-        - Name
-        - Login
-        - Password
-      properties:
-        ID:
-          type: string
-          description: The user ID in DB in UUID format.
-        Name:
-          type: string
-          description: User name.
-        Login:
-          type: string
-          description: User login.
-        Password:
-          type: string
-          description: User password
-  TaskModel:
+    type: object
+    required:
+      - Login
+      - Password
+    properties:
+      ID:
+        type: string
+        description: The user ID in DB in UUID format.
+      Name:
+        type: string
+        description: User name.
+      Login:
+        type: string
+        description: User login.
+      Password:
+        type: string
+        description: User password
+  Task:
     type: object
     properties:
       ID:
-        type: UUID
+        type: string
+        description: The task ID in DB in UUID format.
       UserID:
-        type: UUID
+        type: string
+        description: The user ID in DB in UUID format.
       Name:
         type: string
+        description: Task name.
       Time:
-        type: time
+        type: string
+        description: Task time.
       CreatedAt:
-        type: time
+        type: string
+        description: Time when task was created.
       UpdatedAt:
-        type: time
+        type: string
+        description: Time when task was updated.
       Desc:
         type: string
+        description: Task description.
+  Event:
+    type: object
+    properties:
+      ID:
+        type: string
+        description: The event ID in DB in UUID format.
+      Title:
+        type: string
+        description: Event title.
+      Category:
+        type: string
+        description: Event category.
+      Town:
+        type: string
+        description: Event town.
+      Date:
+        type: string
+        description: Event date.
+      Price:
+        type: integer
+        description: Event price.
+  Flight:
+    type: object
+    properties:
+      ID:
+        type: string
+        description: The flight ID in DB in UUID format.
+      DepartureCity:
+        type: string
+        description: Flight departure city.
+      DepartureTime:
+        type: string
+        description: Flight departure time.
+      DepartureDate:
+        type: string
+        description: Flight departure date.
+      ArrivalCity:
+        type: string
+        description: Flight arrival city.
+      ArrivalTime:
+        type: string
+        description: Flight arrival time.
+      ArrivalDate:
+        type: string
+        description: Flight arrival date.
+      Price:
+        type: integer
+        description: Flight price.
+  Museum:
+    type: object
+    properties:
+      ID:
+        type: string
+        description: The museum ID in DB in UUID format.
+      Name:
+        type: string
+        description: Museum name.
+      Location:
+        type: string
+        description: Museum location.
+      Price:
+        type: integer
+        description: Museum price.
+      OpenedAt:
+        type: string
+        description: A time when the museum opens.
+      ClosedAt:
+        type: string
+        description: A time when the museum closed.
+      MuseumType:
+        type: string
+        description: Museum type.
+      Info:
+        type: string
+        description: Info about museum.
+  Train:
+    type: object
+    properties:
+      ID:
+        type: string
+        description: The train ID in DB in UUID format.
+      DepartureCity:
+        type: string
+        description: Train departure city.
+      DepartureTime:
+        type: string
+        description: Train departure time.
+      DepartureDate:
+        type: string
+        description: Train departure date.
+      ArrivalCity:
+        type: string
+        description: Train arrival city.
+      ArrivalTime:
+        type: string
+        description: Train arrival time.
+      ArrivalDate:
+        type: string
+        description: Train arrival date.
+      CarType:
+        type: string
+        description: Train car type.
+      TrainType:
+        type: string
+        description: Train type.
+      Price:
+        type: integer
+        description: Train price.
+  Hotel:
+    type: object
+    properties:
+      ID:
+        type: string
+        description: The hotel ID in DB in UUID format.
+      Name:
+        type: string
+        description: Hotel name.
+      Class:
+        type: integer
+        description: Hotel class.
+      Capacity:
+        type: integer
+        description: Hotel capacity.
+      RoomsLeft:
+        type: integer
+        description: How many hotel rooms left.
+      Floors:
+        type: integer
+        description: Hotel floors.
+      MaxPrice:
+        type: string
+        description: Max hotel price.
+      CityName:
+        type: string
+        description: Hotel city.
+      Address:
+        type: string
+        description: Hotel address.
+  Restaurant:
+    type: object
+    properties:
+      ID:
+        type: string
+        description: The restaurant ID in DB in UUID format.
+      Name:
+        type: string
+        description: Restaurant name.
+      Location:
+        type: string
+        description: Restaurant location.
+      Stars:
+        type: integer
+        description: Restaurant stars.
+      Prices:
+        type: integer
+        description: Restaurant prices
+      Description:
+        type: string
+        description: Restaurant description.
+  Trip:
+    type: object
+    properties:
+      TripID:
+        type: string
+        description: The trip ID in DB in UUID format.
+      UserID:
+        type: string
+        description: The user ID in DB in UUID format.
+      Events:
+        type: array
+        items:
+          $ref: "#/definitions/Event"
+        description: Trip events.
+      Flights:
+        type: array
+        items:
+          $ref: "#/definitions/Flight"
+        description: Trip flights.
+      Museums:
+        type: array
+        items:
+          $ref: "#/definitions/Museum"
+        description: Trip museums.
+      Restaurants:
+        type: array
+        items:
+          $ref: "#/definitions/Restaurant"
+        description: Trip restaurants.
+      Hotels:
+        type: array
+        items:
+          $ref: "#/definitions/Hotel"
+        description: Trip hotels.
+      Trains:
+        type: array
+        items:
+          $ref: "#/definitions/Train"
+        description: Trip trains.
