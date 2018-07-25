@@ -52,19 +52,19 @@ func TestGetRestaurantByTripID(t *testing.T) {
 	expected := []Restaurant{
 		{
 			ID,
-			"Крива липа",
+			"Kryva Lypa",
 			"Lviv",
 			4,
 			3,
-			"Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи",
+			"Some info 1",
 		},
 		{
 			ID,
-			"Крива липа",
+			"Kryva Lypa",
 			"Lviv",
 			4,
 			3,
-			"Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи",
+			"Some info 1",
 		},
 	}
 	if flightMockErr != nil {
@@ -72,7 +72,7 @@ func TestGetRestaurantByTripID(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "name", "location", "stars", "prices", "description"}).
-		AddRow(ID.Bytes(), "Крива липа", "Lviv", 4, 3, "Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи")
+		AddRow(ID.Bytes(), expected[0].Name, expected[0].Location, expected[0].Stars, expected[0].Prices, expected[0].Description)
 
 	mock.ExpectQuery("SELECT (.+) FROM restaurants").WithArgs(ID).WillReturnRows(rows)
 
@@ -89,32 +89,6 @@ func TestGetRestaurantByTripID(t *testing.T) {
 	for i := 0; i < len(result); i++ {
 		if expected[i] != result[i] {
 			t.Error("Expected:", expected[i], "Was:", result[i])
-		}
-	}
-}
-
-func TestRequestGenerator(t *testing.T) {
-	generatorTests := []reqGenTestCases{
-		{
-			"SELECT * FROM restaurants WHERE ID = ",
-			"ID",
-			"SELECT * FROM restaurants WHERE ID = $1",
-		},
-		{
-			"SELECT * FROM restaurants",
-			"",
-			"SELECT * FROM restaurants",
-		},
-	}
-	for _, tc := range generatorTests {
-		var request = ""
-		if tc.paramName == "" {
-			request = recGen()
-		} else {
-			request = recGen(tc.paramName)
-		}
-		if request != tc.expected {
-			t.Error("Expected:", tc.expected, "Was:", request)
 		}
 	}
 }

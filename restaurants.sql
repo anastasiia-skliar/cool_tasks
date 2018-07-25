@@ -12,16 +12,16 @@ CREATE TABLE restaurants (
 
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Крива липа', 'Lviv', 4, 3, 'Кулінарна студія «Крива Липа» – це авторська кухня без ГМО. Справжні кулінарні шедеври тільки найкращої якості та зі свіжих продуктів від знаних майстрів своєї справи');
+  VALUES ( uuid_generate_v1(), 'Kryva Lypa', 'Lviv', 4, 3, 'Some info 1');
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Криівка', 'Lviv', 5, 5, 'Автентичний заклад, оздоблений у вигляді польової криївки УПА, знаходиться у підвалі одного з будинків');
+  VALUES ( uuid_generate_v1(), 'Kryivka', 'Lviv', 5, 5, 'Some info 2');
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Живий хліб', 'Lviv', 5, 3, 'Хліб та булочки тут готують на натуральних заквасках з італійського борошна. Для круасанів використовують французьке масло.');
+  VALUES ( uuid_generate_v1(), 'Jiviy hlib', 'Lviv', 5, 3, 'Some info 3');
 INSERT INTO restaurants
   (id,  name, location, stars, prices, description)
-  VALUES ( uuid_generate_v1(), 'Фан-бар Банка', 'Lviv', 5, 4, 'Концептуальний демократичний бар, де вперше в Україні всі страви та напої подаються виключно у традиційних скляних банках. Все повинно бути в банках – в барі заборонені пляшки, тарілки, чарки, склянки й інший подібний посуд.');
+  VALUES ( uuid_generate_v1(), 'Fun-bar Banka', 'Lviv', 5, 4, 'Some info 4');
 
 
 -- TRIP_RESTAURANTS
