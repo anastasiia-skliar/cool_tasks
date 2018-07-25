@@ -7,6 +7,7 @@ import (
 	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 type successCreate struct {
@@ -19,7 +20,10 @@ type successDelete struct {
 }
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
-
+	if auth.CheckPermission(r, "admin", "")==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	tasks, err := models.GetTasks()
 
 	if err != nil {
@@ -41,7 +45,11 @@ func GetTasksByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := models.GetTask(taskID)
-
+	itemOwner, err:= models.GetUserByID(task.UserID)
+	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get task by ID", err)
 		return
@@ -125,5 +133,10 @@ func GetUserTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	itemOwner, err:= models.GetUserByID(idUser)
+	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	common.RenderJSON(w, r, tasks)
 }

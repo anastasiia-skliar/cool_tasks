@@ -7,8 +7,7 @@ import (
 
 const (
 	createUser     = "INSERT INTO users (name, login, password, role) VALUES ($1, $2, $3, $4) RETURNING id"
-	getUser        = "SELECT * FROM users WHERE id = $1"
-	getUserByID    = "SELECT ID, Password FROM users WHERE Login = $1"
+	getUserByID    = "SELECT * FROM users WHERE id = $1"
 	getUserByLogin = "SELECT * FROM users WHERE login = $1"
 	deleteUser     = "DELETE FROM users WHERE id = $1"
 	getUsers       = "SELECT * FROM users"
@@ -32,10 +31,10 @@ var CreateUser = func(user User) (uuid.UUID, error) {
 	return id, err
 }
 
-//GetUser used for getting user from DB
-var GetUser = func(id uuid.UUID) (User, error) {
+//GetUserByID used for getting user from DB
+var GetUserByID = func(id uuid.UUID) (User, error) {
 	var user User
-	err := database.DB.QueryRow(getUser, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
+	err := database.DB.QueryRow(getUserByID, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
 
 	return user, err
 }
