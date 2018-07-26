@@ -52,6 +52,10 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := models.GetTask(taskID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get task by ID", err)
+		return
+	}
 	itemOwner, err := models.GetUserByID(task.UserID)
 	if auth.CheckPermission(r, "owner", itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)

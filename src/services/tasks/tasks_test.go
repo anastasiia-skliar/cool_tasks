@@ -91,7 +91,7 @@ func TestGetTasksByID(t *testing.T) {
 		},
 		{
 			name:             "Get_TaskByWithWrongTaskID",
-			url:              "/v1/tasks/00000000-0000-0000-0000-000000000001",
+			url:              "/v1/tasks/00000000-0000-0000-0000-000000000002",
 			want:             404,
 			mockedTasksError: http.ErrLineTooLong,
 		},
@@ -207,6 +207,7 @@ func TestCreateTasks(t *testing.T) {
 }
 
 func TestGetUserTasks(t *testing.T) {
+	auth.MockedCheckPermission(true)
 	tests := []tasksCRUDTestCase{
 		{
 			name:             "GetUserTasks",
