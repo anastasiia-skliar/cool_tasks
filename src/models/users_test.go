@@ -55,7 +55,7 @@ func TestGetUserByID(t *testing.T) {
 		Name:     "John",
 		Login:    "john",
 		Password: "1111",
-		Role: "Admin",
+		Role:     "Admin",
 	}
 
 	if userMockErr != nil {
@@ -94,7 +94,7 @@ func TestGetUserByLogin(t *testing.T) {
 		Name:     "John",
 		Login:    "john",
 		Password: "1111",
-		Role:"Admin",
+		Role:     "Admin",
 	}
 
 	if userMockErr != nil {
@@ -155,19 +155,16 @@ func TestGetUsers(t *testing.T) {
 			Name:     "John",
 			Login:    "john_doe",
 			Password: "****",
-			Role:"Admin",
+			Role:     "Admin",
 		},
 		{
 			ID:       UserID,
 			Name:     "Tom",
 			Login:    "hate_jerry",
 			Password: "****",
-			Role:"Admin",
+			Role:     "Admin",
 		},
 	}
-
-
-
 
 	if userMockErr != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", userMockErr)

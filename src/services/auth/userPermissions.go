@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-var CheckPermission = func(r *http.Request, requiredRole string, itemOwner string) bool{
+var CheckPermission = func(r *http.Request, requiredRole string, itemOwner string) bool {
 	userSession, _ := r.Cookie("user_session")
 
 	switch requiredRole {
@@ -18,21 +18,21 @@ var CheckPermission = func(r *http.Request, requiredRole string, itemOwner strin
 	return false
 }
 
-var isOwner = func (session string, itemOwner string) bool{
-	sessionLogin, _:=database.Cache.Get(session).Result()
+var isOwner = func(session string, itemOwner string) bool {
+	sessionLogin, _ := database.Cache.Get(session).Result()
 	//error is not nil always
-	if sessionLogin==itemOwner{
+	if sessionLogin == itemOwner {
 		return true
 	}
-	if isAdmin(session){
-return true
+	if isAdmin(session) {
+		return true
 	}
 	return false
 }
 
-var isAdmin = func(session string) bool{
-	sessionLogin, _:=database.Cache.Get(session).Result()
-	if user, err:=models.GetUserByLogin(sessionLogin); err==nil && user.Role=="Admin"{
+var isAdmin = func(session string) bool {
+	sessionLogin, _ := database.Cache.Get(session).Result()
+	if user, err := models.GetUserByLogin(sessionLogin); err == nil && user.Role == "Admin" {
 		return true
 	}
 	return false

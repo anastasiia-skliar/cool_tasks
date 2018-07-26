@@ -9,9 +9,9 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 type successCreate struct {
@@ -73,11 +73,10 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddUserHandler is a handler for creating User
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
-	if auth.CheckPermission(r, "admin", "")==false{
+	if auth.CheckPermission(r, "admin", "") == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
-
 
 	err := r.ParseForm()
 	if err != nil {
@@ -127,7 +126,7 @@ func IsValid(user models.User) (bool, string) {
 
 //DeleteUserHandler is a handler for deleting User from DB
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	if auth.CheckPermission(r, "admin", "")==false{
+	if auth.CheckPermission(r, "admin", "") == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}

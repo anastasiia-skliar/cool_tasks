@@ -12,7 +12,6 @@ import (
 	"github.com/satori/go.uuid"
 
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
-
 )
 
 type successCreate struct {
@@ -27,9 +26,9 @@ type successDelete struct {
 //GetTasksHandler gets Tasks from DB
 func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 
-if auth.CheckPermission(r, "admin", "")==false{
-	common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
-	return
+	if auth.CheckPermission(r, "admin", "") == false {
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
 	}
 	tasks, err := models.GetTasks()
 
@@ -53,8 +52,8 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := models.GetTask(taskID)
-	itemOwner, err:= models.GetUserByID(task.UserID)
-	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+	itemOwner, err := models.GetUserByID(task.UserID)
+	if auth.CheckPermission(r, "owner", itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
@@ -150,8 +149,8 @@ func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	itemOwner, err:= models.GetUserByID(idUser)
-	if auth.CheckPermission(r, "owner", itemOwner.Login)==false{
+	itemOwner, err := models.GetUserByID(idUser)
+	if auth.CheckPermission(r, "owner", itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}

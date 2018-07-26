@@ -20,7 +20,7 @@ type User struct {
 	Name     string
 	Login    string
 	Password string
-	Role 	 string
+	Role     string
 }
 
 //AddUser used for creation user in DB

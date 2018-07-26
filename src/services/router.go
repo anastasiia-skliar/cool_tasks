@@ -8,6 +8,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/flights"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/hotels"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/restaurants"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasks"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trips"
@@ -15,7 +16,6 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/restaurants"
 )
 
 // NewRouter creates a router for URL-to-service mapping
@@ -112,7 +112,7 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/users/trips/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(trips.GetTripIDsByUserIDHandler),
+		http.MethodGet: http.HandlerFunc(trips.GetTripIDsByUserIDHandler),
 	}))
 	apiV1.Handle("/trips", common.MethodHandler(map[string]http.Handler{
 		http.MethodPost: http.HandlerFunc(trips.AddTripHandler),
