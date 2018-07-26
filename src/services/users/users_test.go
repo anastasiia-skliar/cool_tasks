@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 var router = services.NewRouter()
@@ -23,6 +24,7 @@ type usersCRUDTestCase struct {
 	mockedGetUsers    []models.User
 	mockedUserError   error
 	mockedDeleteUsers uuid.UUID
+	permission func(r *http.Request, requiredRole string, itemOwner string) bool
 	mock              func()
 	error             string
 	testUser          models.User
@@ -100,6 +102,7 @@ func TestGetUserByID(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
+	auth.CheckPermission=auth.MockedCheckPermissionTrue
 	userId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	tests := []usersCRUDTestCase{
 		{
@@ -108,6 +111,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              200,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			permission: auth.MockedCheckPermissionTrue,
 			mock: func() {
 			},
 		},
@@ -117,6 +121,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              404,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			permission: auth.MockedCheckPermissionTrue,
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
 				models.DeleteUser = func(id uuid.UUID) error {
@@ -130,6 +135,17 @@ func TestDeleteUser(t *testing.T) {
 			want:              400,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			permission: auth.MockedCheckPermissionTrue,
+			mock: func() {
+			},
+		},
+		{
+			name:              "Delete_Users_403",
+			url:               "/v1/users/00000000-0000-0000-0000-000000000001",
+			want:              403,
+			mockedDeleteUsers: userId,
+			mockedUserError:   nil,
+			permission: auth.MockedCheckPermissionFalse,
 			mock: func() {
 			},
 		},
@@ -137,6 +153,8 @@ func TestDeleteUser(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			models.MockedDeleteUser(userId, nil)
+			defer func(){auth.CheckPermission=auth.CheckPermission}()
+			auth.CheckPermission= tc.permission
 			tc.mock()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodDelete, tc.url, nil)
@@ -158,6 +176,15 @@ func TestCreateUser(t *testing.T) {
 			want:             200,
 			mockedCreateUser: models.User{},
 			mockedUserError:  nil,
+			permission: auth.MockedCheckPermissionTrue,
+		},
+		{
+			name:             "Add_Users_403",
+			url:              "/v1/users",
+			want:             403,
+			mockedCreateUser: models.User{},
+			mockedUserError:  nil,
+			permission: auth.MockedCheckPermissionFalse,
 		},
 	}
 	data := url.Values{}
@@ -166,6 +193,8 @@ func TestCreateUser(t *testing.T) {
 	data.Add("password", "1324qwer")
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			defer func(){auth.CheckPermission=auth.CheckPermission}()
+			auth.CheckPermission= tc.permission
 			models.MockedCreateUser(tc.mockedCreateUser)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))

@@ -2,10 +2,10 @@ package auth
 
 import "net/http"
 
-func mockedCheckPermissionTrue(r *http.Request, requiredRole string, itemOwner string) bool {
+func MockedCheckPermissionTrue(r *http.Request, requiredRole string, itemOwner string) bool {
 	return true
 }
 
-func mockedCheckPermissionFalse(r *http.Request, requiredRole string, itemOwner string) bool {
+func MockedCheckPermissionFalse(r *http.Request, requiredRole string, itemOwner string) bool {
 	return false
 }
