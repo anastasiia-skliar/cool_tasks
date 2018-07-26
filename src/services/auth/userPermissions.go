@@ -11,26 +11,26 @@ var CheckPermission = func(r *http.Request, requiredRole string, itemOwner strin
 
 	switch requiredRole {
 	case "owner":
-		return IsOwner(userSession.Value, itemOwner)
+		return isOwner(userSession.Value, itemOwner)
 	case "admin":
-		return IsAdmin(userSession.Value)
+		return isAdmin(userSession.Value)
 	}
 	return false
 }
 
-var IsOwner = func (session string, itemOwner string) bool{
+var isOwner = func (session string, itemOwner string) bool{
 	sessionLogin, _:=database.Cache.Get(session).Result()
 	//error is not nil always
 	if sessionLogin==itemOwner{
 		return true
 	}
-	if IsAdmin(session){
+	if isAdmin(session){
 return true
 	}
 	return false
 }
 
-var IsAdmin = func(session string) bool{
+var isAdmin = func(session string) bool{
 	sessionLogin, _:=database.Cache.Get(session).Result()
 	if user, err:=models.GetUserByLogin(sessionLogin); err==nil && user.Role=="Admin"{
 		return true
