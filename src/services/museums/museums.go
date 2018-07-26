@@ -1,3 +1,4 @@
+//Package museums implements museum handlers
 package museums
 
 import (

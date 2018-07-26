@@ -5,8 +5,8 @@ packages = \
 	./database \
 	./models \
     ./services/auth \
-    ./services/usersCRUD \
-    ./services/tasksCRUD \
+    ./services/users \
+    ./services/tasks \
     ./services/events \
     ./services/flights \
     ./services/museums \

@@ -1,4 +1,4 @@
-package tasksCRUD_test
+package tasks_test
 
 import (
 	"bytes"

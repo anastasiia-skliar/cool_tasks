@@ -1,9 +1,9 @@
 package models
 
 import (
-	"net/url"
-	sq "github.com/Masterminds/squirrel"
 	"errors"
+	sq "github.com/Masterminds/squirrel"
+	"net/url"
 )
 
 func contains(array []string, value string) bool {

@@ -1,3 +1,4 @@
+//Package events implements event handlers
 package trips
 
 import (

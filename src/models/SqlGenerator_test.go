@@ -1,8 +1,8 @@
 package models
 
 import (
-	"testing"
 	"net/http"
+	"testing"
 )
 
 func TestSqlGenerator(t *testing.T) {
