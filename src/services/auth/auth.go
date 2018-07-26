@@ -21,18 +21,6 @@ type login struct {
 	sessionID string
 }
 
-<<<<<<< HEAD
-=======
-//User representation in DB
-type User struct {
-	ID       uuid.UUID
-	Name     string
-	Login    string
-	Password string
-}
-
-//Login login new User
->>>>>>> master
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	redis := database.Cache
 	var newLogin login
@@ -44,13 +32,8 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 	newLogin.login = r.Form.Get("login")
 	newLogin.pass = r.Form.Get("password")
 
-<<<<<<< HEAD
-	userInDB, er := GetUserByLogin(newLogin.login)
-=======
-	var userInDB models.User
-
 	userInDB, er := models.GetUserByLogin(newLogin.login)
->>>>>>> master
+
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
 		return
