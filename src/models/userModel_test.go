@@ -154,14 +154,14 @@ func TestGetUsers(t *testing.T) {
 			ID:       UserID,
 			Name:     "John",
 			Login:    "john_doe",
-			Password: "1111",
+			Password: "****",
 			Role:"Admin",
 		},
 		{
 			ID:       UserID,
 			Name:     "Tom",
 			Login:    "hate_jerry",
-			Password: "2222",
+			Password: "****",
 			Role:"Admin",
 		},
 	}
