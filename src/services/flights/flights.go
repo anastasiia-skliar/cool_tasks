@@ -1,3 +1,4 @@
+//Package flights implements flight handlers
 package flights
 
 import (

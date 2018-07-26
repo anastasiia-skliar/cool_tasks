@@ -1,3 +1,4 @@
+//Package database provides DB connections
 package database
 
 import (
@@ -41,7 +42,7 @@ type PostgreSQLInfo struct {
 	Password     string
 }
 
-//RedisInfo is...
+//RedisInfo shows redis information
 type RedisInfo struct {
 	URL  string
 	Port int

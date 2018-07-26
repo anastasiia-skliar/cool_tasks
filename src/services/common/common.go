@@ -1,3 +1,4 @@
+//Package common contains functions for rendering and sending errors
 package common
 
 import (

@@ -8,10 +8,10 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/flights"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/hotels"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasksCRUD"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasks"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trains"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/trips"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/users"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/welcome"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -36,24 +36,24 @@ func NewRouter() *mux.Router {
 	}))
 
 	apiV1.Handle("/users", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(usersCRUD.GetUsersHandler),
-		http.MethodPost: http.HandlerFunc(usersCRUD.AddUserHandler),
+		http.MethodGet:  http.HandlerFunc(users.GetUsersHandler),
+		http.MethodPost: http.HandlerFunc(users.AddUserHandler),
 	}))
 	apiV1.Handle("/users/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:    http.HandlerFunc(usersCRUD.GetUserHandler),
-		http.MethodDelete: http.HandlerFunc(usersCRUD.DeleteUserHandler),
+		http.MethodGet:    http.HandlerFunc(users.GetUserHandler),
+		http.MethodDelete: http.HandlerFunc(users.DeleteUserHandler),
 	}))
 	apiV1.Handle("/users/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(tasksCRUD.GetUserTasksHandler),
+		http.MethodGet: http.HandlerFunc(tasks.GetUserTasksHandler),
 	}))
 
 	apiV1.Handle("/tasks", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(tasksCRUD.GetTasksHandler),
-		http.MethodPost: http.HandlerFunc(tasksCRUD.AddTaskHandler),
+		http.MethodGet:  http.HandlerFunc(tasks.GetTasksHandler),
+		http.MethodPost: http.HandlerFunc(tasks.AddTaskHandler),
 	}))
 	apiV1.Handle("/tasks/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:    http.HandlerFunc(tasksCRUD.GetTaskHandler),
-		http.MethodDelete: http.HandlerFunc(tasksCRUD.DeleteTaskHandler),
+		http.MethodGet:    http.HandlerFunc(tasks.GetTaskHandler),
+		http.MethodDelete: http.HandlerFunc(tasks.DeleteTaskHandler),
 	}))
 	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
 		http.MethodPost: http.HandlerFunc(restaurants.AddRestaurantToTripHandler),

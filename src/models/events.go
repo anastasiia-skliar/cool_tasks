@@ -1,3 +1,4 @@
+//Package models contains functions interacting with DB
 package models
 
 import (

@@ -1,4 +1,5 @@
-package tasksCRUD
+//Package tasks implements task handlers
+package tasks
 
 import (
 	"net/http"
