@@ -1,10 +1,10 @@
-package usersCRUD_test
+package users_test
 
 import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/usersCRUD"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/users"
 	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
@@ -218,7 +218,7 @@ func TestIsValid(t *testing.T) {
 	for _, tc := range tests {
 
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := usersCRUD.IsValid(tc.testUser)
+			_, err := users.IsValid(tc.testUser)
 			if err != tc.error {
 				t.Errorf("Expected: %s , got %s", tc.error, err)
 			}

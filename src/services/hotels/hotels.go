@@ -1,3 +1,4 @@
+//Package hotels implements hotel handlers
 package hotels
 
 import (

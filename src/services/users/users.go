@@ -1,4 +1,5 @@
-package usersCRUD
+//Package users implements user handlers
+package users
 
 import (
 	"log"

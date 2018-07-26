@@ -1,3 +1,4 @@
+//Package trains implements train handlers
 package trains
 
 import (

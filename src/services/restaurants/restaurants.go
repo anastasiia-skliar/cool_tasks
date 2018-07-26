@@ -1,3 +1,4 @@
+//Package restaurants implements restaurant handlers
 package restaurants
 
 import (

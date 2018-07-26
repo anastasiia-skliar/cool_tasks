@@ -5,8 +5,8 @@ packages = \
 	./database \
 	./models \
     ./services/auth \
-    ./services/usersCRUD \
-    ./services/tasksCRUD \
+    ./services/users \
+    ./services/tasks \
     ./services/events \
     ./services/flights \
     ./services/museums \
@@ -37,7 +37,7 @@ doc:
 	godoc -http=:6060
 
 go-build:
-	go build -o cool_tasks
+	GOOS=linux GOARCH=amd64 go build -o cool_tasks
 
 dc-build:
 	docker-compose build

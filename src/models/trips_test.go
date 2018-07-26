@@ -110,7 +110,7 @@ func TestGetTrip(t *testing.T) {
 				return nil, nil
 			}
 			testTrip, _ := models.GetTrip(TripID)
-			
+
 			if testTrip.TripID != tc.expectedTripId {
 				t.Errorf("Expected: %s", tc.name)
 			}
