@@ -651,7 +651,7 @@ definitions:
         description: Hotel capacity.
       RoomsLeft:
         type: integer
-        description: How many hotel rooms left.
+        description: How many rooms left in hotel.
       Floors:
         type: integer
         description: Hotel floors.
