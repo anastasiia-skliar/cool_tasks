@@ -11,6 +11,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 
 	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 var router = services.NewRouter()
@@ -25,6 +26,7 @@ type tasksCRUDTestCase struct {
 	mockedDeleteTask uuid.UUID
 	mockedCreateTask models.Task
 	mockedTasksError error
+	permission bool
 	mock             func()
 	userId           string
 	testTime         string
@@ -39,6 +41,7 @@ func TestGetTasks(t *testing.T) {
 			want:             200,
 			mockedGetTasks:   []models.Task{},
 			mockedTasksError: nil,
+			permission: true,
 		},
 		{
 			name:             "Get_Tasks_404",
@@ -46,11 +49,21 @@ func TestGetTasks(t *testing.T) {
 			want:             404,
 			mockedGetTasks:   []models.Task{},
 			mockedTasksError: http.ErrBodyNotAllowed,
+			permission: true,
+		},
+		{
+			name:             "Get_Tasks_403",
+			url:              "/v1/tasks",
+			want:             403,
+			mockedGetTasks:   []models.Task{},
+			mockedTasksError: http.ErrBodyNotAllowed,
+			permission: false,
 		},
 	}
-
+	defer func(){auth.CheckPermission=auth.CheckPermission}()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			auth.MockedCheckPermission(tc.permission)
 			models.MockedGetTasks(tc.mockedGetTasks, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
@@ -83,9 +96,12 @@ func TestGetTasksByID(t *testing.T) {
 			mockedTasksError: http.ErrLineTooLong,
 		},
 	}
-
+	defer func(){auth.CheckPermission=auth.CheckPermission}()
+	auth.MockedCheckPermission(true)
+	models.MockedGetUserByID(models.User{}, nil)
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			models.MockedGetTask(tc.mockedGetTask, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
