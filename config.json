@@ -8,11 +8,11 @@
       "Username": "postgres",
       "Password": "postgres",
       "DatabaseName": "cool_tasks",
-      "Hostname": "172.17.0.2",
+      "Hostname": "postgres",
       "Port": 5432
     },
     "Redis":{
-      "URL":"172.17.0.3",
+      "URL":"redis",
       "Port":6379
     }
   }
