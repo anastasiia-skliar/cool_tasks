@@ -11,16 +11,6 @@ produces:
 consumes:
   - application/json
 paths:
-  /hello-world:
-    get:
-      summary: Hello World
-      tags:
-        - welcome page
-      responses:
-        '200':
-          description: Hello World
-          schema:
-            $ref: '#/definitions/HelloWorldResponse'
   /login:
     post:
       summary: Login method, creates user session
@@ -478,12 +468,6 @@ paths:
         '400':
           description: Can't get this trip
 definitions:
-  HelloWorldResponse:
-    type: object
-    properties:
-      message:
-        type: string
-        description: Hello World
   User:
     type: object
     required:
