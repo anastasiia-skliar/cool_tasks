@@ -57,6 +57,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		newLogin.sessionID = sessionUUID.String()
+		http.Redirect(w, r, "http://localhost:8080/v1/users", 302)
 	}
 	if newLogin.sessionID != "" {
 
@@ -68,7 +69,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
 
-		common.RenderJSON(w, r, newLogin.sessionID)
+		http.Redirect(w, r, "http://localhost:8080/v1/users", 302)
 		return
 	}
 	common.SendError(w, r, 401, "ERROR: ", errors.New("Fail to autorize"))
