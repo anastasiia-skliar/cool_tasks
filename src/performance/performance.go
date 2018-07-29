@@ -1,32 +1,25 @@
 package main
 
 import (
-	"time"
-	"github.com/tsenart/vegeta/lib"
 	"fmt"
+	"github.com/tsenart/vegeta/lib"
 	"math"
+	"time"
 )
 
-func main()  {
-	rate := uint64(100) // per second
-	duration := 3 * time.Second
+func main() {
+	rate := uint64(300) // per second
+	duration := 5 * time.Second
 	login := vegeta.NewStaticTargeter(vegeta.Target{
 		Method: "POST",
 		URL:    "https://cool-tasks.herokuapp.com/v1/login?login=admin&password=admin",
 	})
-	//users := vegeta.NewStaticTargeter(vegeta.Target{
-	//	Method: "GET",
-	//	URL:    "https://cool-tasks.herokuapp.com/v1/users",
-	//})
 	attacker := vegeta.NewAttacker()
 
 	var metrics vegeta.Metrics
 	for res := range attacker.Attack(login, rate, duration, "") {
 		metrics.Add(res)
 	}
-	//for res := range attacker.Attack(users, rate, duration, "") {
-	//	metrics.Add(res)
-	//}
 	metrics.Close()
 
 	fmt.Println("Max latency:", metrics.Latencies.Max)
