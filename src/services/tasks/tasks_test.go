@@ -10,8 +10,8 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 
-	"github.com/satori/go.uuid"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
+	"github.com/satori/go.uuid"
 )
 
 var router = services.NewRouter()
@@ -26,7 +26,7 @@ type tasksCRUDTestCase struct {
 	mockedDeleteTask uuid.UUID
 	mockedCreateTask models.Task
 	mockedTasksError error
-	permission bool
+	permission       bool
 	mock             func()
 	userId           string
 	testTime         string
@@ -41,7 +41,7 @@ func TestGetTasks(t *testing.T) {
 			want:             200,
 			mockedGetTasks:   []models.Task{},
 			mockedTasksError: nil,
-			permission: true,
+			permission:       true,
 		},
 		{
 			name:             "Get_Tasks_404",
@@ -49,7 +49,7 @@ func TestGetTasks(t *testing.T) {
 			want:             404,
 			mockedGetTasks:   []models.Task{},
 			mockedTasksError: http.ErrBodyNotAllowed,
-			permission: true,
+			permission:       true,
 		},
 		{
 			name:             "Get_Tasks_403",
@@ -57,7 +57,7 @@ func TestGetTasks(t *testing.T) {
 			want:             403,
 			mockedGetTasks:   []models.Task{},
 			mockedTasksError: http.ErrBodyNotAllowed,
-			permission: false,
+			permission:       false,
 		},
 	}
 

@@ -58,8 +58,8 @@ func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	itemOwner, err := models.GetUserByID(result.UserID)
-	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
-	if err!=nil {
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
 		return
 	}
 	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {
@@ -79,8 +79,8 @@ func GetTripIDsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	itemOwner, err := models.GetUserByID(userID)
-	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
-	if err!=nil {
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
 		return
 	}
 	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {

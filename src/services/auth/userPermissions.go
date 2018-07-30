@@ -3,8 +3,8 @@ package auth
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"net/http"
-		"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 )
 
 var CheckPermission = func(userSession string, requiredRole string, itemOwner string) bool {
@@ -19,11 +19,11 @@ var CheckPermission = func(userSession string, requiredRole string, itemOwner st
 
 var IsAdmin = func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	if r.URL.Path == "/v1/users" {
-		session, err:=GetSessionIDFromRequest(w, r)
-		if err!=nil{
+		session, err := GetSessionIDFromRequest(w, r)
+		if err != nil {
 			return
 		}
-		if isAdmin(session)==false{
+		if isAdmin(session) == false {
 			common.SendError(w, r, 400, "ERROR: Not admin", err)
 			return
 		}
@@ -35,7 +35,7 @@ var IsAdmin = func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc
 
 var isOwner = func(session string, itemOwner string) bool {
 	sessionLogin, err := database.Cache.Get(session).Result()
-	if err!=nil{
+	if err != nil {
 		return false
 	}
 	//error is not nil always
@@ -48,11 +48,9 @@ var isOwner = func(session string, itemOwner string) bool {
 	return false
 }
 
-
-
 var isAdmin = func(session string) bool {
 	sessionLogin, err := database.Cache.Get(session).Result()
-	if err!=nil{
+	if err != nil {
 		return false
 	}
 	if user, err := models.GetUserByLogin(sessionLogin); err == nil && user.Role == "Admin" {

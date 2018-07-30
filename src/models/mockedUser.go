@@ -16,7 +16,6 @@ func MockedGetUserByID(user User, err error) {
 	}
 }
 
-
 //MockedDeleteUser is mocked DeleteUser func
 func MockedDeleteUser(id uuid.UUID, err error) {
 	DeleteUser = func(id uuid.UUID) error {

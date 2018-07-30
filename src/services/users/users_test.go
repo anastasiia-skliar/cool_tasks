@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/users"
 	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 var router = services.NewRouter()
@@ -24,7 +24,7 @@ type usersCRUDTestCase struct {
 	mockedGetUsers    []models.User
 	mockedUserError   error
 	mockedDeleteUsers uuid.UUID
-	permission bool
+	permission        bool
 	mock              func()
 	error             string
 	testUser          models.User
@@ -111,7 +111,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              200,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
-			permission: true,
+			permission:        true,
 			mock: func() {
 			},
 		},
@@ -121,7 +121,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              404,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
-			permission: true,
+			permission:        true,
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
 				models.DeleteUser = func(id uuid.UUID) error {
@@ -135,7 +135,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              400,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
-			permission: true,
+			permission:        true,
 			mock: func() {
 			},
 		},
@@ -167,7 +167,7 @@ func TestCreateUser(t *testing.T) {
 			want:             200,
 			mockedCreateUser: models.User{},
 			mockedUserError:  nil,
-			permission: true,
+			permission:       true,
 		},
 	}
 	data := url.Values{}

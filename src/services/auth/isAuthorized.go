@@ -22,7 +22,7 @@ func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		return
 	}
 
-	userSession, err := GetSessionIDFromRequest(w,r)
+	userSession, err := GetSessionIDFromRequest(w, r)
 	if err != nil {
 		return
 	}

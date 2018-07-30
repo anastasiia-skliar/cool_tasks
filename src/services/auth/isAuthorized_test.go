@@ -59,7 +59,6 @@ func TestIsAuthorized(t *testing.T) {
 
 			IsAuthorized(rec, req, fackedNext)
 
-
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}

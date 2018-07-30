@@ -25,8 +25,8 @@ type successDelete struct {
 
 //GetTasksHandler gets Tasks from DB
 func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
-	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
-	if err!=nil {
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
 		return
 	}
 	if auth.CheckPermission(sessionID, "admin", "") == false {
@@ -60,8 +60,8 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	itemOwner, err := models.GetUserByID(task.UserID)
-	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
-	if err!=nil {
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
 		return
 	}
 	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {
@@ -161,8 +161,8 @@ func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	itemOwner, err := models.GetUserByID(idUser)
-	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
-	if err!=nil {
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
 		return
 	}
 	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {

@@ -9,7 +9,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
-		"github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 )
 
@@ -72,7 +72,6 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddUserHandler is a handler for creating User
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
-
 
 	err := r.ParseForm()
 	if err != nil {
