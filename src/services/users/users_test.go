@@ -102,7 +102,6 @@ func TestGetUserByID(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-
 	userId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	tests := []usersCRUDTestCase{
 		{
@@ -144,7 +143,6 @@ func TestDeleteUser(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			models.MockedDeleteUser(userId, nil)
-
 			auth.MockedCheckPermission(tc.permission)
 			tc.mock()
 			rec := httptest.NewRecorder()
@@ -177,7 +175,6 @@ func TestCreateUser(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-
 			auth.MockedCheckPermission(tc.permission)
 			models.MockedCreateUser(tc.mockedCreateUser)
 			rec := httptest.NewRecorder()

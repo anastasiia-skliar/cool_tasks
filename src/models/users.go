@@ -26,9 +26,7 @@ type User struct {
 //AddUser used for creation user in DB
 var AddUser = func(user User) (uuid.UUID, error) {
 	var id uuid.UUID
-
 	err := database.DB.QueryRow(createUser, user.Name, user.Login, user.Password, user.Role).Scan(&id)
-
 	return id, err
 }
 
@@ -36,7 +34,6 @@ var AddUser = func(user User) (uuid.UUID, error) {
 var GetUserByID = func(id uuid.UUID) (User, error) {
 	var user User
 	err := database.DB.QueryRow(getUserByID, id).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
-
 	return user, err
 }
 
@@ -50,7 +47,6 @@ var GetUserByLogin = func(login string) (User, error) {
 //DeleteUser used for deleting user from DB
 var DeleteUser = func(id uuid.UUID) error {
 	_, err := database.DB.Exec(deleteUser, id)
-
 	return err
 }
 

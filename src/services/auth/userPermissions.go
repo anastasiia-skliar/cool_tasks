@@ -25,7 +25,6 @@ var CheckPermission = func(userSession string, requiredRole string, itemOwner st
 }
 
 var AccessPermission = func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-
 	rolesRequired := SpecialPermissions[r.URL.Path]
 	if rolesRequired == nil {
 		next(w, r)
@@ -38,7 +37,6 @@ var AccessPermission = func(w http.ResponseWriter, r *http.Request, next http.Ha
 			if err != nil {
 				return
 			}
-
 			if isAdmin(session) == false {
 				common.SendError(w, r, 400, "ERROR: Not admin", err)
 				return

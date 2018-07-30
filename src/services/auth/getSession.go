@@ -20,5 +20,4 @@ func MockedGetSession(sessionID string, err error) {
 	GetSessionIDFromRequest = func(w http.ResponseWriter, r *http.Request) (string, error) {
 		return sessionID, err
 	}
-
 }
