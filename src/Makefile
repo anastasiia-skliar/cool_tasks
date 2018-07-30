@@ -25,7 +25,7 @@ test:
     		go test -coverprofile $(package)/cover.out -covermode=count $(package);)
 
 perf-test:
-	vegeta attack -targets=src/performance/target.txt -duration=5s -rate=300 | tee src/performance/results.bin | vegeta report
+	vegeta attack -targets=src/performance/test-login.txt -duration=5s -rate=150 | tee src/performance/results.bin | vegeta report
 	cat src/performance/results.bin | vegeta report -reporter=plot > src/performance/plot.html
 
 code-quality:
