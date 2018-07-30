@@ -33,26 +33,28 @@ type User struct {
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	redis := database.Cache
 	var newLogin login
-	parseErr := r.ParseForm()
-	if parseErr != nil {
-		log.Println(parseErr)
+	err := r.ParseForm()
+	if err != nil {
+		common.SendError(w, r, 400, "ERROR: BadRequest", err)
+		log.Println(err)
+		return
 	}
 
 	newLogin.login = r.Form.Get("login")
 	newLogin.pass = r.Form.Get("password")
 
-	var userInDB models.User
 
-	userInDB, er := models.GetUserForLogin(newLogin.login, userInDB.Password)
-	if er != nil {
-		common.SendError(w, r, 401, "ERROR: ", er)
+
+	_, err = models.GetUserForLogin(newLogin.login, newLogin.pass)
+	if err != nil {
+		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
 
 	}
 
 	sessionUUID, err := uuid.NewV1()
 	if err != nil {
-		common.SendError(w, r, 401, "ERROR: ", err)
+		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
 	}
 	newLogin.sessionID = sessionUUID.String()
