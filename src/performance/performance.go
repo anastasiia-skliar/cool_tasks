@@ -12,7 +12,7 @@ func main() {
 	duration := 5 * time.Second
 	login := vegeta.NewStaticTargeter(vegeta.Target{
 		Method: "POST",
-		URL:    "https://cool-tasks.herokuapp.com/v1/login?login=admin&password=admin",
+		URL:    "https://cool-tasks.herokuapp.com/v1/login?login=admin&password=:GUingeigHSizU",
 	})
 	attacker := vegeta.NewAttacker()
 
