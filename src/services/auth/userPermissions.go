@@ -5,7 +5,14 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"net/http"
-)
+	)
+
+var SpecialPermissions map[string][]string
+
+func init()  {
+	SpecialPermissions =make(map[string][]string)
+	SpecialPermissions["\v1\users"]=[]string{"admin"}
+}
 
 var CheckPermission = func(userSession string, requiredRole string, itemOwner string) bool {
 	switch requiredRole {
@@ -17,20 +24,32 @@ var CheckPermission = func(userSession string, requiredRole string, itemOwner st
 	return false
 }
 
-var IsAdmin = func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	if r.URL.Path == "/v1/users" {
-		session, err := GetSessionIDFromRequest(w, r)
-		if err != nil {
-			return
-		}
-		if isAdmin(session) == false {
-			common.SendError(w, r, 400, "ERROR: Not admin", err)
-			return
-		}
+var AccessPermission = func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+
+	rolesRequired := SpecialPermissions[r.URL.Path]
+	if rolesRequired == nil {
 		next(w, r)
 		return
 	}
-	next(w, r)
+	for _, v := range rolesRequired {
+		switch v {
+		case "admin":
+			session, err := GetSessionIDFromRequest(w, r)
+			if err != nil {
+				return
+			}
+
+			if isAdmin(session) == false {
+				common.SendError(w, r, 400, "ERROR: Not admin", err)
+				return
+			}
+			next(w, r)
+			return
+		default:
+			next(w, r)
+			return
+		}
+	}
 }
 
 var isOwner = func(session string, itemOwner string) bool {
