@@ -5,13 +5,13 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"net/http"
-	)
+)
 
 var SpecialPermissions map[string][]string
 
-func init()  {
-	SpecialPermissions =make(map[string][]string)
-	SpecialPermissions["\v1\users"]=[]string{"admin"}
+func init() {
+	SpecialPermissions = make(map[string][]string)
+	SpecialPermissions["/v1/users"] = []string{"admin"}
 }
 
 var CheckPermission = func(userSession string, requiredRole string, itemOwner string) bool {
