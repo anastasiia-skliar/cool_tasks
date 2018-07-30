@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	usersloc       = "users"
 	createUser     = "INSERT INTO users (name, login, password) VALUES ($1, $2, $3) RETURNING id"
 	getUser        = "SELECT * FROM users WHERE id = $1"
 	getUserByLogin = "SELECT * FROM users WHERE login = $1"
@@ -42,6 +43,21 @@ var GetUser = func(id uuid.UUID) (User, error) {
 var GetUserByLogin = func(login string) (User, error) {
 	var user User
 	err := database.DB.QueryRow(getUserByLogin, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	return user, err
+}
+
+//GetUserForLogin used for getting user from DB by Login and Password
+var GetUserForLogin = func(login string, password string) (User, error) {
+	var user User
+	params := []string{"login", "password"}
+	values := make(map[string][]string)
+	values["login"] = []string{login}
+	values["password"] = []string{password}
+	req, sqlParams, err := SQLGenerator(usersloc, params, nil, values)
+	if err != nil {
+		return User{}, err
+	}
+	err = database.DB.QueryRow(req, sqlParams...).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
 	return user, err
 }
 

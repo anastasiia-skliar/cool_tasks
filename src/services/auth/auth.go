@@ -43,21 +43,20 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 
 	var userInDB models.User
 
-	userInDB, er := models.GetUserByLogin(newLogin.login)
+	userInDB, er := models.GetUserForLogin(newLogin.login, userInDB.Password)
 	if er != nil {
 		common.SendError(w, r, 401, "ERROR: ", er)
 		return
 
 	}
 
-	if newLogin.pass == userInDB.Password {
-		sessionUUID, err := uuid.NewV1()
-		if err != nil {
-			common.SendError(w, r, 401, "ERROR: ", err)
-			return
-		}
-		newLogin.sessionID = sessionUUID.String()
+	sessionUUID, err := uuid.NewV1()
+	if err != nil {
+		common.SendError(w, r, 401, "ERROR: ", err)
+		return
 	}
+	newLogin.sessionID = sessionUUID.String()
+
 	if newLogin.sessionID != "" {
 
 		err := redis.Set(newLogin.sessionID, newLogin.login, time.Hour*4).Err()
