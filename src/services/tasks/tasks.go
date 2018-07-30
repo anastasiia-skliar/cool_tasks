@@ -25,8 +25,11 @@ type successDelete struct {
 
 //GetTasksHandler gets Tasks from DB
 func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
-
-	if auth.CheckPermission(r, "admin", "") == false {
+	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
+	if err!=nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, "admin", "") == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
@@ -57,7 +60,11 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	itemOwner, err := models.GetUserByID(task.UserID)
-	if auth.CheckPermission(r, "owner", itemOwner.Login) == false {
+	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
+	if err!=nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
@@ -154,7 +161,11 @@ func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	itemOwner, err := models.GetUserByID(idUser)
-	if auth.CheckPermission(r, "owner", itemOwner.Login) == false {
+	sessionID,err:=auth.GetSessionIDFromRequest(w,r)
+	if err!=nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}

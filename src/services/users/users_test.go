@@ -88,7 +88,7 @@ func TestGetUserByID(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetUser(tc.mockedGetUser, tc.mockedUserError)
+			models.MockedGetUserByID(tc.mockedGetUser, tc.mockedUserError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -139,18 +139,8 @@ func TestDeleteUser(t *testing.T) {
 			mock: func() {
 			},
 		},
-		{
-			name:              "Delete_Users_403",
-			url:               "/v1/users/00000000-0000-0000-0000-000000000001",
-			want:              403,
-			mockedDeleteUsers: userId,
-			mockedUserError:   nil,
-			permission: false,
-			mock: func() {
-			},
-		},
 	}
-	defer func(){auth.CheckPermission=auth.CheckPermission}()
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			models.MockedDeleteUser(userId, nil)
@@ -179,20 +169,12 @@ func TestCreateUser(t *testing.T) {
 			mockedUserError:  nil,
 			permission: true,
 		},
-		{
-			name:             "Add_Users_403",
-			url:              "/v1/users",
-			want:             403,
-			mockedCreateUser: models.User{},
-			mockedUserError:  nil,
-			permission: false,
-		},
 	}
 	data := url.Values{}
 	data.Add("name", "Karim")
 	data.Add("login", "Karim123")
 	data.Add("password", "1324qwer")
-	defer func(){auth.CheckPermission=auth.CheckPermission}()
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 

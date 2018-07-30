@@ -59,13 +59,6 @@ func TestIsAuthorized(t *testing.T) {
 
 			IsAuthorized(rec, req, fackedNext)
 
-			/*middlewareManager := negroni.New(
-				negroni.HandlerFunc(IsAuthorized),
-			)
-			middlewareManager.Use(negroni.NewRecovery())
-			middlewareManager.UseHandler(services.NewRouter())
-
-			middlewareManager.ServeHTTP(rec, req)*/
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)

@@ -9,17 +9,13 @@ func MockedCreateUser(user User) {
 	}
 }
 
-//MockedGetUser is mocked GetUserByID func
-func MockedGetUser(user User, err error) {
-	GetUserByID = func(id uuid.UUID) (User, error) {
-		return user, err
-	}
-}
+//MockedGetUserByID is mocked GetUserByID func
 func MockedGetUserByID(user User, err error) {
 	GetUserByID = func(id uuid.UUID) (User, error) {
 		return user, err
 	}
 }
+
 
 //MockedDeleteUser is mocked DeleteUser func
 func MockedDeleteUser(id uuid.UUID, err error) {

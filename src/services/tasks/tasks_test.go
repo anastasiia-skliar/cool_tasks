@@ -60,7 +60,7 @@ func TestGetTasks(t *testing.T) {
 			permission: false,
 		},
 	}
-	defer func(){auth.CheckPermission=auth.CheckPermission}()
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			auth.MockedCheckPermission(tc.permission)
@@ -96,7 +96,7 @@ func TestGetTasksByID(t *testing.T) {
 			mockedTasksError: http.ErrLineTooLong,
 		},
 	}
-	defer func(){auth.CheckPermission=auth.CheckPermission}()
+
 	auth.MockedCheckPermission(true)
 	models.MockedGetUserByID(models.User{}, nil)
 	for _, tc := range tests {
