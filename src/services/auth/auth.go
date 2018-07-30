@@ -39,36 +39,27 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-
 	newLogin.login = r.Form.Get("login")
 	newLogin.pass = r.Form.Get("password")
-
-
-
 	_, err = models.GetUserForLogin(newLogin.login, newLogin.pass)
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
 
 	}
-
 	sessionUUID, err := uuid.NewV1()
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
 	}
 	newLogin.sessionID = sessionUUID.String()
-
 	if newLogin.sessionID != "" {
-
 		err := redis.Set(newLogin.sessionID, newLogin.login, time.Hour*4).Err()
 		if err != nil {
 			log.Println(err)
 		}
-
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
-
 		common.RenderJSON(w, r, newLogin.sessionID)
 		return
 	}
