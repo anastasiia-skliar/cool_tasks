@@ -1,11 +1,14 @@
-package: github.com/Nastya-Kruglikova/cool_tasks/src
+package: github.com/Nastya-Kruglikova/cool_tasks
 import:
+- package: github.com/Masterminds/squirrel
 - package: github.com/alicebob/miniredis
 - package: github.com/go-redis/redis
-  subpackages:
-  - redis
 - package: github.com/gorilla/mux
 - package: github.com/lib/pq
 - package: github.com/satori/go.uuid
+- package: github.com/tsenart/vegeta
+  subpackages:
+  - lib
 - package: github.com/urfave/negroni
+testImport:
 - package: gopkg.in/DATA-DOG/go-sqlmock.v1
