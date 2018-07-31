@@ -7,8 +7,8 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
-	"github.com/satori/go.uuid"
 	"github.com/gorilla/mux"
+	"github.com/satori/go.uuid"
 )
 
 type successCreate struct {
