@@ -30,7 +30,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 	}
 	newLogin.login = r.Form.Get("login")
 	newLogin.pass = r.Form.Get("password")
-	_, err = models.GetUserForLogin(newLogin.login, newLogin.pass)
+	userInDB, err := models.GetUserForLogin(newLogin.login, newLogin.pass)
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
@@ -48,7 +48,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 		}
 		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
-		common.RenderJSON(w, r, newLogin.sessionID)
+		common.RenderJSON(w, r, userInDB.ID)
 		return
 	}
 	common.SendError(w, r, 401, "ERROR: Authorization failed", errors.New("Fail to autorize"))
