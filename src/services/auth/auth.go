@@ -6,11 +6,9 @@ import (
 	"log"
 	"net/http"
 	"time"
-
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-
 	"github.com/satori/go.uuid"
 )
 
@@ -45,7 +43,6 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
-
 	}
 	sessionUUID, err := uuid.NewV1()
 	if err != nil {

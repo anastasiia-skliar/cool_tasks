@@ -16,19 +16,16 @@ var IsExistRedis = func(key string) bool {
 
 //IsAuthorized checks authorization
 func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-
 	if r.URL.Path == "/v1/login" {
 		next(w, r)
 		return
 	}
-
 	userSession, err := r.Cookie("user_session") //get value from user_session key from cookie
 	if err != nil {
 		log.Println(err, "ERROR: Can't get cookies")
 		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)
 		return
 	}
-
 	if IsExistRedis(userSession.Value) {
 		next(w, r)
 	} else {
