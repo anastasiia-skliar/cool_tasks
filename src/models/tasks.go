@@ -27,7 +27,7 @@ type Task struct {
 
 //AddTask used for creation task in DB
 var AddTask = func(task Task) (Task, error) {
-	err := database.DB.QueryRow(createTask, &task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc).Scan(&task.ID)
+	err := database.DB.QueryRow(createTask, task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc).Scan(&task.ID)
 
 	return task, err
 }
@@ -51,7 +51,7 @@ var DeleteTask = func(id uuid.UUID) error {
 var GetTasks = func() ([]Task, error) {
 	rows, err := database.DB.Query(getTasks)
 	if err != nil {
-		return []Task{}, err
+		return nil, err
 	}
 
 	tasks := make([]Task, 0)
@@ -59,7 +59,7 @@ var GetTasks = func() ([]Task, error) {
 	for rows.Next() {
 		var t Task
 		if err := rows.Scan(&t.ID, &t.UserID, &t.Name, &t.Time, &t.CreatedAt, &t.UpdatedAt, &t.Desc); err != nil {
-			return []Task{}, err
+			return nil, err
 		}
 		tasks = append(tasks, t)
 	}
@@ -70,7 +70,7 @@ var GetTasks = func() ([]Task, error) {
 var GetUserTasks = func(id uuid.UUID) ([]Task, error) {
 	rows, err := database.DB.Query(getUserTasks, id)
 	if err != nil {
-		return []Task{}, err
+		return nil, err
 	}
 
 	userTasks := make([]Task, 0)
@@ -79,7 +79,7 @@ var GetUserTasks = func(id uuid.UUID) ([]Task, error) {
 		task := Task{}
 		scanErr := rows.Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
 		if scanErr != nil {
-			return []Task{}, scanErr
+			return nil, scanErr
 		}
 		userTasks = append(userTasks, task)
 	}
