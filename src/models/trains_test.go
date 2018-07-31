@@ -92,7 +92,7 @@ func TestGetTrains(t *testing.T) {
 			"Lviv", "Kyiv", "el", "coupe", "250uah")
 
 		mock.ExpectQuery("SELECT (.+) FROM trains").WillReturnRows(rows)
-		models.SQLGenerator=originalGenerator
+		models.SQLGenerator = originalGenerator
 		result, err := models.GetTrains(params)
 
 		if err != nil {

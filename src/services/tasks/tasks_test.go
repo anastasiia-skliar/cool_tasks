@@ -11,8 +11,8 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
-	"github.com/satori/go.uuid"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasks"
+	"github.com/satori/go.uuid"
 )
 
 var router = services.NewRouter()

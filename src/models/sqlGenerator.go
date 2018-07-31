@@ -16,7 +16,7 @@ func contains(array []string, value string) bool {
 }
 
 //SQLGenerator is universal function for dynamic SQL queries
-var SQLGenerator=func(findType string, stringArgs []string, numberArgs []string, params url.Values) (string, []interface{}, error) {
+var SQLGenerator = func(findType string, stringArgs []string, numberArgs []string, params url.Values) (string, []interface{}, error) {
 	req := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).Select("*").From(findType)
 	var (
 		request string

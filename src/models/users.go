@@ -57,7 +57,7 @@ var GetUserForLogin = func(login string, password string) (User, error) {
 	if err != nil {
 		return User{}, err
 	}
-	err = database.DB.QueryRow(req, sqlParams...).Scan(&user.ID, &user.Name, &user.Login, &user.Password)
+	err = database.DB.QueryRow(req, sqlParams...).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Role)
 	return user, err
 }
 

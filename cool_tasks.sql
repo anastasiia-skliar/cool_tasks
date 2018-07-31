@@ -2,12 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.4 (Ubuntu 10.4-0ubuntu0.18.04)
+-- Dumped from database version 10.4 (Debian 10.4-2.pgdg90+1)
 -- Dumped by pg_dump version 10.4 (Ubuntu 10.4-0ubuntu0.18.04)
-
---
--- Name: cool_tasks; Type: DATABASE; Schema: -; Owner: postgres
---
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -33,7 +29,7 @@ ALTER DATABASE cool_tasks OWNER TO postgres;
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
+SET client_encoding = 'SQL_ASCII';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
@@ -52,6 +48,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: chkpass; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS chkpass WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION chkpass; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION chkpass IS 'data type for auto-encrypted passwords';
 
 
 --
@@ -294,7 +304,8 @@ CREATE TABLE public.users (
     id uuid DEFAULT public.uuid_generate_v1() NOT NULL,
     name character varying(34) NOT NULL,
     login character varying(34) NOT NULL,
-    password character varying(16) NOT NULL
+    password public.chkpass,
+    role character varying(16)
 );
 
 
@@ -446,8 +457,8 @@ COPY public.trips_trains (id, trip_id, train_id) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.users (id, name, login, password) FROM stdin;
-03dc3258-86a7-11e8-9a39-d4bed959082a	John	admin	admin
+COPY public.users (id, name, login, password, role) FROM stdin;
+03dc3258-86a7-11e8-9a39-d4bed959082a	John	admin	:SrU4bmypbPpMo	admin
 \.
 
 

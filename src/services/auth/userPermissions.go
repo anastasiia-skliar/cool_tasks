@@ -9,8 +9,8 @@ import (
 
 var SpecialPermissions map[string][]string
 
-const AdminRole  = "admin"
-const Owner  = "owner"
+const AdminRole = "admin"
+const Owner = "owner"
 
 func init() {
 	SpecialPermissions = make(map[string][]string)
@@ -70,7 +70,7 @@ var isAdmin = func(session string) bool {
 	if err != nil {
 		return false
 	}
-	if user, err := models.GetUserByLogin(sessionLogin); err == nil && user.Role == "Admin" {
+	if user, err := models.GetUserByLogin(sessionLogin); err == nil && user.Role == AdminRole {
 		return true
 	}
 	return false
