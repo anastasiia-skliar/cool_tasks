@@ -21,7 +21,7 @@ public class TaskService extends Headers {
         RestTemplate rest = new RestTemplate();
         HttpEntity<String> request = new HttpEntity<String>(getHeaders());
         String jsonStr = rest.exchange(REST_SERVICE_URI+"tasks?=id"+id, HttpMethod.GET,request, String.class).getBody();
-        Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new GsonUTCDateAdapter()).create();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssz").create();
         return gson.fromJson(jsonStr, Task[].class);
     }
 }

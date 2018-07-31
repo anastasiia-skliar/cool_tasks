@@ -24,7 +24,7 @@
                   <TableColumn fx:id="taskTime" minWidth="0.0" prefWidth="100.0" text="Time" />
                   <TableColumn fx:id="createdAt" maxWidth="332.0" prefWidth="116.0" text="CreatedAt" />
                   <TableColumn fx:id="updatedAt" maxWidth="298.0" prefWidth="102.0" text="UpdatedAt" />
-                  <TableColumn fx:id="desc" maxWidth="332.0" prefWidth="153.0" text="Desc" />
+                  <TableColumn fx:id="Description" maxWidth="332.0" prefWidth="153.0" text="Description" />
               </columns>
             </TableView>
          </children>

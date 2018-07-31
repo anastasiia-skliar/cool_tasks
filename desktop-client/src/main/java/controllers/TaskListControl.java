@@ -29,7 +29,7 @@ public class TaskListControl extends ControlWithSide implements Initializable {
     @FXML
     private TableColumn updatedAt;
     @FXML
-    private TableColumn desc;
+    private TableColumn Description;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -44,8 +44,8 @@ public class TaskListControl extends ControlWithSide implements Initializable {
         taskTime.setCellValueFactory(new PropertyValueFactory("Time"));
         createdAt.setCellValueFactory(new PropertyValueFactory("CreatedAt"));
         updatedAt.setCellValueFactory(new PropertyValueFactory("UpdatedAt"));
-        desc.setCellValueFactory(new PropertyValueFactory("Desc"));
-        taskTable.getColumns().setAll(taskID, taskName, taskTime, createdAt, updatedAt, desc);
+        Description.setCellValueFactory(new PropertyValueFactory("Description"));
+        taskTable.getColumns().setAll(taskID, taskName, taskTime, createdAt, updatedAt, Description);
     }
 
 }
