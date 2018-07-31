@@ -2,13 +2,12 @@
 package trips
 
 import (
-	"net/http"
-
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
-
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
+	"net/http"
 )
 
 type successCreate struct {
@@ -55,6 +54,15 @@ func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	itemOwner, err := models.GetUserByID(result.UserID)
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	common.RenderJSON(w, r, result)
 }
 
@@ -65,6 +73,15 @@ func GetTripIDsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.FromString(params["id"])
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong userID", err)
+		return
+	}
+	itemOwner, err := models.GetUserByID(userID)
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
 

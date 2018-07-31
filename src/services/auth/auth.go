@@ -19,15 +19,6 @@ type login struct {
 	sessionID string
 }
 
-//User representation in DB
-type User struct {
-	ID       uuid.UUID
-	Name     string
-	Login    string
-	Password string
-}
-
-//Login login new User
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	redis := database.Cache
 	var newLogin login

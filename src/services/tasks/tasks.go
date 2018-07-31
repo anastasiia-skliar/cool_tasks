@@ -10,6 +10,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
+
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 )
 
 type successCreate struct {
@@ -23,7 +25,14 @@ type successDelete struct {
 
 //GetTasksHandler gets Tasks from DB
 func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
-
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, auth.AdminRole, "") == false {
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	tasks, err := models.GetTasks()
 
 	if err != nil {
@@ -46,7 +55,19 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := models.GetTask(taskID)
-
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get task by ID", err)
+		return
+	}
+	itemOwner, err := models.GetUserByID(task.UserID)
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get task by ID", err)
 		return
@@ -139,5 +160,14 @@ func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	itemOwner, err := models.GetUserByID(idUser)
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		return
+	}
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
+		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		return
+	}
 	common.RenderJSON(w, r, tasks)
 }

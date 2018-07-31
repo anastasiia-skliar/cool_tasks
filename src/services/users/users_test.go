@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/users"
 	"github.com/satori/go.uuid"
 	"net/http"
@@ -23,6 +24,7 @@ type usersCRUDTestCase struct {
 	mockedGetUsers    []models.User
 	mockedUserError   error
 	mockedDeleteUsers uuid.UUID
+	permission        bool
 	mock              func()
 	error             string
 	testUser          models.User
@@ -86,7 +88,7 @@ func TestGetUserByID(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetUser(tc.mockedGetUser, tc.mockedUserError)
+			models.MockedGetUserByID(tc.mockedGetUser, tc.mockedUserError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -108,6 +110,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              200,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			permission:        true,
 			mock: func() {
 			},
 		},
@@ -117,6 +120,7 @@ func TestDeleteUser(t *testing.T) {
 			want:              404,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			permission:        true,
 			mock: func() {
 				var err = http.ErrBodyNotAllowed
 				models.DeleteUser = func(id uuid.UUID) error {
@@ -130,13 +134,16 @@ func TestDeleteUser(t *testing.T) {
 			want:              400,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
+			permission:        true,
 			mock: func() {
 			},
 		},
 	}
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			models.MockedDeleteUser(userId, nil)
+			auth.MockedCheckPermission(tc.permission)
 			tc.mock()
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodDelete, tc.url, nil)
@@ -158,14 +165,17 @@ func TestCreateUser(t *testing.T) {
 			want:             200,
 			mockedCreateUser: models.User{},
 			mockedUserError:  nil,
+			permission:       true,
 		},
 	}
 	data := url.Values{}
 	data.Add("name", "Karim")
 	data.Add("login", "Karim123")
 	data.Add("password", "1324qwer")
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			auth.MockedCheckPermission(tc.permission)
 			models.MockedCreateUser(tc.mockedCreateUser)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))

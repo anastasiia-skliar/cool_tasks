@@ -48,6 +48,7 @@ func main() {
 	// setting up web server middlewares
 	middlewareManager := negroni.New(
 		negroni.HandlerFunc(auth.IsAuthorized),
+		negroni.HandlerFunc(auth.AccessPermission),
 	)
 	middlewareManager.Use(negroni.NewRecovery())
 	middlewareManager.UseHandler(services.NewRouter())

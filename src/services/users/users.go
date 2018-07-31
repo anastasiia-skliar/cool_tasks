@@ -56,7 +56,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from URL", err)
 		return
 	}
-	user, err := models.GetUser(idUser)
+	user, err := models.GetUserByID(idUser)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find user with such ID", err)
 		return
@@ -72,6 +72,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddUserHandler is a handler for creating User
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
+
 	err := r.ParseForm()
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
@@ -120,6 +121,7 @@ func IsValid(user models.User) (bool, string) {
 
 //DeleteUserHandler is a handler for deleting User from DB
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+
 	params := mux.Vars(r)
 	idUser, err := uuid.FromString(params["id"])
 	if err != nil {
