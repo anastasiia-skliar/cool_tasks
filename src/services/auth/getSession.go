@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func GetSessionIDFromRequest(w http.ResponseWriter, r *http.Request) (string, error) {
+var GetSessionIDFromRequest= func(w http.ResponseWriter, r *http.Request) (string, error) {
 	session, err := r.Cookie("user_session")
 	if err != nil {
 		log.Println(err, "ERROR: Can't get cookies")

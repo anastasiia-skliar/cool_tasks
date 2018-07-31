@@ -5,7 +5,7 @@ import (
 	"github.com/satori/go.uuid"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
-)
+	)
 
 var mock sqlmock.Sqlmock
 var userMockErr error
@@ -141,7 +141,10 @@ func TestGetUserForLogin(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
 		AddRow(UserID.Bytes(), "John", "john", "1111")
-
+	expectedInterface:=make([]interface{}, 0)
+	expectedInterface=append(expectedInterface, expected.Login)
+	expectedInterface=append(expectedInterface, expected.Password)
+	MockedGenerator("SELECT * FROM users WHERE (login = $1 AND password = $2)", expectedInterface, nil)
 	mock.ExpectQuery("SELECT (.+) FROM users WHERE").WithArgs(expected.Login, expected.Password).WillReturnRows(rows)
 
 	result, err := GetUserForLogin(expected.Login, expected.Password)

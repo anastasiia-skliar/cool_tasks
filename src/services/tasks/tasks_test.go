@@ -12,6 +12,7 @@ import (
 
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/satori/go.uuid"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasks"
 )
 
 var router = services.NewRouter()
@@ -60,7 +61,7 @@ func TestGetTasks(t *testing.T) {
 			permission:       false,
 		},
 	}
-
+	auth.MockedGetSession("", nil)
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			auth.MockedCheckPermission(tc.permission)
@@ -68,7 +69,7 @@ func TestGetTasks(t *testing.T) {
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
-			router.ServeHTTP(rec, req)
+			tasks.GetTasksHandler(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
@@ -96,7 +97,7 @@ func TestGetTasksByID(t *testing.T) {
 			mockedTasksError: http.ErrLineTooLong,
 		},
 	}
-
+	auth.MockedGetSession("", nil)
 	auth.MockedCheckPermission(true)
 	models.MockedGetUserByID(models.User{}, nil)
 	for _, tc := range tests {
