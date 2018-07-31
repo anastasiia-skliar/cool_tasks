@@ -71,7 +71,7 @@ var DeleteUser = func(id uuid.UUID) error {
 var GetUsers = func() ([]User, error) {
 	rows, err := database.DB.Query(getUsers)
 	if err != nil {
-		return []User{}, err
+		return nil, err
 	}
 
 	users := make([]User, 0)
@@ -79,7 +79,7 @@ var GetUsers = func() ([]User, error) {
 	for rows.Next() {
 		var u User
 		if err := rows.Scan(&u.ID, &u.Name, &u.Login, &u.Password, &u.Role); err != nil {
-			return []User{}, err
+			return nil, err
 		}
 		users = append(users, u)
 	}
