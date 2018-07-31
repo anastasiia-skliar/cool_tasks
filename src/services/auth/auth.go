@@ -3,13 +3,13 @@ package auth
 
 import (
 	"errors"
-	"log"
-	"net/http"
-	"time"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/satori/go.uuid"
+	"log"
+	"net/http"
+	"time"
 )
 
 //Login stores info for logging
@@ -60,7 +60,7 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, newLogin.sessionID)
 		return
 	}
-	common.SendError(w, r, 401, "ERROR: ", errors.New("Fail to autorize"))
+	common.SendError(w, r, 401, "ERROR: Authorization failed", errors.New("Fail to autorize"))
 }
 
 //Logout logout User
