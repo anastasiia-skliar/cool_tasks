@@ -15,7 +15,7 @@ packages = \
     ./services/events \
     ./services/hotels \
 
-all: test format go-build dc-build dc-up
+all: test format migrate-down migrate-up dc-build dc-up
 
 setup:
 	go get -u gopkg.in/alecthomas/gometalinter.v2
@@ -36,6 +36,12 @@ code-quality-print:
 
 format:
 	go fmt $(packages)
+	
+migrate-down:
+	goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.2 dbname=cool_tasks sslmode=disable" down-to 0
+
+migrate-up:
+	goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.2 dbname=cool_tasks sslmode=disable" up
 
 doc:
 	godoc -http=:6060
