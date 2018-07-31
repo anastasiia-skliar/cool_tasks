@@ -16,17 +16,14 @@ var IsExistRedis = func(key string) bool {
 
 //IsAuthorized checks authorization
 func IsAuthorized(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-
 	if r.URL.Path == "/v1/login" {
 		next(w, r)
 		return
 	}
-
 	userSession, err := GetSessionIDFromRequest(w, r)
 	if err != nil {
 		return
 	}
-
 	if IsExistRedis(userSession) {
 		next(w, r)
 	} else {

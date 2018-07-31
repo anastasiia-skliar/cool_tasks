@@ -17,7 +17,7 @@ func init() {
 var CheckPermission = func(userSession string, requiredRole string, itemOwner string) bool {
 	switch requiredRole {
 	case "owner":
-		return isOwner(userSession, itemOwner)||isAdmin(userSession)
+		return isOwner(userSession, itemOwner) || isAdmin(userSession)
 	case "admin":
 		return isAdmin(userSession)
 	}

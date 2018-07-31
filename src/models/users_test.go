@@ -120,6 +120,44 @@ func TestGetUserByLogin(t *testing.T) {
 	}
 }
 
+func TestGetUserForLogin(t *testing.T) {
+
+	originalDB := database.DB
+	database.DB, mock, userMockErr = sqlmock.New()
+	defer func() { database.DB = originalDB }()
+
+	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+
+	expected := User{
+		ID:       UserID,
+		Name:     "John",
+		Login:    "john",
+		Password: "1111",
+	}
+
+	if userMockErr != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", userMockErr)
+	}
+
+	rows := sqlmock.NewRows([]string{"ID", "Name", "Login", "Password"}).
+		AddRow(UserID.Bytes(), "John", "john", "1111")
+
+	mock.ExpectQuery("SELECT (.+) FROM users WHERE").WithArgs(expected.Login, expected.Password).WillReturnRows(rows)
+
+	result, err := GetUserForLogin(expected.Login, expected.Password)
+
+	if err != nil {
+		t.Errorf("error was not expected while updating stats: %s", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+
+	if result != expected {
+		t.Error("Expected:", expected, "Was:", result)
+	}
+}
+
 func TestDeleteUser(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, userMockErr = sqlmock.New()
