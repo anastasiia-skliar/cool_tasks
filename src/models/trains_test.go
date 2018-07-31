@@ -20,6 +20,8 @@ type trainsTestCase struct {
 	url  string
 }
 
+var originalGenerator = models.SQLGenerator
+
 func TestGetTrains(t *testing.T) {
 	testCases := []trainsTestCase{
 		{"id departure_time departure_date arrival_time arrival_date price",
@@ -90,7 +92,7 @@ func TestGetTrains(t *testing.T) {
 			"Lviv", "Kyiv", "el", "coupe", "250uah")
 
 		mock.ExpectQuery("SELECT (.+) FROM trains").WillReturnRows(rows)
-
+		models.SQLGenerator=originalGenerator
 		result, err := models.GetTrains(params)
 
 		if err != nil {
