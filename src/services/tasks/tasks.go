@@ -29,7 +29,7 @@ func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	if auth.CheckPermission(sessionID, "admin", "") == false {
+	if auth.CheckPermission(sessionID, auth.AdminRole, "") == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
@@ -64,7 +64,7 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}
@@ -165,7 +165,7 @@ func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	if auth.CheckPermission(sessionID, "owner", itemOwner.Login) == false {
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
 		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
 		return
 	}

@@ -9,16 +9,19 @@ import (
 
 var SpecialPermissions map[string][]string
 
+const AdminRole  = "admin"
+const Owner  = "owner"
+
 func init() {
 	SpecialPermissions = make(map[string][]string)
-	SpecialPermissions["/v1/users"] = []string{"admin"}
+	SpecialPermissions["/v1/users"] = []string{AdminRole}
 }
 
 var CheckPermission = func(userSession string, requiredRole string, itemOwner string) bool {
 	switch requiredRole {
-	case "owner":
+	case Owner:
 		return isOwner(userSession, itemOwner) || isAdmin(userSession)
-	case "admin":
+	case AdminRole:
 		return isAdmin(userSession)
 	}
 	return false
@@ -32,7 +35,7 @@ var AccessPermission = func(w http.ResponseWriter, r *http.Request, next http.Ha
 	}
 	for _, v := range rolesRequired {
 		switch v {
-		case "admin":
+		case AdminRole:
 			session, err := GetSessionIDFromRequest(w, r)
 			if err != nil {
 				return
