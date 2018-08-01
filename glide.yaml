@@ -7,6 +7,7 @@ import:
 - package: github.com/lib/pq
 - package: github.com/satori/go.uuid
 - package: github.com/tsenart/vegeta
+- package: github.com/pressly/goose
   subpackages:
   - lib
 - package: github.com/urfave/negroni
