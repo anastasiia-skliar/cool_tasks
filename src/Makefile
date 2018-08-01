@@ -10,7 +10,6 @@ packages = \
     ./services/events \
     ./services/flights \
     ./services/museums \
-    ./services/restaurants \
     ./services/trains \
     ./services/events \
     ./services/hotels \
@@ -41,6 +40,7 @@ format:
 
 doc:
 	godoc -http=:6060
+	http://localhost:6060/pkg/github.com/Nastya-Kruglikova/cool_tasks/
 
 go-build:
 	GOOS=linux GOARCH=amd64 go build -o cool_tasks

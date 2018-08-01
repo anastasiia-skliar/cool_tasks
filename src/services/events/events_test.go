@@ -56,9 +56,9 @@ func TestGetByRequestHandler(t *testing.T) {
 func TestAddToTripHandler(t *testing.T) {
 	tests := []EventsTestCase{
 		{
-			name:            "Add_Events_200",
+			name:            "Add_Events_201",
 			url:             "/v1/events",
-			want:            200,
+			want:            201,
 			testDataId:      "00000000-0000-0000-0000-000000000001",
 			testDataEv:      "00000000-0000-0000-0000-000000000001",
 			mockedEventsErr: nil,

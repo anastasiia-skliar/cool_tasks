@@ -19,7 +19,14 @@ type ErrorMessage struct {
 
 // RenderJSON is used for rendering JSON response body with appropriate headers
 func RenderJSON(w http.ResponseWriter, r *http.Request, response interface{}) {
-	renderJSON(w, r, http.StatusOK, response)
+	switch r.Method {
+	case http.MethodPost:
+		renderJSON(w, r, http.StatusCreated, response)
+	case http.MethodDelete:
+		renderJSON(w, r, http.StatusNoContent, response)
+	case http.MethodGet:
+		renderJSON(w, r, http.StatusOK, response)
+	}
 }
 
 // SendMethodNotAllowed sends Internal Server Error Status and logs an error if it exists

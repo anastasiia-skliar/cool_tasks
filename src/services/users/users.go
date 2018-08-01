@@ -18,10 +18,6 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
-type successDelete struct {
-	Status string `json:"status"`
-}
-
 type userResponse struct {
 	ID    uuid.UUID `json:"ID"`
 	Name  string    `json:"Name"`
@@ -82,6 +78,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	newUser.Login = r.Form.Get("login")
 	newUser.Name = r.Form.Get("name")
 	newUser.Password = r.Form.Get("password")
+	newUser.Role=r.Form.Get("role")
 	valid, errMessage := IsValid(newUser)
 	if !valid {
 		log.Print(errMessage)
@@ -133,5 +130,5 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendNotFound(w, r, "ERROR: Can't delete this user", err)
 		return
 	}
-	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
+	common.RenderJSON(w, r, nil)
 }

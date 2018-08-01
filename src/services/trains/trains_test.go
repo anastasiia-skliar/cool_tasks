@@ -55,9 +55,9 @@ func TestGetTrains(t *testing.T) {
 func TestSaveTrain(t *testing.T) {
 	tests := []TrainsTestCase{
 		{
-			name:             "Add_To_Trip_200",
+			name:             "Add_To_Trip_201",
 			url:              "/v1/trains",
-			want:             200,
+			want:             201,
 			testDataId:       "00000000-0000-0000-0000-000000000001",
 			testDataTr:       "00000000-0000-0000-0000-000000000001",
 			mockedGetTrains:  []models.Train{},

@@ -120,9 +120,9 @@ func TestDeleteTasks(t *testing.T) {
 	id, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	tests := []tasksCRUDTestCase{
 		{
-			name: "Delete_Task_200",
+			name: "Delete_Task_204",
 			url:  "/v1/tasks/" + testUUID,
-			want: 200,
+			want: 204,
 		},
 		{
 			name:             "Delete_Task_400",
@@ -160,9 +160,9 @@ func TestDeleteTasks(t *testing.T) {
 func TestCreateTasks(t *testing.T) {
 	tests := []tasksCRUDTestCase{
 		{
-			name:     "Add_Task_200",
+			name:     "Add_Task_201",
 			url:      "/v1/tasks",
-			want:     200,
+			want:     201,
 			userId:   "00000000-0000-0000-0000-000000000001",
 			testTime: "Mon Jan 2 15:04:05 MST 2006",
 		},

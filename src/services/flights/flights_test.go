@@ -57,9 +57,9 @@ func TestGetByRequestHandler(t *testing.T) {
 func TestAddToTripHandler(t *testing.T) {
 	tests := []FlightsTestCase{
 		{
-			name:             "Add_To_Trip_200",
+			name:             "Add_To_Trip_201",
 			url:              "/v1/flights",
-			want:             200,
+			want:             201,
 			testDataId:       "00000000-0000-0000-0000-000000000001",
 			testDataFl:       "00000000-0000-0000-0000-000000000001",
 			mockedFlightsErr: nil,
