@@ -15,10 +15,12 @@ packages = \
     ./services/events \
     ./services/hotels \
 
-all: test format migrate-down migrate-up dc-build dc-up
+all: setup test format go-build dc-build dc-up migrate-down migrate-up
 
 setup:
 	go get -u gopkg.in/alecthomas/gometalinter.v2
+	go get github.com/pressly/goose/cmd/goose
+
 
 test:
 	@$(foreach package,$(packages), set -e; \
@@ -36,12 +38,6 @@ code-quality-print:
 
 format:
 	go fmt $(packages)
-	
-migrate-down:
-	goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.2 dbname=cool_tasks sslmode=disable" down-to 0
-
-migrate-up:
-	goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.2 dbname=cool_tasks sslmode=disable" up
 
 doc:
 	godoc -http=:6060
@@ -51,6 +47,12 @@ go-build:
 
 dc-build:
 	docker-compose build
-
 dc-up:
-	docker-compose up
+	docker-compose up &
+
+migrate-down:
+	echo $(GOPATH)
+	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.3 dbname=cool_tasks sslmode=disable" down-to 0
+migrate-up:
+	echo $(GOPATH)
+	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.3 dbname=cool_tasks sslmode=disable" up
