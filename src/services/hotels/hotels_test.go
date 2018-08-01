@@ -55,9 +55,9 @@ func TestGetHotels(t *testing.T) {
 func TestAddHotel(t *testing.T) {
 	tests := []HotelsTestCase{
 		{
-			name:           "Add_Hotels_200",
+			name:           "Add_Hotels_201",
 			url:            "/v1/hotels",
-			want:           200,
+			want:           201,
 			testDataId:     "00000000-0000-0000-0000-000000000001",
 			testDataHo:     "00000000-0000-0000-0000-000000000001",
 			mockedHotelErr: nil,

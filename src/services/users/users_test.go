@@ -105,9 +105,9 @@ func TestDeleteUser(t *testing.T) {
 	userId, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	tests := []usersCRUDTestCase{
 		{
-			name:              "Delete_Users_200",
+			name:              "Delete_Users_204",
 			url:               "/v1/users/00000000-0000-0000-0000-000000000001",
-			want:              200,
+			want:              204,
 			mockedDeleteUsers: userId,
 			mockedUserError:   nil,
 			permission:        true,
@@ -160,9 +160,9 @@ func TestDeleteUser(t *testing.T) {
 func TestCreateUser(t *testing.T) {
 	tests := []usersCRUDTestCase{
 		{
-			name:             "Add_Users_200",
+			name:             "Add_Users_201",
 			url:              "/v1/users",
-			want:             200,
+			want:             201,
 			mockedCreateUser: models.User{},
 			mockedUserError:  nil,
 			permission:       true,

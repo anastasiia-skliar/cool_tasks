@@ -10,7 +10,6 @@ const (
 	createUser     = "INSERT INTO users (name, login, password, role) VALUES ($1, $2, $3, $4) RETURNING id"
 	getUserByID    = "SELECT * FROM users WHERE id = $1"
 	usersloc       = "users"
-	getUser        = "SELECT * FROM users WHERE id = $1"
 	getUserByLogin = "SELECT * FROM users WHERE login = $1"
 	deleteUser     = "DELETE FROM users WHERE id = $1"
 	getUsers       = "SELECT * FROM users"

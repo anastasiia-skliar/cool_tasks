@@ -57,9 +57,9 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 func TestAddMuseumToTripHandler(t *testing.T) {
 	tests := []MuseumsTestCase{
 		{
-			name:            "Add_Museum_200",
+			name:            "Add_Museum_201",
 			url:             "/v1/museums",
-			want:            200,
+			want:            201,
 			testDataId:      "00000000-0000-0000-0000-000000000001",
 			testDataMu:      "00000000-0000-0000-0000-000000000001",
 			mockedMuseumErr: nil,

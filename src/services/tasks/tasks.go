@@ -19,10 +19,6 @@ type successCreate struct {
 	Result models.Task `json:"result"`
 }
 
-type successDelete struct {
-	Status string `json:"message"`
-}
-
 //GetTasksHandler gets Tasks from DB
 func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 	sessionID, err := auth.GetSessionIDFromRequest(w, r)
@@ -120,7 +116,7 @@ func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.RenderJSON(w, r, successCreate{Status: "201 Created", Result: resultTask})
+	common.RenderJSON(w, r, successCreate{Status: "200 OK", Result: resultTask})
 }
 
 //DeleteTaskHandler deletes Task from DB
@@ -141,7 +137,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
+	common.RenderJSON(w, r, nil)
 }
 
 //GetUserTasksHandler gets Tasks related to current User
