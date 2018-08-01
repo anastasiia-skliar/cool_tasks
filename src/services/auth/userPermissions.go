@@ -41,7 +41,7 @@ var AccessPermission = func(w http.ResponseWriter, r *http.Request, next http.Ha
 				return
 			}
 			if isAdmin(session) == false {
-				common.SendError(w, r, 400, "ERROR: Not admin", err)
+				common.SendError(w, r, 403, "ERROR: Not admin", err)
 				return
 			}
 			next(w, r)
