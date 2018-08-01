@@ -8,12 +8,13 @@
       "Username": "postgres",
       "Password": "postgres",
       "DatabaseName": "cool_tasks",
-      "Hostname": "postgres",
+      "Hostname": "localhost",
       "Port": 5432
     },
     "Redis":{
-      "URL":"redis",
-      "Port":6379
+      "URL":"ec2-107-23-150-142.compute-1.amazonaws.com",
+      "Port":49499,
+      "Password":"pa01a3981212cb4fef102b219f9335989cacc98af72abb4b6f9de0b3b6639719f"
     }
   }
 }
