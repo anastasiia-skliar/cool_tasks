@@ -11,6 +11,7 @@ var SpecialPermissions map[string][]string
 
 const AdminRole = "admin"
 const Owner = "owner"
+const NotOwnerResponse = "User is not object owner"
 
 func init() {
 	SpecialPermissions = make(map[string][]string)

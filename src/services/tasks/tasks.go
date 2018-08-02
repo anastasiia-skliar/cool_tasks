@@ -133,7 +133,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	err = models.DeleteTask(taskID)
 
 	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't delete this task", err)
+		common.SendNotFound(w, r, auth.NotOwnerResponse, err)
 		return
 	}
 
@@ -162,7 +162,7 @@ func GetUserTasksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
-		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		common.SendError(w, r, http.StatusForbidden, auth.NotOwnerResponse, nil)
 		return
 	}
 	common.RenderJSON(w, r, tasks)

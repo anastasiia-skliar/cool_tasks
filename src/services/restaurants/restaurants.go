@@ -105,11 +105,11 @@ func GetRestaurantFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetRestaurantsFromTrip(tripID)
+	items, err := models.GetRestaurantsFromTrip(tripID)
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants by trip ID", err)
 		return
 	}
 
-	common.RenderJSON(w, r, trains)
+	common.RenderJSON(w, r, items)
 }

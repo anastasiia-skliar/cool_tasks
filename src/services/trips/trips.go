@@ -60,7 +60,7 @@ func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
-		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		common.SendError(w, r, http.StatusForbidden, auth.NotOwnerResponse, nil)
 		return
 	}
 	common.RenderJSON(w, r, result)
@@ -81,7 +81,7 @@ func GetTripIDsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
-		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		common.SendError(w, r, http.StatusForbidden, auth.NotOwnerResponse, nil)
 		return
 	}
 
