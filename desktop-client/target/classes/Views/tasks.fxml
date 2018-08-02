@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="382.0" prefWidth="727.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TaskListControl">
+   <children>
+      <Label layoutX="565.0" layoutY="22.0" text="Tasks" textFill="#363131">
+         <font>
+            <Font name="Eras Medium ITC" size="25.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="13.0" layoutY="62.0" prefHeight="207.0" prefWidth="637.0">
+         <children>
+            <TableView fx:id="taskTable" layoutY="4.0" prefHeight="300.0" prefWidth="637.0">
+              <columns>
+                <TableColumn fx:id="taskID" minWidth="0.0" prefWidth="60.00001525878906" text="ID" />
+                  <TableColumn fx:id="taskName" prefWidth="103.99998474121094" text="Name" />
+                  <TableColumn fx:id="taskTime" minWidth="0.0" prefWidth="100.0" text="Time" />
+                  <TableColumn fx:id="createdAt" maxWidth="332.0" prefWidth="116.0" text="CreatedAt" />
+                  <TableColumn fx:id="updatedAt" maxWidth="298.0" prefWidth="102.0" text="UpdatedAt" />
+                  <TableColumn fx:id="Description" maxWidth="332.0" prefWidth="153.0" text="Description" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      <JFXHamburger fx:id="hamburger" layoutX="673.0" layoutY="27.0" />
+      <JFXDrawer fx:id="drawer" defaultDrawerSize="200.0" prefHeight="382.0" prefWidth="108.0" />
+   </children>
+</AnchorPane>
