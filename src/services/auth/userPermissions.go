@@ -12,6 +12,7 @@ var SpecialPermissions map[string][]string
 const AdminRole = "admin"
 const Owner = "owner"
 const NotOwnerResponse = "User is not object owner"
+const NotAdminResponse  = "User in not admin"
 
 func init() {
 	SpecialPermissions = make(map[string][]string)
@@ -42,7 +43,7 @@ var AccessPermission = func(w http.ResponseWriter, r *http.Request, next http.Ha
 				return
 			}
 			if isAdmin(session) == false {
-				common.SendError(w, r, 403, "ERROR: Not admin", err)
+				common.SendError(w, r, 403, NotAdminResponse, err)
 				return
 			}
 			next(w, r)

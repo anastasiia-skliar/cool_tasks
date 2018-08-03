@@ -26,7 +26,7 @@ func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if auth.CheckPermission(sessionID, auth.AdminRole, "") == false {
-		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		common.SendError(w, r, http.StatusForbidden, auth.NotAdminResponse, nil)
 		return
 	}
 	tasks, err := models.GetTasks()
@@ -61,7 +61,7 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
-		common.SendError(w, r, http.StatusForbidden, "Wrong user role", nil)
+		common.SendError(w, r, http.StatusForbidden, auth.NotOwnerResponse, nil)
 		return
 	}
 	if err != nil {
@@ -133,7 +133,7 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	err = models.DeleteTask(taskID)
 
 	if err != nil {
-		common.SendNotFound(w, r, auth.NotOwnerResponse, err)
+		common.SendNotFound(w, r, "204 No content", err)
 		return
 	}
 
