@@ -78,7 +78,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	newUser.Login = r.Form.Get("login")
 	newUser.Name = r.Form.Get("name")
 	newUser.Password = r.Form.Get("password")
-	newUser.Role=r.Form.Get("role")
+	newUser.Role = r.Form.Get("role")
 	valid, errMessage := IsValid(newUser)
 	if !valid {
 		log.Print(errMessage)
