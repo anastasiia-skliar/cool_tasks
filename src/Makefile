@@ -14,7 +14,7 @@ packages = \
     ./services/events \
     ./services/hotels \
 
-all: setup test format go-build dc-build dc-up
+all: setup test format go-build dc-build dc-up migrate-up
 
 setup:
 	go get -u gopkg.in/alecthomas/gometalinter.v2
@@ -52,7 +52,7 @@ dc-up:
 
 migrate-down:
 	echo $(GOPATH)
-	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.3 dbname=cool_tasks sslmode=disable" down-to 0
+	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.18.0.2 dbname=cool_tasks sslmode=disable" down-to 0
 migrate-up:
 	echo $(GOPATH)
-	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.19.0.3 dbname=cool_tasks sslmode=disable" up
+	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.18.0.2 dbname=cool_tasks sslmode=disable" up

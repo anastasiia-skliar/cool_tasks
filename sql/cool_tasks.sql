@@ -85,7 +85,6 @@ SET default_with_oids = false;
 --
 -- Name: events; Type: TABLE; Schema: public; Owner: postgres
 --
-
 CREATE TABLE public.events (
     id uuid DEFAULT public.uuid_generate_v1() NOT NULL,
     title character varying(64) NOT NULL,
