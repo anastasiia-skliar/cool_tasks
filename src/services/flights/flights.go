@@ -33,7 +33,7 @@ func AddFlightToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddToTrip(flightID, tripID,models.Flight{})
+	err = models.AddToTrip(flightID, tripID, models.Flight{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new flight to trip", err)
 		return
@@ -51,7 +51,7 @@ func GetFlightsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	flights, err := models.GetFromTrip(tripID,models.Flight{})
+	flights, err := models.GetFromTrip(tripID, models.Flight{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get flights by trip ID", err)
 		return
@@ -63,7 +63,7 @@ func GetFlightsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetFlightsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	flights, err := models.GetData(params,models.Flight{})
+	flights, err := models.GetData(params, models.Flight{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't find flights with such parameters", err)
 		return

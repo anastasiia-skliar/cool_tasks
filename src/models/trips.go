@@ -42,19 +42,19 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	trip.TripID = id
 
-	trip.Events, err = GetFromTrip(id,Event{})
+	trip.Events, err = GetFromTrip(id, Event{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
 
-	trip.Flights, err = GetFromTrip(id,Flight{})
+	trip.Flights, err = GetFromTrip(id, Flight{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
 
-	trip.Museums, err = GetFromTrip(id,Museum{})
+	trip.Museums, err = GetFromTrip(id, Museum{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
@@ -66,7 +66,7 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		return Trip{}, err
 	}
 
-	trip.Trains, err = GetFromTrip(id,Train{})
+	trip.Trains, err = GetFromTrip(id, Train{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err

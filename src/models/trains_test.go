@@ -122,7 +122,7 @@ func TestSaveTrainToTrip(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO trips_trains").WithArgs(trainID, tripID).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := models.AddToTrip(trainID, tripID,models.Train{}); err != nil {
+	if err := models.AddToTrip(trainID, tripID, models.Train{}); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 

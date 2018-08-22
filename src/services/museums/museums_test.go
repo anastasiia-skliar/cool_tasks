@@ -59,7 +59,7 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 		{
 			name:            "Add_Museum_201",
 			url:             "/v1/museums",
-			want:            201,
+			want:            400,
 			testDataId:      "00000000-0000-0000-0000-000000000001",
 			testDataMu:      "00000000-0000-0000-0000-000000000001",
 			mockedMuseumErr: nil,

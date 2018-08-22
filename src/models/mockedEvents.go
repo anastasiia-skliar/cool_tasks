@@ -14,14 +14,14 @@ func MockedGetEvents(events []Event, err error) {
 
 //MockedAddEventToTrip is mocked AddEventToTrip func
 func MockedAddEventToTrip(err error) {
-	AddToTrip = func(event_id uuid.UUID, trip_id uuid.UUID,dataSource interface{}) error {
+	AddToTrip = func(event_id uuid.UUID, trip_id uuid.UUID, dataSource interface{}) error {
 		return err
 	}
 }
 
 //MockedGetEventsByTrip is mocked GetEventsByTrip func
 func MockedGetEventsByTrip(events []Event, err error) {
-	GetFromTrip = func(trip_id uuid.UUID,dataSource interface{}) (interface{}, error) {
+	GetFromTrip = func(trip_id uuid.UUID, dataSource interface{}) (interface{}, error) {
 		return events, err
 	}
 }

@@ -7,9 +7,9 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	"fmt"
 )
 
 type successAdd struct {
@@ -36,7 +36,7 @@ func AddTrainToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddToTrip(trainID, tripID,models.Train{})
+	err = models.AddToTrip(trainID, tripID, models.Train{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		fmt.Println(err)
@@ -56,7 +56,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := models.GetFromTrip(tripID,models.Train{})
+	trains, err := models.GetFromTrip(tripID, models.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
 		return
@@ -69,7 +69,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetTrainsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	trains, err := models.GetData(params,models.Train{})
+	trains, err := models.GetData(params, models.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
 		return

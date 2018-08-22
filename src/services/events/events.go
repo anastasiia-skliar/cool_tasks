@@ -33,7 +33,7 @@ func AddEventToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddToTrip(eventID, tripID,models.Event{})
+	err = models.AddToTrip(eventID, tripID, models.Event{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new event to trip", err)
 		return
@@ -51,7 +51,7 @@ func GetEventsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	events, err := models.GetFromTrip(tripID,models.Event{})
+	events, err := models.GetFromTrip(tripID, models.Event{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get events by tripID", err)
 		return
@@ -63,7 +63,7 @@ func GetEventsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	events, err := models.GetData(params,models.Event{})
+	events, err := models.GetData(params, models.Event{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find events with such parameters", err)
 		return

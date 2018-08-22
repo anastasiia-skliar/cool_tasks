@@ -105,7 +105,7 @@ func TestAddEventToTrip(t *testing.T) {
 	}
 
 	mock.ExpectExec("INSERT INTO trips_events").WithArgs(EventID, TripID).WillReturnResult(sqlmock.NewResult(1, 1))
-	if err := AddToTrip(EventID, TripID,Event{}); err != nil {
+	if err := AddToTrip(EventID, TripID, Event{}); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 

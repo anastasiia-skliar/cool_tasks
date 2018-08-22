@@ -81,7 +81,7 @@ func TestGetHotelsByTrip(t *testing.T) {
 		AddRow(ID.Bytes(), "Hotel Ukraine", 3, 1000, 218, 18,
 			"3200uah", "Kyiv", "Vulytsya Instytutsʹka 4")
 
-	mock.ExpectQuery("SELECT (.+) FROM hotels INNER JOIN trips_hotels ON hotels.id=trips_hotels.hotels_id AND trips_hotels.trip_id").WithArgs(ID).WillReturnRows(rows)
+	mock.ExpectQuery("SELECT (.+) FROM hotels INNER JOIN trips_hotels ON hotels.id=trips_hotels.hotel_id AND trips_hotels.trip_id").WithArgs(ID).WillReturnRows(rows)
 
 	result, err := GetHotelsByTrip(ID)
 

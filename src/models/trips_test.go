@@ -88,13 +88,13 @@ func TestGetTrip(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 
-			models.GetFromTrip = func(tripID uuid.UUID,dataSource interface{}) (interface{}, error) {
+			models.GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Event{}, nil
 			}
-			models.GetFromTrip = func(tripID uuid.UUID,dataSource interface{}) (interface{}, error) {
+			models.GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Flight{}, nil
 			}
-			models.GetFromTrip = func(trip_id uuid.UUID,dataSource interface{}) (interface{}, error) {
+			models.GetFromTrip = func(trip_id uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Museum{}, nil
 			}
 			models.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]models.Restaurant, error) {
@@ -103,7 +103,7 @@ func TestGetTrip(t *testing.T) {
 			models.GetHotelsByTrip = func(tripID uuid.UUID) ([]models.Hotel, error) {
 				return []models.Hotel{}, nil
 			}
-			models.GetTrainsFromTrip = func(tripsID uuid.UUID) ([]models.Train, error) {
+			models.GetFromTrip = func(tripsID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Train{}, nil
 			}
 			models.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
