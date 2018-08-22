@@ -15,21 +15,19 @@ const (
 //Train representation in DB
 type Train struct {
 	ID            uuid.UUID
-	DepartureTime time.Time
-	DepartureDate time.Time
-	ArrivalTime   time.Time
-	ArrivalDate   time.Time
+	Departure     time.Time
+	Arrival       time.Time
 	DepartureCity string
 	ArrivalCity   string
 	TrainType     string
 	CarType       string
-	Price         string
+	Price         int
 }
 
 //GetTrains used for getting Trains from DB
 var GetTrains = func(params url.Values) ([]Train, error) {
 	stringArgs := []string{"departure_city", "arrival_city"}
-	numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
+	numberArgs := []string{"price", "departure", "arrival"}
 	request, args, err := SQLGenerator("trains", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
@@ -42,7 +40,8 @@ var GetTrains = func(params url.Values) ([]Train, error) {
 	trains := make([]Train, 0)
 	for rows.Next() {
 		var t Train
-		if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
+
+		if err := rows.Scan(&t.ID, &t.Departure, &t.Arrival,
 			&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
 			return nil, err
 		}
@@ -69,7 +68,7 @@ var GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
 	trains := make([]Train, 0)
 	for rows.Next() {
 		var t Train
-		if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
+		if err := rows.Scan(&t.ID, &t.Departure, &t.Arrival,
 			&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
 			return nil, err
 		}

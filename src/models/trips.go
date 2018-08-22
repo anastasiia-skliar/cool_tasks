@@ -8,8 +8,8 @@ import (
 
 const (
 	createTrip        = "INSERT INTO trips (user_id) VALUES ($1) RETURNING trip_id;"
+	getTrip           = "SELECT * FROM trips WHERE trip_id = $1;"
 	getTripIDByUserID = "SELECT trips.trip_id FROM trips WHERE trips.user_id = $1;"
-	getTripsByTripID  = "SELECT trips.user_id FROM trips WHERE trip_id = $1;"
 )
 
 //Trip is a representation of Event Trip in DB
@@ -40,7 +40,11 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		err  error
 	)
 
-	trip.TripID = id
+	dbErr := database.DB.QueryRow(getTrip, id).Scan(&trip.TripID, &trip.UserID)
+	if dbErr != nil {
+		log.Println(dbErr)
+		return Trip{}, dbErr
+	}
 
 	trip.Events, err = GetEventsByTrip(id)
 	if err != nil {
@@ -75,12 +79,6 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 	trip.Restaurants, err = GetRestaurantsFromTrip(id)
 	if err != nil {
 		log.Println(err)
-		return Trip{}, err
-	}
-
-	errDB := database.DB.QueryRow(getTripsByTripID, id).Scan(&trip.UserID)
-	if err != nil {
-		log.Println(errDB)
 		return Trip{}, err
 	}
 

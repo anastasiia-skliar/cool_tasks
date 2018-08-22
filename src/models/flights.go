@@ -16,11 +16,9 @@ const (
 type Flight struct {
 	ID            uuid.UUID
 	DepartureCity string
-	DepartureTime time.Time
-	DepartureDate time.Time
+	Departure     time.Time
 	ArrivalCity   string
-	ArrivalTime   time.Time
-	ArrivalDate   time.Time
+	Arrival       time.Time
 	Price         int
 }
 
@@ -41,7 +39,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 
 	for rows.Next() {
 		var f Flight
-		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
+		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.Departure, &f.ArrivalCity, &f.Arrival, &f.Price); err != nil {
 			return nil, err
 		}
 		flights = append(flights, f)
@@ -53,7 +51,7 @@ var GetFlightsByTrip = func(tripID uuid.UUID) ([]Flight, error) {
 var GetFlights = func(params url.Values) ([]Flight, error) {
 
 	stringArgs := []string{"departure_city", "arrival_city"}
-	numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
+	numberArgs := []string{"price", "departure", "arrival"}
 	request, args, err := SQLGenerator("flights", stringArgs, numberArgs, params)
 	if err != nil {
 		return nil, err
@@ -67,7 +65,7 @@ var GetFlights = func(params url.Values) ([]Flight, error) {
 
 	for rows.Next() {
 		var f Flight
-		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
+		if err := rows.Scan(&f.ID, &f.DepartureCity, &f.Departure, &f.ArrivalCity, &f.Arrival, &f.Price); err != nil {
 			return nil, err
 		}
 		flightsArray = append(flightsArray, f)

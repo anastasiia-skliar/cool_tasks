@@ -29,14 +29,9 @@ func TestGetFlightsByRequest(t *testing.T) {
 			"localhost:8080/v1/flights?departure_city=Lviv&departure_city=Sokal&arrival_city=Kyiv",
 		},
 		{
-			"test with departure_time, departure_date ,arrival_time,arrival_date,price",
-			"localhost:8080/v1/flights?departure_time=Mon Jun  11 10:53:39 PST 2018&departure_date=Mon Jun  11 10:53:39 PST 2018" +
-				"&arrival_time=Mon Jun  12 9:53:39 PST 2018&price=100",
-		},
-		{
-			"test with departure_time, departure_date ,arrival_time,arrival_date, 2 price",
-			"localhost:8080/v1/flights?departure_time=Mon Jun  11 10:53:39 PST 2018&departure_date=Mon Jun  11 10:53:39 PST 2018" +
-				"&arrival_time=Mon Jun  12 9:53:39 PST 2018&price=100&price=200",
+			"test with departure, arrival, price",
+			"localhost:8080/v1/flights?departure=2006-01-02 12:00:00&departure=2006-01-02 12:00:00" +
+				"&arrival=2006-01-02 12:00:00&price=100",
 		},
 	}
 
@@ -44,8 +39,8 @@ func TestGetFlightsByRequest(t *testing.T) {
 	database.DB, mock, flightMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
-	departureTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
-	arrivalTime, _ := time.Parse(time.UnixDate, "Mon Jun  12 9:53:39 PST 2018")
+	departure, _ := time.Parse(time.UnixDate, "2006-01-02 12:00:00")
+	arrival, _ := time.Parse(time.UnixDate, "2006-01-02 12:00:00")
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -53,21 +48,17 @@ func TestGetFlightsByRequest(t *testing.T) {
 		{
 			ID,
 			"Lviv",
-			departureTime,
-			departureTime,
+			departure,
 			"Kyiv",
-			arrivalTime,
-			arrivalTime,
+			arrival,
 			100,
 		},
 		{
 			ID,
 			"Sokal",
-			departureTime,
-			departureTime,
+			departure,
 			"Mosty",
-			arrivalTime,
-			arrivalTime,
+			arrival,
 			200,
 		},
 	}
@@ -79,9 +70,9 @@ func TestGetFlightsByRequest(t *testing.T) {
 			t.Fatalf("an error '%s' was not expected when opening a stub database connection", flightMockErr)
 		}
 
-		rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}).
-			AddRow(ID.Bytes(), "Lviv", departureTime, departureTime, "Kyiv", arrivalTime, arrivalTime, 100).
-			AddRow(ID.Bytes(), "Sokal", departureTime, departureTime, "Mosty", arrivalTime, arrivalTime, 200)
+		rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure", "arrival_city", "arrival", "price"}).
+			AddRow(ID.Bytes(), "Lviv", departure, "Kyiv", arrival, 100).
+			AddRow(ID.Bytes(), "Sokal", departure, "Mosty", arrival, 200)
 
 		mock.ExpectQuery("SELECT (.+) FROM flights").WillReturnRows(rows)
 
@@ -131,8 +122,8 @@ func TestGetFlightsByTrip(t *testing.T) {
 	database.DB, mock, flightMockErr = sqlmock.New()
 	defer func() { database.DB = originalDB }()
 
-	departureTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
-	arrivalTime, _ := time.Parse(time.UnixDate, "Mon Jun  12 9:53:39 PST 2018")
+	departure, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
+	arrival, _ := time.Parse(time.UnixDate, "Mon Jun  12 9:53:39 PST 2018")
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
@@ -140,11 +131,9 @@ func TestGetFlightsByTrip(t *testing.T) {
 
 		ID,
 		"Lviv",
-		departureTime,
-		departureTime,
+		departure,
 		"Kyiv",
-		arrivalTime,
-		arrivalTime,
+		arrival,
 		100,
 	}
 
@@ -152,8 +141,8 @@ func TestGetFlightsByTrip(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", flightMockErr)
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure_time", "departure_date", "arrival_city", "arrival_time", "arrival_date", "price"}).
-		AddRow(ID.Bytes(), "Lviv", departureTime, departureTime, "Kyiv", arrivalTime, arrivalTime, 100)
+	rows := sqlmock.NewRows([]string{"ID", "departure_city", "departure", "arrival_city", "arrival", "price"}).
+		AddRow(ID.Bytes(), "Lviv", departure, "Kyiv", arrival, 100)
 
 	mock.ExpectQuery("SELECT (.+) FROM flights INNER JOIN trips_flights ON flights.id=trips_flights.flight_id AND trips_flights.trip_id=\\$1").WithArgs(expected.ID).WillReturnRows(rows)
 

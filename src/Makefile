@@ -20,7 +20,6 @@ setup:
 	go get -u gopkg.in/alecthomas/gometalinter.v2
 	go get github.com/pressly/goose/cmd/goose
 
-
 test:
 	@$(foreach package,$(packages), set -e; \
     		go test -coverprofile $(package)/cover.out -covermode=count $(package);)
