@@ -38,7 +38,7 @@ func AddTripHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, successCreate{Status: "201 Created", ID: id})
 }
 
-//GetTrip is a handler for getting Trip from DB bu tripID
+//GetTrip is a handler for getting Trip from DB by tripID
 func GetTripHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 

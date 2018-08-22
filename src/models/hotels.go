@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	addHotelToTrip = "INSERT INTO trips_hotels (trip_id, hotels_id) VALUES ($1, $2)"
-	getHotelByTrip = "SELECT hotels.* FROM hotels INNER JOIN trips_hotels ON hotels.id=trips_hotels.hotels_id AND trips_hotels.trip_id=$1"
+	addHotelToTrip = "INSERT INTO trips_hotels (hotel_id, trip_id) VALUES ($1, $2)"
+	getHotelByTrip = "SELECT hotels.* FROM hotels INNER JOIN trips_hotels ON hotels.id=trips_hotels.hotel_id AND trips_hotels.trip_id=$1"
 )
 
 //Hotel is a representation of Hotel table in DB

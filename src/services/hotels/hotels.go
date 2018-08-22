@@ -33,7 +33,7 @@ func AddHotelToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddHotelToTrip(tripID, hotelID)
+	err = models.AddHotelToTrip(hotelID, tripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new hotel to trip", err)
 		return

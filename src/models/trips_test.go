@@ -88,7 +88,7 @@ func TestGetTrip(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 
-			models.GetEventsByTrip = func(tripID uuid.UUID) ([]models.Event, error) {
+			models.GetFromTrip = func(tripID uuid.UUID,dataSource interface{}) (interface{}, error) {
 				return []models.Event{}, nil
 			}
 			models.GetFlightsByTrip = func(tripID uuid.UUID) ([]models.Flight, error) {

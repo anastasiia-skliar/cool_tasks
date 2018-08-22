@@ -16,8 +16,8 @@ const (
 type Trip struct {
 	TripID      uuid.UUID
 	UserID      uuid.UUID
-	Events      []Event
-	Flights     []Flight
+	Events      interface{}
+	Flights     interface{}
 	Museums     []Museum
 	Restaurants []Restaurant
 	Hotels      []Hotel
@@ -42,13 +42,13 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 
 	trip.TripID = id
 
-	trip.Events, err = GetEventsByTrip(id)
+	trip.Events, err = GetFromTrip(id,Event{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
 
-	trip.Flights, err = GetFlightsByTrip(id)
+	trip.Flights, err = GetFromTrip(id,Flight{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
