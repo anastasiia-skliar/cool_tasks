@@ -2,31 +2,31 @@
 -- SQL in this section is executed when the migration is applied.
 CREATE TABLE trains (
    id uuid DEFAULT uuid_generate_v1(),
-   departure_time TIME,
-   departure_date DATE,
-   arrival_time TIME,
-   arrival_date DATE,
+   departure TIMESTAMP ,
+   arrival TIMESTAMP ,
    departure_city VARCHAR(30) NOT NULL,
    arrival_city VARCHAR(30) NOT NULL,
    train_type VARCHAR(30) NOT NULL,
    car_type VARCHAR(30) NOT NULL,
-   price VARCHAR(10) NOT NULL,
+   price INT NOT NULL,
    PRIMARY KEY (id)
 );
 
 INSERT INTO trains
-  (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '11:23:54', '2018-07-20', '18:23:54', '2018-07-22', 'Lviv', 'Odessa', 'electric', 'coupe', '200uah');
+  (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
+  VALUES ( uuid_generate_v1(), '2018-08-23 12:20:00', '2018-08-25 13:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 200);
 INSERT INTO trains
-  (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '10:23:54', '2018-07-21', '17:23:54', '2018-07-24', 'Kyiv', 'Moscow', 'electric', 'coupe', '190uah');
+  (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
+  VALUES ( uuid_generate_v1(), '2018-08-24 13:20:00', '2018-08-25 16:55:00', 'Lviv', 'Kyiv', 'electric', 'coupe', 250);
 INSERT INTO trains
-  (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '12:23:54', '2018-07-22', '16:23:54', '2018-07-23', 'Lviv', 'Kyiv', 'electric', 'coupe', '225uah');
+  (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
+  VALUES ( uuid_generate_v1(), '2018-08-24 12:50:00', '2018-08-26 13:55:00', 'Lviv', 'Moscow', 'electric', 'coupe', 320);
 INSERT INTO trains
-  (id,  departure_time, departure_date, arrival_time, arrival_date, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '15:23:54', '2018-07-23', '20:23:54', '2018-07-25', 'Lviv', 'Kharkiv', 'electric', 'coupe', '320uah');
-
+  (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
+  VALUES ( uuid_generate_v1(), '2018-08-23 13:20:00', '2018-08-23 14:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 190);
+INSERT INTO trains
+  (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
+  VALUES ( uuid_generate_v1(), '2018-08-24 17:20:00', '2018-08-25 20:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 230);
 -- +goose Up
 -- SQL in this section is executed when the migration is applied.
 CREATE TABLE trips_trains(

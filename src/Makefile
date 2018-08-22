@@ -14,7 +14,7 @@ packages = \
     ./services/events \
     ./services/hotels \
 
-all: setup test format go-build dc-build dc-up migrate-up
+all: setup format go-build dc-build dc-up migrate-up
 
 setup:
 	go get -u gopkg.in/alecthomas/gometalinter.v2

@@ -24,16 +24,16 @@ var originalGenerator = models.SQLGenerator
 
 func TestGetTrains(t *testing.T) {
 	testCases := []trainsTestCase{
-		{"id departure_time departure_date arrival_time arrival_date price",
-			"localhost:8080/hello?id=00000000-0000-0000-0000-000000000001&departure_time=12:00:00" +
-				"&arrival_time=15:00:00&arrival_date=2018-07-21&price=200uah",
+		{"id departure arrival",
+			"localhost:8080/hello?id=00000000-0000-0000-0000-000000000001&departure=2006-01-02 12:00:00" +
+				"&arrival=2006-01-02 15:00:00&price=200",
 		},
 		{
 			"Departure city & arrival City",
 			"localhost:8080/hello?departure_city=Lviv&arrival_city=Kyiv",
 		},
 		{
-			"price > 200 & price <250",
+			"price > 200 & price < 250",
 			"localhost:8080/hello?price=200uah&price=250uah",
 		},
 		{"test with zero parameters",
@@ -49,35 +49,29 @@ func TestGetTrains(t *testing.T) {
 		params := rawUrl.Query()
 		ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-		departureTime, _ := time.Parse("15:04:05", "12:00:00")
-		departureDate, _ := time.Parse("2006-01-02", "2018-07-21")
-		arrivalTime, _ := time.Parse("15:04:05", "15:00:00")
-		arrivalDate, _ := time.Parse("2006-01-02", "2018-07-21")
+		departure, _ := time.Parse("15:04:05", "12:00:00")
+		arrival, _ := time.Parse("2006-01-02", "2018-07-21")
 
 		expects := []models.Train{
 			{
 				ID:            ID,
-				DepartureTime: departureTime,
-				DepartureDate: departureDate,
-				ArrivalTime:   arrivalTime,
-				ArrivalDate:   arrivalDate,
+				Departure:     departure,
+				Arrival:       arrival,
 				DepartureCity: "Lviv",
 				ArrivalCity:   "Kyiv",
 				TrainType:     "el",
 				CarType:       "coupe",
-				Price:         "200uah",
+				Price:         200,
 			},
 			{
 				ID:            ID,
-				DepartureTime: departureTime,
-				DepartureDate: departureDate,
-				ArrivalTime:   arrivalTime,
-				ArrivalDate:   arrivalDate,
+				Departure:     departure,
+				Arrival:       arrival,
 				DepartureCity: "Lviv",
 				ArrivalCity:   "Kyiv",
 				TrainType:     "el",
 				CarType:       "coupe",
-				Price:         "250uah",
+				Price:         250,
 			},
 		}
 
@@ -85,11 +79,11 @@ func TestGetTrains(t *testing.T) {
 			t.Fatalf("an error '%s' was not expected when opening a stub database connection", mockErr)
 		}
 
-		rows := sqlmock.NewRows([]string{"ID", "departureTime", "departureDate", "arrivalTime", "arrivalDate",
+		rows := sqlmock.NewRows([]string{"ID", "departure", "arrival",
 			"departure_city", "arrival_city", "train_type", "car_type", "price"}).
-			AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
-				"Lviv", "Kyiv", "el", "coupe", "200uah").AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
-			"Lviv", "Kyiv", "el", "coupe", "250uah")
+			AddRow(ID.Bytes(), departure, arrival,
+				"Lviv", "Kyiv", "el", "coupe", 200).AddRow(ID.Bytes(), departure, arrival,
+			"Lviv", "Kyiv", "el", "coupe", 250)
 
 		mock.ExpectQuery("SELECT (.+) FROM trains").WillReturnRows(rows)
 		models.SQLGenerator = originalGenerator
@@ -142,44 +136,37 @@ func TestGetTrainFromTrip(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", mockErr)
 	}
 
-	departureTime, _ := time.Parse("15:04:05", "12:00:00")
-	departureDate, _ := time.Parse("2006-01-02", "2018-07-21")
-	arrivalTime, _ := time.Parse("15:04:05", "15:00:00")
-	arrivalDate, _ := time.Parse("2006-01-02", "2018-07-21")
+	departure, _ := time.Parse("2006-01-02 15:04:05", " 2006-01-02 12:00:00")
+	arrival, _ := time.Parse("2006-01-02 15:04:05", "2006-01-02 15:00:00")
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	expects := []models.Train{
 		{
 			ID:            ID,
-			DepartureTime: departureTime,
-			DepartureDate: departureDate,
-			ArrivalTime:   arrivalTime,
-			ArrivalDate:   arrivalDate,
+			Departure:     departure,
+			Arrival:       arrival,
 			DepartureCity: "Lviv",
 			ArrivalCity:   "Kyiv",
 			TrainType:     "el",
 			CarType:       "coupe",
-			Price:         "200uah",
+			Price:         200,
 		},
 		{
 			ID:            ID,
-			DepartureTime: departureTime,
-			DepartureDate: departureDate,
-			ArrivalTime:   arrivalTime,
-			ArrivalDate:   arrivalDate,
+			Departure:     departure,
+			Arrival:       arrival,
 			DepartureCity: "Lviv",
 			ArrivalCity:   "Kharkiv",
 			TrainType:     "el",
 			CarType:       "coupe",
-			Price:         "250uah",
+			Price:         250,
 		},
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "departure_time", "departure_date", "arrival_time", "arrival_date",
+	rows := sqlmock.NewRows([]string{"ID", "departure", "arrival",
 		"departure_city", "arrival_city", "train_type", "car_type", "price"}).
-		AddRow(ID.Bytes(), departureTime, departureDate, arrivalTime, arrivalDate,
-			"Lviv", "Kyiv", "el", "coupe", "200uah")
+		AddRow(ID.Bytes(), departure, arrival, "Lviv", "Kyiv", "el", "coupe", 200)
 
 	mock.ExpectQuery("SELECT (.+) FROM trains INNER JOIN trips_trains ON trips_trains.train_id = trains.id AND trips_trains.trip_id").WithArgs(ID).WillReturnRows(rows)
 
