@@ -3,8 +3,8 @@ package main
 import (
 	"reflect"
 	"strings"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"fmt"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 )
 
 func generateQueryGet(dataSource interface{})string{
@@ -16,8 +16,5 @@ func generateQueryGet(dataSource interface{})string{
 }
 
 func main(){
-	t:=reflect.TypeOf(models.Event{})
-	fmt.Println(t)
-	fmt.Println(t.Kind())
-	fmt.Println(t.Name())
+	fmt.Println(models.GenerateQueryAdd(models.Train{}))
 }

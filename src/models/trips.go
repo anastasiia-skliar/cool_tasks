@@ -18,10 +18,10 @@ type Trip struct {
 	UserID      uuid.UUID
 	Events      interface{}
 	Flights     interface{}
-	Museums     []Museum
+	Museums     interface{}
 	Restaurants []Restaurant
 	Hotels      []Hotel
-	Trains      []Train
+	Trains      interface{}
 }
 
 //AddTrip creates Trip and saves it to DB
@@ -54,7 +54,7 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		return Trip{}, err
 	}
 
-	trip.Museums, err = GetMuseumsByTrip(id)
+	trip.Museums, err = GetFromTrip(id,Museum{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
@@ -66,7 +66,7 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		return Trip{}, err
 	}
 
-	trip.Trains, err = GetTrainsFromTrip(id)
+	trip.Trains, err = GetFromTrip(id,Train{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err

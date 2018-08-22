@@ -3,11 +3,12 @@ package models
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
+	"net/url"
 	"reflect"
 	"strings"
-	"net/url"
 	"time"
 )
+
 //Event is a representation of Event table in DB
 type Event struct {
 	ID       uuid.UUID
@@ -17,6 +18,7 @@ type Event struct {
 	Date     time.Time
 	Price    int
 }
+
 //Flight is a representation of Flight table in DB
 type Flight struct {
 	ID            uuid.UUID
@@ -29,10 +31,37 @@ type Flight struct {
 	Price         int
 }
 
+//Museum is a representation of Museum table in DB
+type Museum struct {
+	ID         uuid.UUID
+	Name       string
+	Location   string
+	Price      int
+	OpenedAt   time.Time
+	ClosedAt   time.Time
+	MuseumType string
+	Info       string
+}
+
+//Train representation in DB
+type Train struct {
+	ID            uuid.UUID
+	DepartureTime time.Time
+	DepartureDate time.Time
+	ArrivalTime   time.Time
+	ArrivalDate   time.Time
+	DepartureCity string
+	ArrivalCity   string
+	TrainType     string
+	CarType       string
+	Price         string
+}
+
 var AddToTrip = func(dataID uuid.UUID, tripID uuid.UUID, dataSource interface{}) error {
-	_, err := database.DB.Exec(generateQueryAdd(dataSource), dataID, tripID)
+	_, err := database.DB.Exec(GenerateQueryAdd(dataSource), dataID, tripID)
 	return err
 }
+
 var GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
 	dataType := reflect.TypeOf(dataSource)
 	rows, err := database.DB.Query(generateQueryGet(dataSource), tripID)
@@ -40,6 +69,7 @@ var GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, e
 		return nil, err
 	}
 	switch dataType.Name() {
+
 	case "Event":
 		events := make([]Event, 0)
 		for rows.Next() {
@@ -50,6 +80,7 @@ var GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, e
 			events = append(events, e)
 		}
 		return events, nil
+
 	case "Flight":
 		flights := make([]Flight, 0)
 		for rows.Next() {
@@ -60,12 +91,33 @@ var GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, e
 			flights = append(flights, f)
 		}
 		return flights, nil
-	}
+	case "Museum":
+		museums := make([]Museum, 0)
 
+		for rows.Next() {
+			var m Museum
+			if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
+				return nil, err
+			}
+			museums = append(museums, m)
+		}
+		return museums, nil
+	case "Train":
+		trains := make([]Train, 0)
+		for rows.Next() {
+			var t Train
+			if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
+				&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
+				return nil, err
+			}
+			trains = append(trains, t)
+		}
+		return trains, nil
+	}
 	return nil, nil
 }
 
-var GetData = func (params url.Values,dataSource interface{})(interface{}, error){
+var GetData = func(params url.Values, dataSource interface{}) (interface{}, error) {
 	dataType := reflect.TypeOf(dataSource)
 	switch dataType.Name() {
 
@@ -111,11 +163,56 @@ var GetData = func (params url.Values,dataSource interface{})(interface{}, error
 			flightsArray = append(flightsArray, f)
 		}
 		return flightsArray, nil
+	case "Museum":
+		stringArgs := []string{"name", "location", "museum_type"}
+		numberArgs := []string{"price", "opened_at", "closed_at"}
+		request, args, err := SQLGenerator("museums", stringArgs, numberArgs, params)
+		if err != nil {
+			return nil, err
+		}
+		rows, err := database.DB.Query(request, args...)
+		if err != nil {
+			return nil, err
+		}
+
+		museumsArray := make([]Museum, 0)
+
+		for rows.Next() {
+			var m Museum
+			if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
+				return nil, err
+			}
+			museumsArray = append(museumsArray, m)
+		}
+		return museumsArray, nil
+	case "Train":
+		stringArgs := []string{"departure_city", "arrival_city"}
+		numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
+		request, args, err := SQLGenerator("trains", stringArgs, numberArgs, params)
+		if err != nil {
+			return nil, err
+		}
+		rows, err := database.DB.Query(request, args...)
+		if err != nil {
+			return nil, err
+		}
+
+		trains := make([]Train, 0)
+		for rows.Next() {
+			var t Train
+			if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
+				&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
+				return nil, err
+			}
+			trains = append(trains, t)
+		}
+		return trains, nil
+
 	}
-	return nil,nil
+	return nil, nil
 }
 
-func generateQueryAdd(dataSource interface{}) string {
+func GenerateQueryAdd(dataSource interface{}) string {
 	dataType := reflect.TypeOf(dataSource)
 	var query = "INSERT INTO trips_" + strings.ToLower(dataType.Name()) + "s" + " (" + strings.ToLower(dataType.Name()) + "_id, trip_id) VALUES ($1, $2)"
 	return query

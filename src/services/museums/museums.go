@@ -20,18 +20,18 @@ func AddMuseumToTripHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
-	museumID, err := uuid.FromString(r.Form.Get("museum"))
+	museumID, err := uuid.FromString(r.Form.Get("museum_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
-	tripID, err := uuid.FromString(r.Form.Get("trip"))
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
 
-	musErr := models.AddMuseumToTrip(museumID, tripID)
+	musErr := models.AddToTrip(museumID,tripID,models.Museum{})
 	if musErr != nil {
 		common.SendBadRequest(w, r, "ERROR: Cant ADD Museum", err)
 		return
@@ -47,7 +47,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from URL", err)
 		return
 	}
-	museums, err := models.GetMuseumsByTrip(tripID)
+	museums, err := models.GetFromTrip(tripID,models.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums in such trip", err)
 		return
@@ -59,7 +59,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetMuseumsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	museums, err := models.GetMuseums(params)
+	museums, err := models.GetData(params,models.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
 		return

@@ -7,21 +7,21 @@ import (
 
 //MockedGetTrains is mocked GetTrains func
 func MockedGetTrains(train []Train, err error) {
-	GetTrains = func(params url.Values) ([]Train, error) {
+	GetData = func(params url.Values,dataSource interface{}) (interface{}, error) {
 		return train, err
 	}
 }
 
 //MockedSaveTrain is mocked AddTrainToTrip func
 func MockedSaveTrain(err error) {
-	AddTrainToTrip = func(tripsID, trainsID uuid.UUID) error {
+	AddToTrip = func(tripsID, trainsID uuid.UUID,dataSource interface{}) error {
 		return err
 	}
 }
 
 //MockedGetTrainsFromTrip is mocked GetTrainsFromTrip func
 func MockedGetTrainsFromTrip(train []Train, err error) {
-	GetTrainsFromTrip = func(tripsID uuid.UUID) ([]Train, error) {
+	GetFromTrip = func(tripsID uuid.UUID,dataSource interface{}) (interface{}, error) {
 		return train, err
 	}
 }
