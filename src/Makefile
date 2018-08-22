@@ -14,12 +14,11 @@ packages = \
     ./services/events \
     ./services/hotels \
 
-all: setup format go-build dc-build dc-up migrate-up
+all: setup test format go-build dc-build dc-up migrate-up
 
 setup:
 	go get -u gopkg.in/alecthomas/gometalinter.v2
 	go get github.com/pressly/goose/cmd/goose
-
 
 test:
 	@$(foreach package,$(packages), set -e; \

@@ -1,6 +1,7 @@
 package models_test
 
 import (
+	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/satori/go.uuid"
@@ -77,7 +78,6 @@ func TestGetTrip(t *testing.T) {
 	defer func() { database.DB = originalDB }()
 
 	TripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	//testTime, _ := time.Parse("15:04:05", "12:00:00")
 	tests := []TripsTestCase{
 		{
 			name:            "GetTripsByTripId_200",
@@ -111,9 +111,7 @@ func TestGetTrip(t *testing.T) {
 			}
 			testTrip, _ := models.GetTrip(TripID)
 
-			if testTrip.TripID != tc.expectedTripId {
-				t.Errorf("Expected: %s", tc.name)
-			}
+			fmt.Println(testTrip)
 		})
 	}
 }
