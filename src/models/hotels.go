@@ -19,7 +19,7 @@ type Hotel struct {
 	Capacity  int
 	RoomsLeft int
 	Floors    int
-	MaxPrice  string
+	MaxPrice  int
 	CityName  string
 	Address   string
 }

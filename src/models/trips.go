@@ -22,10 +22,11 @@ type Trip struct {
 	Restaurants []Restaurant
 	Hotels      []Hotel
 	Trains      []Train
+	TotalSum    int
 }
 
-//AddTrip creates Trip and saves it to DB
-var AddTrip = func(trip Trip) (uuid.UUID, error) {
+//CreateTrip creates Trip and saves it to DB
+var CreateTrip = func(trip Trip) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := database.DB.QueryRow(createTrip, trip.UserID).Scan(&id)
 
@@ -51,11 +52,17 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		log.Println(err)
 		return Trip{}, err
 	}
+	for _, item := range trip.Events {
+		trip.TotalSum += item.Price
+	}
 
 	trip.Flights, err = GetFlightsByTrip(id)
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
+	}
+	for _, item := range trip.Flights {
+		trip.TotalSum += item.Price
 	}
 
 	trip.Museums, err = GetMuseumsByTrip(id)
@@ -63,11 +70,17 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		log.Println(err)
 		return Trip{}, err
 	}
+	for _, item := range trip.Museums {
+		trip.TotalSum += item.Price
+	}
 
 	trip.Hotels, err = GetHotelsByTrip(id)
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
+	}
+	for _, item := range trip.Hotels {
+		trip.TotalSum += item.MaxPrice
 	}
 
 	trip.Trains, err = GetTrainsFromTrip(id)
@@ -75,11 +88,17 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		log.Println(err)
 		return Trip{}, err
 	}
+	for _, item := range trip.Trains {
+		trip.TotalSum += item.Price
+	}
 
 	trip.Restaurants, err = GetRestaurantsFromTrip(id)
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
+	}
+	for _, item := range trip.Restaurants {
+		trip.TotalSum += item.Price
 	}
 
 	return trip, nil

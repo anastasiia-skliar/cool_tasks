@@ -72,7 +72,7 @@ func TestGetRestaurantByTripID(t *testing.T) {
 	}
 
 	rows := sqlmock.NewRows([]string{"ID", "name", "location", "stars", "prices", "description"}).
-		AddRow(ID.Bytes(), expected[0].Name, expected[0].Location, expected[0].Stars, expected[0].Prices, expected[0].Description)
+		AddRow(ID.Bytes(), expected[0].Name, expected[0].Location, expected[0].Stars, expected[0].Price, expected[0].Description)
 
 	mock.ExpectQuery("SELECT (.+) FROM restaurants").WithArgs(ID).WillReturnRows(rows)
 

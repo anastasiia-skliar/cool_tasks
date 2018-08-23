@@ -7,7 +7,7 @@ class VARCHAR(1),
 capacity INT,
 rooms_left INT,
 floors INT,
-max_price VARCHAR(10) NOT NULL,
+max_price INT NOT NULL,
 city_name VARCHAR(255) NOT NULL,
 address VARCHAR(255) NOT NULL,
 PRIMARY KEY (id));
