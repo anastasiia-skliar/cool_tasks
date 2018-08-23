@@ -59,7 +59,7 @@ func TestGetHotelsByTrip(t *testing.T) {
 			Capacity:  1000,
 			RoomsLeft: 218,
 			Floors:    18,
-			MaxPrice:  "3200uah",
+			MaxPrice:  3200,
 			CityName:  "Kyiv",
 			Address:   "Vulytsya Instytutsʹka 4",
 		},
@@ -70,7 +70,7 @@ func TestGetHotelsByTrip(t *testing.T) {
 			Capacity:  1450,
 			RoomsLeft: 200,
 			Floors:    9,
-			MaxPrice:  "3480uah",
+			MaxPrice:  3480,
 			CityName:  "Lviv",
 			Address:   "Prospect V. Chornovil, 7",
 		},
@@ -79,7 +79,7 @@ func TestGetHotelsByTrip(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"ID", "name", "class", "capacity", "rooms_left",
 		"floors", "max_price", "city_name", "address"}).
 		AddRow(ID.Bytes(), "Hotel Ukraine", 3, 1000, 218, 18,
-			"3200uah", "Kyiv", "Vulytsya Instytutsʹka 4")
+			3200, "Kyiv", "Vulytsya Instytutsʹka 4")
 
 	mock.ExpectQuery("SELECT (.+) FROM hotels INNER JOIN trips_hotels ON hotels.id=trips_hotels.hotels_id AND trips_hotels.trip_id").WithArgs(ID).WillReturnRows(rows)
 
@@ -133,7 +133,7 @@ func TestGetHotelByRequest(t *testing.T) {
 				Capacity:  1000,
 				RoomsLeft: 218,
 				Floors:    18,
-				MaxPrice:  "3200uah",
+				MaxPrice:  3200,
 				CityName:  "Kyiv",
 				Address:   "Vulytsya Instytutsʹka 4",
 			},
@@ -144,7 +144,7 @@ func TestGetHotelByRequest(t *testing.T) {
 				Capacity:  1450,
 				RoomsLeft: 200,
 				Floors:    9,
-				MaxPrice:  "3480uah",
+				MaxPrice:  3480,
 				CityName:  "Lviv",
 				Address:   "Prospect V. Chornovil, 7",
 			},
@@ -155,8 +155,8 @@ func TestGetHotelByRequest(t *testing.T) {
 		rows := sqlmock.NewRows([]string{"ID", "name", "class", "capacity", "rooms_left",
 			"floors", "max_price", "city_name", "address"}).
 			AddRow(ID.Bytes(), "Hotel Ukraine", 3, 1000, 218, 18,
-				"3200uah", "Kyiv", "Vulytsya Instytutsʹka 4").AddRow(ID.Bytes(), "Lviv", 4, 1450, 200, 9,
-			"3480uah", "Lviv", "Prospect V. Chornovil, 7")
+				3200, "Kyiv", "Vulytsya Instytutsʹka 4").AddRow(ID.Bytes(), "Lviv", 4, 1450, 200, 9,
+			3480, "Lviv", "Prospect V. Chornovil, 7")
 
 		mock.ExpectQuery("SELECT (.+) FROM hotels").WillReturnRows(rows)
 

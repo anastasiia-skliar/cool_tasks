@@ -37,7 +37,7 @@ func TestCreateTrip(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserID.Bytes())
 
 	mock.ExpectQuery("INSERT INTO trips").WithArgs(UserID).WillReturnRows(rows)
-	if _, err := models.AddTrip(trip); err != nil {
+	if _, err := models.CreateTrip(trip); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 

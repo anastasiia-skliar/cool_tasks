@@ -30,7 +30,7 @@ func AddTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := models.AddTrip(trip)
+	id, err := models.CreateTrip(trip)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add this trip", err)
 		return
