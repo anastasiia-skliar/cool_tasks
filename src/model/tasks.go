@@ -12,6 +12,7 @@ const (
 	deleteTask   = "DELETE FROM tasks WHERE id = $1"
 	getTasks     = "SELECT * FROM tasks"
 	getUserTasks = "SELECT * FROM tasks where user_id = $1"
+	updateTask   = "UPDATE tasks SET status = true where user_id = $1 "
 )
 
 //Task representation in DB
@@ -23,12 +24,20 @@ type Task struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Desc      string
+	Status    bool
 }
 
 //AddTask used for creation task in DB
 var AddTask = func(task Task) (Task, error) {
 	err := database.DB.QueryRow(createTask, task.UserID, task.Name, task.Time, task.CreatedAt, task.UpdatedAt, task.Desc).Scan(&task.ID)
 
+	return task, err
+}
+
+//UpdateTask used for updating the status of the task
+var UpdateTask = func(id uuid.UUID) (Task, error) {
+	var task Task
+	task, err := database.DB.Query(updateTask)
 	return task, err
 }
 
