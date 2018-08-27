@@ -35,9 +35,9 @@ var AddTask = func(task Task) (Task, error) {
 }
 
 //UpdateTask used for updating the status of the task
-var UpdateTask = func(id uuid.UUID) (Task, error) {
-	var task Task
-	task, err := database.DB.Query(updateTask)
+var UpdateTask = func(task Task) (Task, error) {
+	err := database.DB.QueryRow(updateTask, false).Scan(&task.Status)
+
 	return task, err
 }
 
