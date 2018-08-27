@@ -36,8 +36,8 @@ VALUES ( uuid_generate_v1(),'Astoria Hotel', '4', '900','390', '6','4000uah', 'L
 -- SQL in this section is executed when the migration is applied.
 CREATE TABLE trips_hotels(
   id uuid DEFAULT uuid_generate_v1(),
-  hotel_id uuid REFERENCES trips (trip_id) ON DELETE CASCADE,
-  trip_id uuid REFERENCES hotels (id) ON DELETE CASCADE,
+  hotel_id uuid REFERENCES hotels(id) ON DELETE CASCADE,
+  trip_id uuid REFERENCES trips(trip_id) ON DELETE CASCADE,
 PRIMARY KEY (id));
 
 -- +goose Down

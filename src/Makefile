@@ -55,4 +55,4 @@ migrate-down:
 	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.18.0.3 dbname=cool_tasks sslmode=disable" down-to 0
 migrate-up:
 	echo $(GOPATH)
-	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=localhost dbname=cool_tasks sslmode=disable" up
+	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.18.0.3 dbname=cool_tasks sslmode=disable" up

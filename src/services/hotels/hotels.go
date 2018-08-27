@@ -33,7 +33,7 @@ func AddHotelToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = models.AddHotelToTrip(hotelID, tripID)
+	err = models.AddToTrip(hotelID, tripID, models.Hotel{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new hotel to trip", err)
 		return
@@ -51,7 +51,7 @@ func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hotels, err := models.GetHotelsByTrip(tripID)
+	hotels, err := models.GetFromTrip(tripID, models.Hotel{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get hotels by tripID", err)
 		return
@@ -63,7 +63,7 @@ func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetHotelsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	hotels, err := models.GetHotels(params)
+	hotels, err := models.GetData(params, models.Hotel{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find hotels with such parameters", err)
 		return

@@ -41,7 +41,7 @@ func TestGetHotels(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.GetHotelsMocked(tc.mockedGetHotels, tc.mockedHotelErr)
+			models.MockedGetData(tc.mockedGetHotels, tc.mockedHotelErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 			router.ServeHTTP(rec, req)
@@ -93,7 +93,7 @@ func TestAddHotel(t *testing.T) {
 			data := url.Values{}
 			data.Add("hotel_id", tc.testDataHo)
 			data.Add("trip_id", tc.testDataId)
-			models.AddHotelMocked(tc.mockedHotelErr)
+			models.MockedAddToTrip(tc.mockedHotelErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
@@ -133,7 +133,7 @@ func TestGetHotelByTripHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.GetHotelByTripIDMocked(tc.mockedGetHotels, tc.mockedHotelErr)
+			models.MockedGetByTrip(tc.mockedGetHotels, tc.mockedHotelErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

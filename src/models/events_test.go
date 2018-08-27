@@ -9,7 +9,6 @@ import (
 
 var eventMockErr error
 
-
 func TestAddEventToTrip(t *testing.T) {
 	originalDB := database.DB
 	database.DB, mock, eventMockErr = sqlmock.New()

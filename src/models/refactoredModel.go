@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"net/url"
@@ -21,40 +22,63 @@ type Event struct {
 
 //Flight is a representation of Flight table in DB
 type Flight struct {
-	ID            uuid.UUID
-	DepartureCity string
-	DepartureTime time.Time
-	DepartureDate time.Time
-	ArrivalCity   string
-	ArrivalTime   time.Time
-	ArrivalDate   time.Time
-	Price         int
+	ID             uuid.UUID
+	Departure_city string
+	Departure_time time.Time
+	Departure_date time.Time
+	Arrival_city   string
+	Arrival_time   time.Time
+	Arrival_date   time.Time
+	Price          int
 }
 
 //Museum is a representation of Museum table in DB
 type Museum struct {
-	ID         uuid.UUID
-	Name       string
-	Location   string
-	Price      int
-	OpenedAt   time.Time
-	ClosedAt   time.Time
-	MuseumType string
-	Info       string
+	ID              uuid.UUID
+	Name            string
+	Location        string
+	Price           int
+	Opened_at       time.Time
+	Closed_at       time.Time
+	Museum_type     string
+	Additional_info string
 }
 
 //Train representation in DB
 type Train struct {
-	ID            uuid.UUID
-	DepartureTime time.Time
-	DepartureDate time.Time
-	ArrivalTime   time.Time
-	ArrivalDate   time.Time
-	DepartureCity string
-	ArrivalCity   string
-	TrainType     string
-	CarType       string
-	Price         string
+	ID             uuid.UUID
+	Departure_time time.Time
+	Departure_date time.Time
+	Arrival_time   time.Time
+	Arrival_date   time.Time
+	Departure_city string
+	Arrival_city   string
+	Train_type     string
+	Car_type       string
+	Price          string
+}
+
+//Hotel representation in DB
+type Hotel struct {
+	ID         uuid.UUID
+	Name       string
+	Class      string
+	Capacity   int
+	Rooms_left int
+	Floors     int
+	Max_price  string
+	City_name  string
+	Address    string
+}
+
+//Restaurant representation in DB
+type Restaurant struct {
+	ID          uuid.UUID
+	Name        string
+	Location    string
+	Stars       int
+	Prices      int
+	Description string
 }
 
 var AddToTrip = func(dataID uuid.UUID, tripID uuid.UUID, dataSource interface{}) error {
@@ -62,154 +86,143 @@ var AddToTrip = func(dataID uuid.UUID, tripID uuid.UUID, dataSource interface{})
 	return err
 }
 
-var GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
-	dataType := reflect.TypeOf(dataSource)
-	rows, err := database.DB.Query(generateQueryGet(dataSource), tripID)
+var GetFromTrip = func(tripID uuid.UUID, obj interface{}) (interface{}, error) {
+	rows, err := database.DB.Query(generateQueryGet(obj), tripID)
 	if err != nil {
 		return nil, err
 	}
-	switch dataType.Name() {
 
-	case "Event":
-		events := make([]Event, 0)
-		for rows.Next() {
-			var e Event
-			if err := rows.Scan(&e.ID, &e.Title, &e.Category, &e.Town, &e.Date, &e.Price); err != nil {
-				return []Event{}, err
-			}
-			events = append(events, e)
-		}
-		return events, nil
+	cols, err := rows.Columns()
+	rowType := reflect.ValueOf(obj).Type()
+	slicePtrVal := reflect.New(reflect.SliceOf(rowType))
+	sliceVal := reflect.Indirect(slicePtrVal)
 
-	case "Flight":
-		flights := make([]Flight, 0)
-		for rows.Next() {
-			var f Flight
-			if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
-				return nil, err
-			}
-			flights = append(flights, f)
+	for rows.Next() {
+		var row = make([]interface{}, len(cols))
+		var rowp = make([]interface{}, len(cols))
+		for i := 0; i < len(cols); i++ {
+			rowp[i] = &row[i]
 		}
-		return flights, nil
-	case "Museum":
-		museums := make([]Museum, 0)
+		val := reflect.ValueOf(obj)
+		vp := reflect.New(val.Type())
 
-		for rows.Next() {
-			var m Museum
-			if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
-				return nil, err
+		rows.Scan(rowp...)
+
+		var v interface{}
+
+		for i, col := range cols {
+			fieldName := strings.ToUpper(col[0:1]) + strings.ToLower(col[1:])
+			if fieldName == "Id" {
+				fieldName = strings.ToUpper(fieldName)
 			}
-			museums = append(museums, m)
-		}
-		return museums, nil
-	case "Train":
-		trains := make([]Train, 0)
-		for rows.Next() {
-			var t Train
-			if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
-				&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
-				return nil, err
+			v = row[i]
+			structField := vp.Elem().FieldByName(fieldName)
+
+			condition := structField.Type().Name()
+			if condition == "UUID" {
+				s := string(reflect.ValueOf(row[i]).Bytes()[:])
+				v, err = uuid.FromString(s)
+				if err != nil {
+					fmt.Println(err)
+				}
+			} else if condition == "int" {
+				v = int(reflect.ValueOf(v).Int())
 			}
-			trains = append(trains, t)
+			vp.Elem().FieldByName(fieldName).Set(reflect.ValueOf(v))
 		}
-		return trains, nil
+
+		sliceVal.Set(reflect.Append(sliceVal, vp.Elem()))
 	}
-	return nil, nil
+	return sliceVal.Interface(), nil
 }
 
-var GetData = func(params url.Values, dataSource interface{}) (interface{}, error) {
-	dataType := reflect.TypeOf(dataSource)
-	switch dataType.Name() {
+var GetData = func(params url.Values, obj interface{}) (interface{}, error) {
+	objType := reflect.TypeOf(obj)
+	name := strings.ToLower(objType.Name())
+	pluralName := name + "s"
+
+	var stringArgs []string
+	var numberArgs []string
+
+	switch objType.Name() {
 
 	case "Event":
-		stringArgs := []string{"title", "category", "town"}
-		numberArgs := []string{"price", "date"}
-		request, args, err := SQLGenerator("events", stringArgs, numberArgs, params)
-		if err != nil {
-			return nil, err
-		}
-		rows, err := database.DB.Query(request, args...)
-		if err != nil {
-			return []Event{}, err
-		}
-		events := make([]Event, 0)
-		for rows.Next() {
-			var e Event
-			if err := rows.Scan(&e.ID, &e.Title, &e.Category, &e.Town, &e.Date, &e.Price); err != nil {
-				return []Event{}, err
-			}
-			events = append(events, e)
-		}
-		return events, nil
+		stringArgs = []string{"title", "category", "town"}
+		numberArgs = []string{"price", "date"}
+
 	case "Flight":
-		stringArgs := []string{"departure_city", "arrival_city"}
-		numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
-		request, args, err := SQLGenerator("flights", stringArgs, numberArgs, params)
-		if err != nil {
-			return nil, err
-		}
-		rows, err := database.DB.Query(request, args...)
-		if err != nil {
-			return nil, err
-		}
-
-		flightsArray := make([]Flight, 0)
-
-		for rows.Next() {
-			var f Flight
-			if err := rows.Scan(&f.ID, &f.DepartureCity, &f.DepartureTime, &f.DepartureDate, &f.ArrivalCity, &f.ArrivalDate, &f.ArrivalTime, &f.Price); err != nil {
-				return nil, err
-			}
-			flightsArray = append(flightsArray, f)
-		}
-		return flightsArray, nil
+		stringArgs = []string{"departure_city", "arrival_city"}
+		numberArgs = []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
 	case "Museum":
-		stringArgs := []string{"name", "location", "museum_type"}
-		numberArgs := []string{"price", "opened_at", "closed_at"}
-		request, args, err := SQLGenerator("museums", stringArgs, numberArgs, params)
-		if err != nil {
-			return nil, err
-		}
-		rows, err := database.DB.Query(request, args...)
-		if err != nil {
-			return nil, err
-		}
+		stringArgs = []string{"name", "location", "museum_type"}
+		numberArgs = []string{"price", "opened_at", "closed_at"}
 
-		museumsArray := make([]Museum, 0)
-
-		for rows.Next() {
-			var m Museum
-			if err := rows.Scan(&m.ID, &m.Name, &m.Location, &m.Price, &m.OpenedAt, &m.ClosedAt, &m.MuseumType, &m.Info); err != nil {
-				return nil, err
-			}
-			museumsArray = append(museumsArray, m)
-		}
-		return museumsArray, nil
 	case "Train":
-		stringArgs := []string{"departure_city", "arrival_city"}
-		numberArgs := []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
-		request, args, err := SQLGenerator("trains", stringArgs, numberArgs, params)
-		if err != nil {
-			return nil, err
-		}
-		rows, err := database.DB.Query(request, args...)
-		if err != nil {
-			return nil, err
-		}
+		stringArgs = []string{"departure_city", "arrival_city"}
+		numberArgs = []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
 
-		trains := make([]Train, 0)
-		for rows.Next() {
-			var t Train
-			if err := rows.Scan(&t.ID, &t.DepartureTime, &t.DepartureDate, &t.ArrivalTime, &t.ArrivalDate,
-				&t.DepartureCity, &t.ArrivalCity, &t.TrainType, &t.CarType, &t.Price); err != nil {
-				return nil, err
-			}
-			trains = append(trains, t)
-		}
-		return trains, nil
+	case "Restaurant":
+		stringArgs = []string{"id", "name", "location"}
+		numberArgs = []string{"stars", "prices"}
 
+	case "Hotel":
+		stringArgs = []string{"name", "city_name", "address"}
+		numberArgs = []string{"class", "capacity", "rooms_left", "floors", "max_price"}
 	}
-	return nil, nil
+
+	request, args, err := SQLGenerator(pluralName, stringArgs, numberArgs, params)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := database.DB.Query(request, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	cols, err := rows.Columns()
+	rowType := reflect.ValueOf(obj).Type()
+	slicePtrVal := reflect.New(reflect.SliceOf(rowType))
+	sliceVal := reflect.Indirect(slicePtrVal)
+
+	for rows.Next() {
+		var row = make([]interface{}, len(cols))
+		var rowp = make([]interface{}, len(cols))
+		for i := 0; i < len(cols); i++ {
+			rowp[i] = &row[i]
+		}
+		val := reflect.ValueOf(obj)
+		vp := reflect.New(val.Type())
+
+		rows.Scan(rowp...)
+
+		var v interface{}
+
+		for i, col := range cols {
+			fieldName := strings.ToUpper(col[0:1]) + strings.ToLower(col[1:])
+			if fieldName == "Id" {
+				fieldName = strings.ToUpper(fieldName)
+			}
+			v = row[i]
+			structField := vp.Elem().FieldByName(fieldName)
+
+			condition := structField.Type().Name()
+			if condition == "UUID" {
+				s := string(reflect.ValueOf(row[i]).Bytes()[:])
+				v, err = uuid.FromString(s)
+				if err != nil {
+					fmt.Println(err)
+				}
+			} else if condition == "int" {
+				v = int(reflect.ValueOf(v).Int())
+			}
+			vp.Elem().FieldByName(fieldName).Set(reflect.ValueOf(v))
+
+		}
+		sliceVal.Set(reflect.Append(sliceVal, vp.Elem()))
+	}
+	return sliceVal.Interface(), nil
 }
 
 func GenerateQueryAdd(dataSource interface{}) string {

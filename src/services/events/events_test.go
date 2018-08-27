@@ -42,7 +42,7 @@ func TestGetByRequestHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetEvents(tc.mockedGetEvents, tc.mockedEventsErr)
+			models.MockedGetData(tc.mockedGetEvents, tc.mockedEventsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 			router.ServeHTTP(rec, req)
@@ -94,7 +94,7 @@ func TestAddToTripHandler(t *testing.T) {
 			data := url.Values{}
 			data.Add("event_id", tc.testDataEv)
 			data.Add("trip_id", tc.testDataId)
-			models.MockedAddEventToTrip(tc.mockedEventsErr)
+			models.MockedAddToTrip(tc.mockedEventsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
@@ -135,7 +135,7 @@ func TestGetByTripHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetEventsByTrip(tc.mockedGetEvents, tc.mockedEventsErr)
+			models.MockedGetByTrip(tc.mockedGetEvents, tc.mockedEventsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

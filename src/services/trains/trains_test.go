@@ -39,7 +39,7 @@ func TestGetTrains(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetTrains(tc.mockedGetTrains, tc.mockedTrainError)
+			models.MockedGetData(tc.mockedGetTrains, tc.mockedTrainError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -96,7 +96,7 @@ func TestSaveTrain(t *testing.T) {
 			data := url.Values{}
 			data.Add("train_id", tc.testDataId)
 			data.Add("trip_id", tc.testDataTr)
-			models.MockedSaveTrain(tc.mockedTrainError)
+			models.MockedAddToTrip(tc.mockedTrainError)
 
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
@@ -138,7 +138,7 @@ func TestGetTrainFromTrip(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			models.MockedGetTrainsFromTrip(tc.mockedGetTrains, tc.mockedTrainError)
+			models.MockedGetByTrip(tc.mockedGetTrains, tc.mockedTrainError)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

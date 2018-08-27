@@ -59,9 +59,6 @@ func NewRouter() *mux.Router {
 		http.MethodPost: http.HandlerFunc(restaurants.AddRestaurantToTripHandler),
 		http.MethodGet:  http.HandlerFunc(restaurants.GetRestaurantHandler),
 	}))
-	apiV1.Handle("/restaurants/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodDelete: http.HandlerFunc(restaurants.DeleteRestaurantHandler),
-	}))
 	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(restaurants.GetRestaurantFromTrip),
 	}))

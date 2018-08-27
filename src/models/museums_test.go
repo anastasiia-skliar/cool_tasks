@@ -30,4 +30,3 @@ func TestAddMuseumToTrip(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
-

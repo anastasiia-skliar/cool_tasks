@@ -19,8 +19,8 @@ type Trip struct {
 	Events      interface{}
 	Flights     interface{}
 	Museums     interface{}
-	Restaurants []Restaurant
-	Hotels      []Hotel
+	Restaurants interface{}
+	Hotels      interface{}
 	Trains      interface{}
 }
 
@@ -60,7 +60,7 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		return Trip{}, err
 	}
 
-	trip.Hotels, err = GetHotelsByTrip(id)
+	trip.Hotels, err = GetFromTrip(id, Hotel{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
@@ -72,7 +72,7 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		return Trip{}, err
 	}
 
-	trip.Restaurants, err = GetRestaurantsFromTrip(id)
+	trip.Restaurants, err = GetFromTrip(id, Restaurant{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err

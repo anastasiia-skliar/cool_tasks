@@ -97,10 +97,10 @@ func TestGetTrip(t *testing.T) {
 			models.GetFromTrip = func(trip_id uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Museum{}, nil
 			}
-			models.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]models.Restaurant, error) {
+			models.GetFromTrip = func(tripsID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Restaurant{}, nil
 			}
-			models.GetHotelsByTrip = func(tripID uuid.UUID) ([]models.Hotel, error) {
+			models.GetFromTrip = func(trip_id uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []models.Hotel{}, nil
 			}
 			models.GetFromTrip = func(tripsID uuid.UUID, dataSource interface{}) (interface{}, error) {
