@@ -4,8 +4,8 @@ import (
 	"flag"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/config"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/service"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 	"github.com/urfave/negroni"
 	"log"
 	"net/http"
@@ -51,7 +51,7 @@ func main() {
 		negroni.HandlerFunc(auth.AccessPermission),
 	)
 	middlewareManager.Use(negroni.NewRecovery())
-	middlewareManager.UseHandler(services.NewRouter())
+	middlewareManager.UseHandler(service.NewRouter())
 
 	log.Println("Starting HTTP listener...")
 	err = http.ListenAndServe(config.Config.ListenURL, middlewareManager)
