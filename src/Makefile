@@ -3,16 +3,16 @@ LINTERCOMMAND=gometalinter --vendor --tests --skip=mock --deadline=1500s
 packages = \
 	./config \
 	./database \
-	./models \
-    ./services/auth \
-    ./services/users \
-    ./services/tasks \
-    ./services/events \
-    ./services/flights \
-    ./services/museums \
-    ./services/trains \
-    ./services/events \
-    ./services/hotels \
+	./model \
+    ./service/auth \
+    ./service/users \
+    ./service/tasks \
+    ./service/events \
+    ./service/flights \
+    ./service/museums \
+    ./service/trains \
+    ./service/events \
+    ./service/hotels \
 
 all: setup test format go-build dc-build dc-up migrate-up
 
