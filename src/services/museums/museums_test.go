@@ -2,11 +2,12 @@ package museums_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/museums"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 )
 
@@ -92,21 +93,21 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			data := url.Values{}
-			data.Add("museum", tc.testDataMu)
-			data.Add("trip", tc.testDataId)
+			var data museums.TripMuseum
+			data.MuseumID = tc.testDataMu
+			data.TripID = tc.testDataId
+			body, _ := json.Marshal(data)
+
 			models.MockedAddMuseum(tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
 
 			router.ServeHTTP(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}
-			data.Del("museum")
-			data.Del("trip")
 		})
 	}
 }

@@ -2,6 +2,7 @@
 package flights
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
@@ -13,21 +14,29 @@ type success struct {
 	Status string `json:"message"`
 }
 
+type TripFlight struct {
+	FlightID string
+	TripID   string
+}
+
 //AddFlightToTripHandler is a handler for adding Flight to Trip
 func AddFlightToTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newFlight TripFlight
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newFlight)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
 
-	flightID, err := uuid.FromString(r.Form.Get("flight_id"))
+	flightID, err := uuid.FromString(newFlight.FlightID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong flight ID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
+	tripID, err := uuid.FromString(newFlight.TripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
 		return

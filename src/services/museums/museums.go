@@ -2,6 +2,7 @@
 package museums
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 	"github.com/gorilla/mux"
@@ -13,19 +14,27 @@ type successCreate struct {
 	Status string `json:"status"`
 }
 
+type TripMuseum struct {
+	MuseumID string
+	TripID   string
+}
+
 //AddMuseumToTripHandler is a handler for adding Museums to Trips
 func AddMuseumToTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newMuseum TripMuseum
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newMuseum)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
-	museumID, err := uuid.FromString(r.Form.Get("museum"))
+	museumID, err := uuid.FromString(newMuseum.MuseumID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
-	tripID, err := uuid.FromString(r.Form.Get("trip"))
+	tripID, err := uuid.FromString(newMuseum.TripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return

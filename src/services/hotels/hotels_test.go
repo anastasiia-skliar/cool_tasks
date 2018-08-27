@@ -2,11 +2,12 @@ package hotels_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/services/hotels"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 )
 
@@ -90,19 +91,19 @@ func TestAddHotel(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			data := url.Values{}
-			data.Add("hotel_id", tc.testDataHo)
-			data.Add("trip_id", tc.testDataId)
+			var data hotels.TripHotel
+			data.HotelID = tc.testDataHo
+			data.TripID = tc.testDataId
+			body, _ := json.Marshal(data)
+
 			models.AddHotelMocked(tc.mockedHotelErr)
 			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
 			router.ServeHTTP(rec, req)
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}
-			data.Del("hotel_id")
-			data.Del("trip_id")
 		})
 	}
 }

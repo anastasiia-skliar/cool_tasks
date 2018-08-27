@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services"
 
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/tasks"
 	"github.com/satori/go.uuid"
@@ -184,25 +184,23 @@ func TestCreateTasks(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			data := url.Values{}
-			data.Add("user_id", tc.userId)
-			data.Add("name", "JustUser")
-			data.Add("time", tc.testTime)
-			data.Add("desc", "Desc of my task")
+			var data tasks.JsonTask
+			data.UserID = tc.userId
+			data.Name = "JustUser"
+			data.Time = tc.testTime
+			data.Desc = "Desc of my task"
+			body, _ := json.Marshal(data)
+
 			models.MockedCreateTask(tc.mockedCreateTask, tc.mockedTasksError)
 			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
 
 			router.ServeHTTP(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}
-			data.Del("user_id")
-			data.Del("name")
-			data.Del("time")
-			data.Del("desc")
 		})
 	}
 }

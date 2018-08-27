@@ -9,6 +9,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 )
@@ -69,20 +70,20 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 //AddUserHandler is a handler for creating User
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
-	err := r.ParseForm()
+	var newUser models.User
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newUser)
+
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
-	var newUser models.User
-	newUser.Login = r.Form.Get("login")
-	newUser.Name = r.Form.Get("name")
-	newUser.Password = r.Form.Get("password")
-	newUser.Role = r.Form.Get("role")
+
 	valid, errMessage := IsValid(newUser)
 	if !valid {
 		log.Print(errMessage)
 	}
+
 	id, err := models.AddUser(newUser)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add this user", err)
