@@ -121,10 +121,10 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/trips/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(trips.GetTripHandler),
 	}))
-	apiV1.Handle("/train/weather/{id}", common.MethodHandler(map[string]http.Handler{
+	apiV1.Handle("/trains/weather/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(weather.GetWeatherByTrainIdHandler),
 	}))
-	apiV1.Handle("/flight/weather/{id}", common.MethodHandler(map[string]http.Handler{
+	apiV1.Handle("/flights/weather/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(weather.GetWeatherByFlightIdHandler),
 	}))
 
