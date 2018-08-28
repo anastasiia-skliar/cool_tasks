@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
+	"encoding/json"
 )
 
 type successAdd struct {
@@ -15,6 +16,11 @@ type successAdd struct {
 
 type successDelete struct {
 	Status string `json:"message"`
+}
+
+type tripRestaurant struct {
+	RestaurantID string
+	TripID       string
 }
 
 //GetRestaurantHandler used for getting restaurants
@@ -48,19 +54,23 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddRestaurantToTrip saves Restaurant to Trip
 func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newRestaurant tripRestaurant
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newRestaurant)
+
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
 
-	restaurantID, err := uuid.FromString(r.Form.Get("restaurant_id"))
+	restaurantID, err := uuid.FromString(newRestaurant.RestaurantID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong restaurant ID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
+	tripID, err := uuid.FromString(newRestaurant.TripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
 		return

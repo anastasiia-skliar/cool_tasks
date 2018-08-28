@@ -7,6 +7,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 )
@@ -15,21 +16,29 @@ type successAdd struct {
 	Status string `json:"message"`
 }
 
+type TripTrain struct {
+	TrainID string
+	TripID  string
+}
+
 //AddTrainToTripHandler is a handler for saving Train to Trip
 func AddTrainToTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newTrain TripTrain
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newTrain)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
 
-	trainID, err := uuid.FromString(r.Form.Get("train_id"))
+	trainID, err := uuid.FromString(newTrain.TrainID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong train ID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
+	tripID, err := uuid.FromString(newTrain.TripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
 		return
