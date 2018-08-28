@@ -2,11 +2,12 @@ package trains_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/service/trains"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 )
 
@@ -93,22 +94,23 @@ func TestSaveTrain(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			data := url.Values{}
-			data.Add("train_id", tc.testDataId)
-			data.Add("trip_id", tc.testDataTr)
+
+			var data trains.TripTrain
+			data.TrainID = tc.testDataId
+			data.TripID = tc.testDataTr
+			body, _ := json.Marshal(data)
+
 			model.MockedSaveTrain(tc.mockedTrainError)
 
 			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
 
 			router.ServeHTTP(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}
-			data.Del("train_id")
-			data.Del("trip_id")
 		})
 
 	}

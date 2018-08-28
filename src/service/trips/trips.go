@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
+	"encoding/json"
 )
 
 type successCreate struct {
@@ -15,16 +16,23 @@ type successCreate struct {
 	ID     uuid.UUID `json:"id"`
 }
 
+type jsonTrip struct {
+	UserID string `json:"user_id"`
+}
+
 //AddTripHandler is a handler for creating Trips
 func AddTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newTrip jsonTrip
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newTrip)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
 
 	var trip model.Trip
-	trip.UserID, err = uuid.FromString(r.Form.Get("user_id"))
+	trip.UserID, err = uuid.FromString(newTrip.UserID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong userID", err)
 		return
