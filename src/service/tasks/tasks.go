@@ -2,6 +2,8 @@
 package tasks
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -17,6 +19,21 @@ import (
 type successCreate struct {
 	Status string     `json:"message"`
 	Result model.Task `json:"result"`
+}
+
+type successChanged struct {
+	Status string `json:"message"`
+}
+
+type JsonTaskStatus struct {
+	ID string `json:"id"`
+}
+
+type JsonTask struct {
+	UserID string `json:"user_id"`
+	Name   string `json:"name"`
+	Time   string `json:"time"`
+	Desc   string `json:"desc"`
 }
 
 //GetTasksHandler gets Tasks from DB
@@ -72,44 +89,96 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	common.RenderJSON(w, r, task)
 }
 
+//GetTaskHandler gets Task from DB by taskID
+func ChangeStatusHandler(w http.ResponseWriter, r *http.Request) {
+	var newTask JsonTaskStatus
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newTask)
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Wrong newTask ID (can't convert string to uuid)", err)
+		return
+	}
+
+	ID, err := uuid.FromString(newTask.ID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = model.ChangeStatus(ID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't change status of this newTask", err)
+		return
+	}
+
+	task, err := model.GetTask(ID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get task", err)
+		return
+	}
+
+	itemOwner, err := model.GetUserByID(task.UserID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get user", err)
+		return
+	}
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)
+		return
+	}
+
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
+		common.SendError(w, r, http.StatusForbidden, auth.NotOwnerResponse, nil)
+		return
+	}
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't change status of this newTask", err)
+		return
+	}
+
+	common.RenderJSON(w, r, successChanged{Status: "201 Created"})
+}
+
 //AddTaskHandler creates and saves Task in DB
 func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 
-	var newTask model.Task
+	var newTask JsonTask
 	var resultTask model.Task
 
-	err := r.ParseForm()
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newTask)
 
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode json from POST Body", err)
 		return
 	}
 
 	timeNow := time.Now()
-	userID, err := uuid.FromString(r.Form.Get("user_id"))
+	userID, err := uuid.FromString(newTask.UserID)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong User ID", err)
 		return
 	}
 
-	newTask.UserID = userID
-	newTask.Name = r.Form.Get("name")
-	newTime := r.Form.Get("time")
-	newTask.CreatedAt = timeNow
-	newTask.UpdatedAt = timeNow
-	newTask.Desc = r.Form.Get("desc")
+	resultTask.UserID = userID
+	resultTask.Name = newTask.Name
+	resultTask.CreatedAt = timeNow
+	resultTask.UpdatedAt = timeNow
+	resultTask.Desc = newTask.Desc
 
-	parsedTime, err := time.Parse(time.UnixDate, newTime)
+	parsedTime, err := time.Parse(time.UnixDate, newTask.Time)
 
 	if err != nil {
-		common.SendUnsupportedMediaType(w, r, "ERROR: Wrong date(can't convert string to int)", err)
+		common.SendUnsupportedMediaType(w, r, "ERROR: Wrong date(can't convert string to time.Time)", err)
 		return
 	}
 
-	newTask.Time = parsedTime
+	resultTask.Time = parsedTime
 
-	resultTask, err = model.AddTask(newTask)
+	resultTask, err = model.AddTask(resultTask)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new task", err)

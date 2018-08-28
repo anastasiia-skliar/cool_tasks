@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
+	"log"
 	"net/url"
 	"reflect"
 	"strings"
 	"time"
-	"log"
 )
 
 //Event is a representation of Event table in DB

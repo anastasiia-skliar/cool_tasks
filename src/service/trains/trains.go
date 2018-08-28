@@ -44,7 +44,7 @@ func AddTrainToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.AddToTrip(tripID, trainID,model.Train{})
+	err = model.AddToTrip(trainID, tripID, model.Train{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		return
@@ -63,7 +63,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := model.GetFromTrip(tripID,model.Train{})
+	trains, err := model.GetFromTrip(tripID, model.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
 		return
@@ -76,7 +76,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetTrainsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	trains, err := model.GetFromTripWithParams(params,model.Train{})
+	trains, err := model.GetFromTripWithParams(params, model.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
 		return
