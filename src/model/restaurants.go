@@ -26,7 +26,7 @@ var parseResult = func(rows *sql.Rows) ([]Restaurant, error) {
 
 	for rows.Next() {
 		var item Restaurant
-		if err := rows.Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Price, &item.Description); err != nil {
+		if err := rows.Scan(&item.ID, &item.Name, &item.Location, &item.Stars, &item.Prices, &item.Description); err != nil {
 			return []Restaurant{}, err
 		}
 		res = append(res, item)

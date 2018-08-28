@@ -43,7 +43,7 @@ func TestGetByRequestHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetRestaurants(tc.mockedGetRestaurants, tc.mockedRestaurantsErr)
+			model.MockedGetData(tc.mockedGetRestaurants, tc.mockedRestaurantsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 			router.ServeHTTP(rec, req)
@@ -97,7 +97,7 @@ func TestAddToTripHandler(t *testing.T) {
 			data.TripID = tc.testDataId
 			body, _ := json.Marshal(data)
 
-			model.MockedAddRestaurants(tc.mockedRestaurantsErr)
+			model.MockedAddToTrip(tc.mockedRestaurantsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
@@ -136,7 +136,7 @@ func TestGetByTripHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetRestaurantsByTrip(tc.mockedGetRestaurants, tc.mockedRestaurantsErr)
+			model.MockedGetByTrip(tc.mockedGetRestaurants, tc.mockedRestaurantsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
