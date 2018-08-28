@@ -18,6 +18,7 @@ func TestCreateTask(t *testing.T) {
 
 	until, _ := time.Parse(time.UnixDate, "Mon Jun  15 10:53:39 PST 2018")
 	currentTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
+	var status bool
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
@@ -30,6 +31,7 @@ func TestCreateTask(t *testing.T) {
 		currentTime,
 		currentTime,
 		"Do smth",
+		status,
 	}
 
 	if taskMockErr != nil {
@@ -58,6 +60,7 @@ func TestGetTask(t *testing.T) {
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-00000000001")
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
+	var status bool
 
 	until, _ := time.Parse(time.UnixDate, "Mon Jun  15 10:53:39 PST 2018")
 	currentTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
@@ -70,14 +73,15 @@ func TestGetTask(t *testing.T) {
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
 		Desc:      "Do smth",
+		Completed: status,
 	}
 
 	if taskMockErr != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", taskMockErr)
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc"}).
-		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
+	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc", "Completed"}).
+		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth", status)
 
 	mock.ExpectQuery("SELECT (.+) FROM tasks").WithArgs(ID).WillReturnRows(rows)
 
@@ -128,6 +132,7 @@ func TestGetTasks(t *testing.T) {
 
 	until, _ := time.Parse(time.UnixDate, "Mon Jun  15 10:53:39 PST 2018")
 	currentTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
+	var status bool
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-00000000001")
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
@@ -141,6 +146,7 @@ func TestGetTasks(t *testing.T) {
 			currentTime,
 			currentTime,
 			"Do smth",
+			status,
 		},
 		{
 			ID,
@@ -150,6 +156,7 @@ func TestGetTasks(t *testing.T) {
 			currentTime,
 			currentTime,
 			"Do smth",
+			status,
 		},
 	}
 
@@ -157,9 +164,9 @@ func TestGetTasks(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", taskMockErr)
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc"}).
+	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc", "Completed"}).
 		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime,
-			"Do smth").AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
+			"Do smth", status).AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth", status)
 
 	mock.ExpectQuery("SELECT (.+) FROM tasks").WillReturnRows(rows)
 
@@ -187,6 +194,7 @@ func TestGetUserTasks(t *testing.T) {
 
 	until, _ := time.Parse(time.UnixDate, "Mon Jun  15 10:53:39 PST 2018")
 	currentTime, _ := time.Parse(time.UnixDate, "Mon Jun  11 10:53:39 PST 2018")
+	var status bool
 
 	ID, _ := uuid.FromString("00000000-0000-0000-0000-00000000001")
 	UserID, _ := uuid.FromString("00000000-0000-0000-0000-000000000011")
@@ -200,6 +208,7 @@ func TestGetUserTasks(t *testing.T) {
 			currentTime,
 			currentTime,
 			"Do smth",
+			status,
 		},
 		{
 			ID,
@@ -209,6 +218,7 @@ func TestGetUserTasks(t *testing.T) {
 			currentTime,
 			currentTime,
 			"Do smth",
+			status,
 		},
 	}
 
@@ -216,9 +226,9 @@ func TestGetUserTasks(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", taskMockErr)
 	}
 
-	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc"}).
+	rows := sqlmock.NewRows([]string{"ID", "UserID", "Name", "Time", "CreatedAt", "UpdatedAt", "Desc", "Completed"}).
 		AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime,
-			"Do smth").AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth")
+			"Do smth", status).AddRow(ID.Bytes(), UserID.Bytes(), "TaskOne", until, currentTime, currentTime, "Do smth", status)
 
 	mock.ExpectQuery("SELECT (.+) FROM tasks").WithArgs(UserID).WillReturnRows(rows)
 

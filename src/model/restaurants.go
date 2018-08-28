@@ -17,16 +17,6 @@ const (
 
 var deleteRequest string
 
-//Restaurant representation in DB
-type Restaurant struct {
-	ID          uuid.UUID
-	Name        string
-	Location    string
-	Stars       int
-	Price       int
-	Description string
-}
-
 func init() {
 	deleteRequest = fmt.Sprintf(deleteTempl, datalocation)
 }

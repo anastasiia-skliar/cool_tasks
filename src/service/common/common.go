@@ -29,27 +29,27 @@ func RenderJSON(w http.ResponseWriter, r *http.Request, response interface{}) {
 	}
 }
 
-// SendMethodNotAllowed sends Internal Server Error Status and logs an error if it exists
+// SendMethodNotAllowed sends Internal Server Error Completed and logs an error if it exists
 func SendMethodNotAllowed(w http.ResponseWriter, r *http.Request, message string, err error) {
 	SendError(w, r, http.StatusMethodNotAllowed, message, err)
 }
 
-//SendUnsupportedMediaType sends Internal Server Error Status and logs an error if it exists
+//SendUnsupportedMediaType sends Internal Server Error Completed and logs an error if it exists
 func SendUnsupportedMediaType(w http.ResponseWriter, r *http.Request, message string, err error) {
 	SendError(w, r, http.StatusUnsupportedMediaType, message, err)
 }
 
-//SendBadRequest sends Internal Server Error Status and logs an error if it exists
+//SendBadRequest sends Internal Server Error Completed and logs an error if it exists
 func SendBadRequest(w http.ResponseWriter, r *http.Request, message string, err error) {
 	SendError(w, r, http.StatusBadRequest, message, err)
 }
 
-//SendNotFound sends Internal Server Error Status and logs an error if it exists
+//SendNotFound sends Internal Server Error Completed and logs an error if it exists
 func SendNotFound(w http.ResponseWriter, r *http.Request, message string, err error) {
 	SendError(w, r, http.StatusNotFound, message, err)
 }
 
-// SendInternalServerError sends Internal Server Error Status and logs an error if it exists
+// SendInternalServerError sends Internal Server Error Completed and logs an error if it exists
 func SendInternalServerError(w http.ResponseWriter, r *http.Request, err error) {
 	SendError(w, r, http.StatusInternalServerError, "", err)
 }
