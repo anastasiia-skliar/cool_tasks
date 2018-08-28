@@ -4,6 +4,7 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/satori/go.uuid"
 	"log"
+	"reflect"
 )
 
 const (
@@ -22,6 +23,7 @@ type Trip struct {
 	Restaurants interface{}
 	Hotels      interface{}
 	Trains      interface{}
+	TotalSum    int
 }
 
 //AddTrip creates Trip and saves it to DB
@@ -47,30 +49,35 @@ var GetTrip = func(id uuid.UUID) (Trip, error) {
 		log.Println(err)
 		return Trip{}, err
 	}
+	trip.TotalSum += getSum(trip.Events)
 
 	trip.Flights, err = GetFromTrip(id, Flight{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
+	trip.TotalSum += getSum(trip.Flights)
 
 	trip.Museums, err = GetFromTrip(id, Museum{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
+	trip.TotalSum += getSum(trip.Museums)
 
 	trip.Hotels, err = GetFromTrip(id, Hotel{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
+	trip.TotalSum += getSum(trip.Hotels)
 
 	trip.Trains, err = GetFromTrip(id, Train{})
 	if err != nil {
 		log.Println(err)
 		return Trip{}, err
 	}
+	trip.TotalSum += getSum(trip.Trains)
 
 	trip.Restaurants, err = GetFromTrip(id, Restaurant{})
 	if err != nil {
@@ -106,6 +113,17 @@ var GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
 		}
 		tripIDs = append(tripIDs, tripID)
 	}
-
 	return tripIDs, nil
+}
+
+func getSum(obj interface{}) (totalSum int) {
+
+	switch reflect.TypeOf(obj).Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(obj)
+		for i := 0; i < s.Len(); i++ {
+			totalSum += int(s.Index(i).FieldByName("Price").Int())
+		}
+	}
+	return
 }

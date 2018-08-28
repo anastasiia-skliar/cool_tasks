@@ -25,11 +25,9 @@ type Event struct {
 type Flight struct {
 	ID             uuid.UUID
 	Departure_city string
-	Departure_time time.Time
-	Departure_date time.Time
+	Departure      time.Time
 	Arrival_city   string
-	Arrival_time   time.Time
-	Arrival_date   time.Time
+	Arrival        time.Time
 	Price          int
 }
 
@@ -48,15 +46,13 @@ type Museum struct {
 //Train representation in DB
 type Train struct {
 	ID             uuid.UUID
-	Departure_time time.Time
-	Departure_date time.Time
-	Arrival_time   time.Time
-	Arrival_date   time.Time
+	Departure      time.Time
+	Arrival        time.Time
 	Departure_city string
 	Arrival_city   string
 	Train_type     string
 	Car_type       string
-	Price          string
+	Price          int
 }
 
 //Hotel representation in DB
@@ -67,7 +63,7 @@ type Hotel struct {
 	Capacity   int
 	Rooms_left int
 	Floors     int
-	Max_price  string
+	Price      int
 	City_name  string
 	Address    string
 }
@@ -168,7 +164,7 @@ var GetFromTripWithParams = func(params url.Values, obj interface{}) (interface{
 
 	case Hotel:
 		stringArgs = []string{"name", "city_name", "address"}
-		numberArgs = []string{"class", "capacity", "rooms_left", "floors", "max_price"}
+		numberArgs = []string{"class", "capacity", "rooms_left", "floors", "price"}
 	}
 
 	request, args, err := SQLGenerator(pluralName, stringArgs, numberArgs, params)

@@ -8,12 +8,11 @@ import (
 	"time"
 
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-
-	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 )
 
 type successCreate struct {
@@ -185,7 +184,7 @@ func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.RenderJSON(w, r, successCreate{Status: "200 OK", Result: resultTask})
+	common.RenderJSON(w, r, successCreate{Status: "201 Created", Result: resultTask})
 }
 
 //DeleteTaskHandler deletes Task from DB
