@@ -27,7 +27,7 @@ func MockedGetRestaurantsByTrip(res []Restaurant, err error) {
 	}
 }
 
-func MockedParseResult(res []Restaurant,err error)  {
+func MockedParseResult(res []Restaurant, err error) {
 	parseResult = func(rows *sql.Rows) ([]Restaurant, error) {
 		return res, err
 	}

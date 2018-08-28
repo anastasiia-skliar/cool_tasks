@@ -2,13 +2,13 @@
 package trips
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
-	"encoding/json"
 )
 
 type successCreate struct {
@@ -17,7 +17,7 @@ type successCreate struct {
 }
 
 type jsonTrip struct {
-	UserID string
+	UserID string `json:"user_id"`
 }
 
 //AddTripHandler is a handler for creating Trips

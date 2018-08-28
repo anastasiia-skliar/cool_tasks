@@ -17,8 +17,8 @@ type successAdd struct {
 }
 
 type TripTrain struct {
-	TrainID string
-	TripID  string
+	TrainID string `json:"train_id"`
+	TripID  string `json:"trip_id"`
 }
 
 //AddTrainToTripHandler is a handler for saving Train to Trip

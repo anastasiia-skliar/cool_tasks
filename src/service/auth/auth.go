@@ -15,9 +15,9 @@ import (
 
 //Login stores info for logging
 type login struct {
-	Login     string
-	Password  string
-	SessionID string
+	Login     string `json:"login"`
+	Password  string `json:"password"`
+	SessionID string `json:"session_id"`
 }
 
 var Login = func(w http.ResponseWriter, r *http.Request) {

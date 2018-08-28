@@ -31,7 +31,7 @@ func init() {
 	deleteRequest = fmt.Sprintf(deleteTempl, datalocation)
 }
 
-var parseResult = func (rows *sql.Rows) ([]Restaurant, error) {
+var parseResult = func(rows *sql.Rows) ([]Restaurant, error) {
 	res := make([]Restaurant, 0)
 
 	for rows.Next() {

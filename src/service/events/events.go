@@ -14,8 +14,8 @@ type success struct {
 	Status string `json:"message"`
 }
 type TripEvent struct {
-	EventID string
-	TripID  string
+	EventID string `json:"event_id"`
+	TripID  string `json:"trip_id"`
 }
 
 //AddEventToTripHandler is a handler for adding Event to Trip

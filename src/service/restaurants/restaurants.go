@@ -2,12 +2,12 @@
 package restaurants
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
-	"encoding/json"
 )
 
 type successAdd struct {
@@ -19,8 +19,8 @@ type successDelete struct {
 }
 
 type TripRestaurant struct {
-	RestaurantID string
-	TripID       string
+	RestaurantID string `json:"restaurant_id"`
+	TripID       string `json:"trip_id"`
 }
 
 //GetRestaurantHandler used for getting restaurants

@@ -18,10 +18,10 @@ const (
 //User representation in DB
 type User struct {
 	ID       uuid.UUID
-	Name     string
-	Login    string
-	Password string
-	Role     string
+	Name     string `json:"name"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
 }
 
 //AddUser used for creation user in DB
