@@ -26,13 +26,13 @@ func getJson(url string, target interface{}) error {
 }
 
 type Forecast struct {
-	Id      int
+	ID      int
 	Name    string
 	Weather []Describe
 	Main    Temp
 }
 type Describe struct {
-	Id          int
+	ID          int
 	Main        string
 	Description string
 }
@@ -42,8 +42,8 @@ type Temp struct {
 	Temp_max float64
 }
 
-//GetWeatherByTrainId is used for getting weather in arrival city
-var GetWeatherByTrainId = func(id uuid.UUID) (Forecast, error) {
+//GetWeatherByTrainID is used for getting weather in arrival city
+var GetWeatherByTrainID = func(id uuid.UUID) (Forecast, error) {
 	var city string
 	var forecast Forecast
 	err := database.DB.QueryRow(getCityTrain, id).Scan(&city)
@@ -52,8 +52,8 @@ var GetWeatherByTrainId = func(id uuid.UUID) (Forecast, error) {
 	return forecast, err
 }
 
-//GetWeatherByFlightId is used for getting weather in arrival city
-var GetWeatherByFlightId = func(id uuid.UUID) (Forecast, error) {
+//GetWeatherByFlightID is used for getting weather in arrival city
+var GetWeatherByFlightID = func(id uuid.UUID) (Forecast, error) {
 	var city string
 	var forecast Forecast
 	err := database.DB.QueryRow(getCityFlight, id).Scan(&city)

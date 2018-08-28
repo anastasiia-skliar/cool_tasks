@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func GetWeatherByTrainIdHandler(w http.ResponseWriter, r *http.Request) {
+func GetWeatherByTrainIDHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	trainID, err := uuid.FromString(params["id"])
@@ -17,7 +17,7 @@ func GetWeatherByTrainIdHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := model.GetWeatherByTrainId(trainID)
+	result, err := model.GetWeatherByTrainID(trainID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: This train is not connected with your trip", err)
 		return
@@ -25,7 +25,7 @@ func GetWeatherByTrainIdHandler(w http.ResponseWriter, r *http.Request) {
 
 	common.RenderJSON(w, r, result)
 }
-func GetWeatherByFlightIdHandler(w http.ResponseWriter, r *http.Request) {
+func GetWeatherByFlightIDHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	flightID, err := uuid.FromString(params["id"])
@@ -34,7 +34,7 @@ func GetWeatherByFlightIdHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := model.GetWeatherByFlightId(flightID)
+	result, err := model.GetWeatherByFlightID(flightID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: This flight is not connected with your trip", err)
 		return
