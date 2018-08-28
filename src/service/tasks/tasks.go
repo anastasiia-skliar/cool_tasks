@@ -25,7 +25,7 @@ type successChanged struct {
 	Status string `json:"message"`
 }
 
-type JsonTask struct {
+type JsonTaskStatus struct {
 	ID string `json:"id"`
 }
 
@@ -84,7 +84,7 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 //GetTaskHandler gets Task from DB by taskID
 func ChangeStatusHandler(w http.ResponseWriter, r *http.Request) {
-	var newTask JsonTask
+	var newTask JsonTaskStatus
 
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newTask)
