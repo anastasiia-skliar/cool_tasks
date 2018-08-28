@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"log"
 )
 
 //Event is a representation of Event table in DB
@@ -123,7 +124,7 @@ var GetFromTrip = func(tripID uuid.UUID, obj interface{}) (interface{}, error) {
 				s := string(reflect.ValueOf(row[i]).Bytes()[:])
 				v, err = uuid.FromString(s)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
 			} else if condition == "int" {
 				v = int(reflect.ValueOf(v).Int())

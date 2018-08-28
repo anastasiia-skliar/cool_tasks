@@ -7,7 +7,6 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/models"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/services/common"
 
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 )
@@ -39,7 +38,6 @@ func AddTrainToTripHandler(w http.ResponseWriter, r *http.Request) {
 	err = models.AddToTrip(trainID, tripID, models.Train{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
-		fmt.Println(err)
 		return
 	}
 
