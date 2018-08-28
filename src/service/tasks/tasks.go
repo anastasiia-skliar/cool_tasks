@@ -11,20 +11,12 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 )
 
 type successCreate struct {
 	Status string     `json:"message"`
 	Result model.Task `json:"result"`
-}
-
-type JsonTask struct {
-	UserID string `json:"user_id"`
-	Name   string `json:"name"`
-	Time   string `json:"time"`
-	Desc   string `json:"desc"`
 }
 
 //GetTasksHandler gets Tasks from DB
@@ -83,41 +75,41 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 //AddTaskHandler creates and saves Task in DB
 func AddTaskHandler(w http.ResponseWriter, r *http.Request) {
 
-	var newTask JsonTask
+	var newTask model.Task
 	var resultTask model.Task
 
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newTask)
+	err := r.ParseForm()
 
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode json from POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
 	timeNow := time.Now()
-	userID, err := uuid.FromString(newTask.UserID)
+	userID, err := uuid.FromString(r.Form.Get("user_id"))
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong User ID", err)
 		return
 	}
 
-	resultTask.UserID = userID
-	resultTask.Name = newTask.Name
-	resultTask.CreatedAt = timeNow
-	resultTask.UpdatedAt = timeNow
-	resultTask.Desc = newTask.Desc
+	newTask.UserID = userID
+	newTask.Name = r.Form.Get("name")
+	newTime := r.Form.Get("time")
+	newTask.CreatedAt = timeNow
+	newTask.UpdatedAt = timeNow
+	newTask.Desc = r.Form.Get("desc")
 
-	parsedTime, err := time.Parse(time.UnixDate, newTask.Time)
+	parsedTime, err := time.Parse(time.UnixDate, newTime)
 
 	if err != nil {
-		common.SendUnsupportedMediaType(w, r, "ERROR: Wrong date(can't convert string to time.Time)", err)
+		common.SendUnsupportedMediaType(w, r, "ERROR: Wrong date(can't convert string to int)", err)
 		return
 	}
 
-	resultTask.Time = parsedTime
+	newTask.Time = parsedTime
 
-	resultTask, err = model.AddTask(resultTask)
+	resultTask, err = model.AddTask(newTask)
 
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new task", err)

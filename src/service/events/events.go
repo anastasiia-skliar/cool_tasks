@@ -2,7 +2,6 @@
 package events
 
 import (
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
@@ -13,35 +12,28 @@ import (
 type success struct {
 	Status string `json:"message"`
 }
-type TripEvent struct {
-	EventID string `json:"event_id"`
-	TripID  string `json:"trip_id"`
-}
 
 //AddEventToTripHandler is a handler for adding Event to Trip
 func AddEventToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newEvent TripEvent
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newEvent)
+	err := r.ParseForm()
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
-	eventID, err := uuid.FromString(newEvent.EventID)
+	eventID, err := uuid.FromString(r.Form.Get("event_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong eventID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(newEvent.TripID)
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 		return
 	}
 
-	err = model.AddEventToTrip(eventID, tripID)
+	err = model.AddToTrip(eventID, tripID, model.Event{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new event to trip", err)
 		return
@@ -59,7 +51,7 @@ func GetEventsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	events, err := model.GetEventsByTrip(tripID)
+	events, err := model.GetFromTrip(tripID, model.Event{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get events by tripID", err)
 		return
@@ -71,7 +63,7 @@ func GetEventsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	events, err := model.GetEvents(params)
+	events, err := model.GetFromTripWithParams(params, model.Event{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find events with such parameters", err)
 		return

@@ -7,7 +7,6 @@ import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 
-	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 )
@@ -16,35 +15,27 @@ type successAdd struct {
 	Status string `json:"message"`
 }
 
-type TripTrain struct {
-	TrainID string `json:"train_id"`
-	TripID  string `json:"trip_id"`
-}
-
 //AddTrainToTripHandler is a handler for saving Train to Trip
 func AddTrainToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newTrain TripTrain
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newTrain)
+	err := r.ParseForm()
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
-	trainID, err := uuid.FromString(newTrain.TrainID)
+	trainID, err := uuid.FromString(r.Form.Get("train_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong train ID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(newTrain.TripID)
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
 		return
 	}
 
-	err = model.AddTrainToTrip(tripID, trainID)
+	err = model.AddToTrip(trainID, tripID, model.Train{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new train to trip", err)
 		return
@@ -63,7 +54,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	trains, err := model.GetTrainsFromTrip(tripID)
+	trains, err := model.GetFromTrip(tripID, model.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get trains by trip ID", err)
 		return
@@ -76,7 +67,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetTrainsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	trains, err := model.GetTrains(params)
+	trains, err := model.GetFromTripWithParams(params, model.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
 		return
