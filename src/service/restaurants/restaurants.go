@@ -7,20 +7,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
-	"encoding/json"
 )
 
 type successAdd struct {
 	Status string `json:"message"`
-}
-
-type successDelete struct {
-	Status string `json:"message"`
-}
-
-type tripRestaurant struct {
-	RestaurantID string `json:"restaurant_id"`
-	TripID       string `json:"trip_id"`
 }
 
 //GetRestaurantHandler used for getting restaurants
@@ -32,17 +22,16 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		restaurants, err := model.GetRestaurants(query)
+		restaurants, err := model.GetFromTripWithParams(query, model.Restaurant{})
 
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Can't get restaurant", err)
 			return
 		}
-		restaurant := restaurants[0]
-		common.RenderJSON(w, r, restaurant)
+		common.RenderJSON(w, r, restaurants)
 	}
 
-	restaurants, err := model.GetRestaurants(query)
+	restaurants, err := model.GetFromTripWithParams(query, model.Restaurant{})
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants", err)
@@ -54,55 +43,31 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddRestaurantToTrip saves Restaurant to Trip
 func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newRestaurant tripRestaurant
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newRestaurant)
-
+	err := r.ParseForm()
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
-	restaurantID, err := uuid.FromString(newRestaurant.RestaurantID)
+	restaurantID, err := uuid.FromString(r.Form.Get("restaurant_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong restaurant ID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(newRestaurant.TripID)
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
 		return
 	}
 
-	err = model.AddRestaurantToTrip(tripID, restaurantID)
+	err = model.AddToTrip(restaurantID, tripID, model.Restaurant{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new restaurant to trip", err)
 		return
 	}
 
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
-}
-
-//DeleteRestaurantHandler deletes Restaurant from DB
-func DeleteRestaurantHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	itemID, err := uuid.FromString(params["id"])
-
-	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong item ID (can't convert string to uuid)", err)
-		return
-	}
-
-	err = model.DeleteRestaurant(itemID)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't delete this item", err)
-		return
-	}
-
-	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
 //GetRestaurantFromTrip gets Restaurant from Trip by tripID
@@ -115,7 +80,7 @@ func GetRestaurantFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	items, err := model.GetRestaurantsFromTrip(tripID)
+	items, err := model.GetFromTrip(tripID, model.Restaurant{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants by trip ID", err)
 		return

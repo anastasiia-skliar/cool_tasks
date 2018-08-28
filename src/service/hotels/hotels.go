@@ -2,7 +2,6 @@
 package hotels
 
 import (
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
@@ -14,35 +13,27 @@ type success struct {
 	Status string `json:"message"`
 }
 
-type TripHotel struct {
-	HotelID string `json:"hotel_id"`
-	TripID  string `json:"trip_id"`
-}
-
 //AddHotelToTripHandler is a handler for adding Hotel to Trip
 func AddHotelToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newHotel TripHotel
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newHotel)
+	err := r.ParseForm()
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
-	hotelID, err := uuid.FromString(newHotel.HotelID)
+	hotelID, err := uuid.FromString(r.Form.Get("hotel_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong hotelID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(newHotel.TripID)
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 		return
 	}
 
-	err = model.AddHotelToTrip(tripID, hotelID)
+	err = model.AddToTrip(hotelID, tripID, model.Hotel{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new hotel to trip", err)
 		return
@@ -60,7 +51,7 @@ func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hotels, err := model.GetHotelsByTrip(tripID)
+	hotels, err := model.GetFromTrip(tripID, model.Hotel{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get hotels by tripID", err)
 		return
@@ -72,7 +63,7 @@ func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetHotelsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	hotels, err := model.GetHotels(params)
+	hotels, err := model.GetFromTripWithParams(params, model.Hotel{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find hotels with such parameters", err)
 		return

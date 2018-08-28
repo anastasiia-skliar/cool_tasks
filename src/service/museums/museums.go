@@ -2,7 +2,6 @@
 package museums
 
 import (
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
@@ -14,33 +13,25 @@ type successCreate struct {
 	Status string `json:"status"`
 }
 
-type TripMuseum struct {
-	MuseumID string `json:"museum_id"`
-	TripID   string `json:"trip_id"`
-}
-
 //AddMuseumToTripHandler is a handler for adding Museums to Trips
 func AddMuseumToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newMuseum TripMuseum
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newMuseum)
+	err := r.ParseForm()
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
-	museumID, err := uuid.FromString(newMuseum.MuseumID)
+	museumID, err := uuid.FromString(r.Form.Get("museum_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
-	tripID, err := uuid.FromString(newMuseum.TripID)
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from POST Body", err)
 		return
 	}
 
-	musErr := model.AddMuseumToTrip(museumID, tripID)
+	musErr := model.AddToTrip(museumID, tripID, model.Museum{})
 	if musErr != nil {
 		common.SendBadRequest(w, r, "ERROR: Cant ADD Museum", err)
 		return
@@ -56,7 +47,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from URL", err)
 		return
 	}
-	museums, err := model.GetMuseumsByTrip(tripID)
+	museums, err := model.GetFromTrip(tripID, model.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums in such trip", err)
 		return
@@ -68,7 +59,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetMuseumsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	museums, err := model.GetMuseums(params)
+	museums, err := model.GetFromTripWithParams(params, model.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
 		return

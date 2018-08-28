@@ -2,7 +2,6 @@
 package auth
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
@@ -15,42 +14,39 @@ import (
 
 //Login stores info for logging
 type login struct {
-	Login     string `json:"login"`
-	Password  string `json:"password"`
-	SessionID string `json:"session_id"`
+	login     string
+	pass      string
+	sessionID string
 }
 
 var Login = func(w http.ResponseWriter, r *http.Request) {
 	redis := database.Cache
 	var newLogin login
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newLogin)
+	err := r.ParseForm()
 	if err != nil {
-		common.SendError(w, r, 400, "ERROR: Can't decode JSON POST Body", err)
+		common.SendError(w, r, 400, "ERROR: BadRequest", err)
 		log.Println(err)
 		return
 	}
-
-	userInDB, err := model.GetUserForLogin(newLogin.Login, newLogin.Password)
+	newLogin.login = r.Form.Get("login")
+	newLogin.pass = r.Form.Get("password")
+	userInDB, err := model.GetUserForLogin(newLogin.login, newLogin.pass)
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
 	}
-
 	sessionUUID, err := uuid.NewV1()
 	if err != nil {
 		common.SendError(w, r, 401, "ERROR: "+err.Error(), err)
 		return
 	}
-
-	newLogin.SessionID = sessionUUID.String()
-	if newLogin.SessionID != "" {
-		err := redis.Set(newLogin.SessionID, newLogin.Login, time.Hour*4).Err()
+	newLogin.sessionID = sessionUUID.String()
+	if newLogin.sessionID != "" {
+		err := redis.Set(newLogin.sessionID, newLogin.login, time.Hour*4).Err()
 		if err != nil {
 			log.Println(err)
 		}
-		newCookie := http.Cookie{Name: "user_session", Value: newLogin.SessionID, Expires: time.Now().Add(time.Hour * 4)}
+		newCookie := http.Cookie{Name: "user_session", Value: newLogin.sessionID, Expires: time.Now().Add(time.Hour * 4)}
 		http.SetCookie(w, &newCookie)
 		common.RenderJSON(w, r, userInDB.ID)
 		return

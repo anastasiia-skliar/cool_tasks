@@ -2,7 +2,6 @@
 package flights
 
 import (
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
@@ -14,35 +13,27 @@ type success struct {
 	Status string `json:"message"`
 }
 
-type TripFlight struct {
-	FlightID string `json:"flight_id"`
-	TripID   string `json:"trip_id"`
-}
-
 //AddFlightToTripHandler is a handler for adding Flight to Trip
 func AddFlightToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newFlight TripFlight
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newFlight)
+	err := r.ParseForm()
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
 		return
 	}
 
-	flightID, err := uuid.FromString(newFlight.FlightID)
+	flightID, err := uuid.FromString(r.Form.Get("flight_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong flight ID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(newFlight.TripID)
+	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong trip ID (can't convert string to uuid)", err)
 		return
 	}
 
-	err = model.AddFlightToTrip(flightID, tripID)
+	err = model.AddToTrip(flightID, tripID, model.Flight{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new flight to trip", err)
 		return
@@ -60,7 +51,7 @@ func GetFlightsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	flights, err := model.GetFlightsByTrip(tripID)
+	flights, err := model.GetFromTrip(tripID, model.Flight{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get flights by trip ID", err)
 		return
@@ -72,7 +63,7 @@ func GetFlightsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetFlightsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	flights, err := model.GetFlights(params)
+	flights, err := model.GetFromTripWithParams(params, model.Flight{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't find flights with such parameters", err)
 		return

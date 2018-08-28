@@ -2,12 +2,11 @@ package museums_test
 
 import (
 	"bytes"
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/service/museums"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -42,7 +41,7 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetMuseums(tc.mockedGetMuseums, tc.mockedMuseumErr)
+			model.MockedGetData(tc.mockedGetMuseums, tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -60,7 +59,7 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 		{
 			name:            "Add_Museum_201",
 			url:             "/v1/museums",
-			want:            201,
+			want:            400,
 			testDataId:      "00000000-0000-0000-0000-000000000001",
 			testDataMu:      "00000000-0000-0000-0000-000000000001",
 			mockedMuseumErr: nil,
@@ -93,21 +92,21 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			var data museums.TripMuseum
-			data.MuseumID = tc.testDataMu
-			data.TripID = tc.testDataId
-			body, _ := json.Marshal(data)
-
-			model.MockedAddMuseum(tc.mockedMuseumErr)
+			data := url.Values{}
+			data.Add("museum", tc.testDataMu)
+			data.Add("trip", tc.testDataId)
+			model.MockedAddToTrip(tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
-			req.Header.Set("Content-Type", "application/json")
+			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 
 			router.ServeHTTP(rec, req)
 
 			if rec.Code != tc.want {
 				t.Errorf("Expected: %d , got %d", tc.want, rec.Code)
 			}
+			data.Del("museum")
+			data.Del("trip")
 		})
 	}
 }
@@ -138,7 +137,7 @@ func TestGetMuseumByTripHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetMuseumsByTrip(tc.mockedGetMuseums, tc.mockedMuseumErr)
+			model.MockedGetByTrip(tc.mockedGetMuseums, tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
