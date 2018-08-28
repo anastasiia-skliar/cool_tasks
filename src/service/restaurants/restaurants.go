@@ -14,10 +14,6 @@ type successAdd struct {
 	Status string `json:"message"`
 }
 
-type successDelete struct {
-	Status string `json:"message"`
-}
-
 type tripRestaurant struct {
 	RestaurantID string `json:"restaurant_id"`
 	TripID       string `json:"trip_id"`
@@ -32,17 +28,16 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		restaurants, err := model.GetRestaurants(query)
+		restaurants, err := model.GetFromTripWithParams(query, model.Restaurant{})
 
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Can't get restaurant", err)
 			return
 		}
-		restaurant := restaurants[0]
-		common.RenderJSON(w, r, restaurant)
+		common.RenderJSON(w, r, restaurants)
 	}
 
-	restaurants, err := model.GetRestaurants(query)
+	restaurants, err := model.GetFromTripWithParams(query, model.Restaurant{})
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants", err)
@@ -76,33 +71,13 @@ func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.AddRestaurantToTrip(tripID, restaurantID)
+	err = model.AddToTrip(restaurantID, tripID,model.Restaurant{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new restaurant to trip", err)
 		return
 	}
 
 	common.RenderJSON(w, r, successAdd{Status: "201 Created"})
-}
-
-//DeleteRestaurantHandler deletes Restaurant from DB
-func DeleteRestaurantHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	itemID, err := uuid.FromString(params["id"])
-
-	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Wrong item ID (can't convert string to uuid)", err)
-		return
-	}
-
-	err = model.DeleteRestaurant(itemID)
-
-	if err != nil {
-		common.SendNotFound(w, r, "ERROR: Can't delete this item", err)
-		return
-	}
-
-	common.RenderJSON(w, r, successDelete{Status: "204 No Content"})
 }
 
 //GetRestaurantFromTrip gets Restaurant from Trip by tripID
@@ -115,7 +90,7 @@ func GetRestaurantFromTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	items, err := model.GetRestaurantsFromTrip(tripID)
+	items, err := model.GetFromTrip(tripID, model.Restaurant{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants by trip ID", err)
 		return

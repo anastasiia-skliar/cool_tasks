@@ -40,7 +40,7 @@ func AddMuseumToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	musErr := model.AddMuseumToTrip(museumID, tripID)
+	musErr := model.AddToTrip(museumID, tripID,model.Museum{})
 	if musErr != nil {
 		common.SendBadRequest(w, r, "ERROR: Cant ADD Museum", err)
 		return
@@ -56,7 +56,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 		common.SendBadRequest(w, r, "ERROR: Converting ID from URL", err)
 		return
 	}
-	museums, err := model.GetMuseumsByTrip(tripID)
+	museums, err := model.GetFromTrip(tripID,model.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums in such trip", err)
 		return
@@ -68,7 +68,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetMuseumsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	museums, err := model.GetMuseums(params)
+	museums, err := model.GetFromTripWithParams(params,model.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
 		return

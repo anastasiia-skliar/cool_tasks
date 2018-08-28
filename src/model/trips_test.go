@@ -1,7 +1,6 @@
 package model_test
 
 import (
-	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/database"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/satori/go.uuid"
@@ -37,7 +36,7 @@ func TestCreateTrip(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"ID"}).AddRow(UserID.Bytes())
 
 	mock.ExpectQuery("INSERT INTO trips").WithArgs(UserID).WillReturnRows(rows)
-	if _, err := model.CreateTrip(trip); err != nil {
+	if _, err := model.AddTrip(trip); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
@@ -78,6 +77,7 @@ func TestGetTrip(t *testing.T) {
 	defer func() { database.DB = originalDB }()
 
 	TripID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	//testTime, _ := time.Parse("15:04:05", "12:00:00")
 	tests := []TripsTestCase{
 		{
 			name:            "GetTripsByTripId_200",
@@ -88,22 +88,22 @@ func TestGetTrip(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 
-			model.GetEventsByTrip = func(tripID uuid.UUID) ([]model.Event, error) {
+			model.GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []model.Event{}, nil
 			}
-			model.GetFlightsByTrip = func(tripID uuid.UUID) ([]model.Flight, error) {
+			model.GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []model.Flight{}, nil
 			}
-			model.GetMuseumsByTrip = func(trip_id uuid.UUID) ([]model.Museum, error) {
+			model.GetFromTrip = func(trip_id uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []model.Museum{}, nil
 			}
-			model.GetRestaurantsFromTrip = func(tripsID uuid.UUID) ([]model.Restaurant, error) {
+			model.GetFromTrip = func(tripsID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []model.Restaurant{}, nil
 			}
-			model.GetHotelsByTrip = func(tripID uuid.UUID) ([]model.Hotel, error) {
+			model.GetFromTrip = func(trip_id uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []model.Hotel{}, nil
 			}
-			model.GetTrainsFromTrip = func(tripsID uuid.UUID) ([]model.Train, error) {
+			model.GetFromTrip = func(tripsID uuid.UUID, dataSource interface{}) (interface{}, error) {
 				return []model.Train{}, nil
 			}
 			model.GetTripIDsByUserID = func(id uuid.UUID) ([]uuid.UUID, error) {
@@ -111,7 +111,9 @@ func TestGetTrip(t *testing.T) {
 			}
 			testTrip, _ := model.GetTrip(TripID)
 
-			fmt.Println(testTrip)
+			if testTrip.TripID != tc.expectedTripId {
+				t.Errorf("Expected: %s", tc.name)
+			}
 		})
 	}
 }

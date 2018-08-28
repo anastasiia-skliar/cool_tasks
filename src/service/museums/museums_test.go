@@ -42,7 +42,7 @@ func TestGetMuseumsByRequestHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetMuseums(tc.mockedGetMuseums, tc.mockedMuseumErr)
+			model.MockedGetData(tc.mockedGetMuseums, tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
@@ -98,7 +98,7 @@ func TestAddMuseumToTripHandler(t *testing.T) {
 			data.TripID = tc.testDataId
 			body, _ := json.Marshal(data)
 
-			model.MockedAddMuseum(tc.mockedMuseumErr)
+			model.MockedAddToTrip(tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
@@ -138,7 +138,7 @@ func TestGetMuseumByTripHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetMuseumsByTrip(tc.mockedGetMuseums, tc.mockedMuseumErr)
+			model.MockedGetByTrip(tc.mockedGetMuseums, tc.mockedMuseumErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

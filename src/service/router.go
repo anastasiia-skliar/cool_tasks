@@ -59,9 +59,6 @@ func NewRouter() *mux.Router {
 		http.MethodPost: http.HandlerFunc(restaurants.AddRestaurantToTripHandler),
 		http.MethodGet:  http.HandlerFunc(restaurants.GetRestaurantHandler),
 	}))
-	apiV1.Handle("/restaurants/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodDelete: http.HandlerFunc(restaurants.DeleteRestaurantHandler),
-	}))
 	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(restaurants.GetRestaurantFromTrip),
 	}))
@@ -102,15 +99,6 @@ func NewRouter() *mux.Router {
 	apiV1.Handle("/hotels/trip/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(hotels.GetHotelsByTripHandler),
 	}))
-
-	apiV1.Handle("/restaurants", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet:  http.HandlerFunc(restaurants.GetRestaurantHandler),
-		http.MethodPost: http.HandlerFunc(restaurants.AddRestaurantToTripHandler),
-	}))
-	apiV1.Handle("/restaurants/trip/{id}", common.MethodHandler(map[string]http.Handler{
-		http.MethodGet: http.HandlerFunc(restaurants.GetRestaurantFromTrip),
-	}))
-
 	apiV1.Handle("/users/trips/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(trips.GetTripIDsByUserIDHandler),
 	}))
