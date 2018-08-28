@@ -17,7 +17,7 @@ type successCreate struct {
 }
 
 type jsonTrip struct {
-	UserID string
+	UserID string `json:"user_id"`
 }
 
 //AddTripHandler is a handler for creating Trips

@@ -15,8 +15,8 @@ type success struct {
 }
 
 type TripFlight struct {
-	FlightID string
-	TripID   string
+	FlightID string `json:"flight_id"`
+	TripID   string `json:"trip_id"`
 }
 
 //AddFlightToTripHandler is a handler for adding Flight to Trip

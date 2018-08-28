@@ -15,8 +15,8 @@ type success struct {
 }
 
 type TripHotel struct {
-	HotelID string
-	TripID  string
+	HotelID string `json:"hotel_id"`
+	TripID  string `json:"trip_id"`
 }
 
 //AddHotelToTripHandler is a handler for adding Hotel to Trip

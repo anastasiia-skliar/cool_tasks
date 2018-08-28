@@ -21,10 +21,10 @@ type successCreate struct {
 }
 
 type JsonTask struct {
-	UserID string
-	Name   string
-	Time   string
-	Desc   string
+	UserID string `json:"user_id"`
+	Name   string `json:"name"`
+	Time   string `json:"time"`
+	Desc   string `json:"desc"`
 }
 
 //GetTasksHandler gets Tasks from DB

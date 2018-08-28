@@ -15,8 +15,8 @@ type successCreate struct {
 }
 
 type TripMuseum struct {
-	MuseumID string
-	TripID   string
+	MuseumID string `json:"museum_id"`
+	TripID   string `json:"trip_id"`
 }
 
 //AddMuseumToTripHandler is a handler for adding Museums to Trips

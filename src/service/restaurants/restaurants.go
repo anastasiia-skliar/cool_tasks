@@ -19,8 +19,8 @@ type successDelete struct {
 }
 
 type tripRestaurant struct {
-	RestaurantID string
-	TripID       string
+	RestaurantID string `json:"restaurant_id"`
+	TripID       string `json:"trip_id"`
 }
 
 //GetRestaurantHandler used for getting restaurants
