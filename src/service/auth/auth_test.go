@@ -49,7 +49,7 @@ func TestLogin(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
-			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 			MockedLogin(rec, req)
 
 			if rec.Code != tc.want {
