@@ -42,7 +42,7 @@ func TestGetByRequestHandler(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetByRequest(tc.mockedGetFlights, tc.mockedFlightsErr)
+			model.MockedGetData(tc.mockedGetFlights, tc.mockedFlightsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 

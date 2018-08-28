@@ -11,7 +11,6 @@ packages = \
     ./service/flights \
     ./service/museums \
     ./service/trains \
-    ./service/events \
     ./service/hotels \
 
 all: setup test format go-build dc-build dc-up migrate-up

@@ -13,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 
-	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 )
 
