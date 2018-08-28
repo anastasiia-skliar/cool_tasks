@@ -2,6 +2,7 @@
 package events
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
@@ -12,22 +13,29 @@ import (
 type success struct {
 	Status string `json:"message"`
 }
+type TripEvent struct {
+	EventID string `json:"event_id"`
+	TripID  string `json:"trip_id"`
+}
 
 //AddEventToTripHandler is a handler for adding Event to Trip
 func AddEventToTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newEvent TripEvent
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newEvent)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
 
-	eventID, err := uuid.FromString(r.Form.Get("event_id"))
+	eventID, err := uuid.FromString(newEvent.EventID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong eventID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
+	tripID, err := uuid.FromString(newEvent.TripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 		return

@@ -2,6 +2,7 @@ package users_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
@@ -9,7 +10,6 @@ import (
 	"github.com/satori/go.uuid"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 )
 
@@ -168,18 +168,19 @@ func TestCreateUser(t *testing.T) {
 			permission:       true,
 		},
 	}
-	data := url.Values{}
-	data.Add("name", "Karim")
-	data.Add("login", "Karim123")
-	data.Add("password", "1324qwer")
+	var newUser model.User
+	newUser.Login = "Karim"
+	newUser.Password = "Kareeem"
+	newUser.Role = "user"
+	body, _ := json.Marshal(newUser)
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			auth.MockedCheckPermission(tc.permission)
 			model.MockedCreateUser(tc.mockedCreateUser)
 			rec := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewBufferString(data.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
 
 			router.ServeHTTP(rec, req)
 

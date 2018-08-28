@@ -2,6 +2,7 @@
 package hotels
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
@@ -13,21 +14,29 @@ type success struct {
 	Status string `json:"message"`
 }
 
+type TripHotel struct {
+	HotelID string `json:"hotel_id"`
+	TripID  string `json:"trip_id"`
+}
+
 //AddHotelToTripHandler is a handler for adding Hotel to Trip
 func AddHotelToTripHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var newHotel TripHotel
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newHotel)
 	if err != nil {
-		common.SendBadRequest(w, r, "ERROR: Can't parse POST Body", err)
+		common.SendBadRequest(w, r, "ERROR: Can't decode JSON POST Body", err)
 		return
 	}
 
-	hotelID, err := uuid.FromString(r.Form.Get("hotel_id"))
+	hotelID, err := uuid.FromString(newHotel.HotelID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong hotelID (can't convert string to uuid)", err)
 		return
 	}
 
-	tripID, err := uuid.FromString(r.Form.Get("trip_id"))
+	tripID, err := uuid.FromString(newHotel.TripID)
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Wrong tripID (can't convert string to uuid)", err)
 		return
