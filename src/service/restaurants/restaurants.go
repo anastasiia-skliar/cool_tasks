@@ -18,7 +18,7 @@ type successDelete struct {
 	Status string `json:"message"`
 }
 
-type tripRestaurant struct {
+type TripRestaurant struct {
 	RestaurantID string
 	TripID       string
 }
@@ -54,7 +54,7 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddRestaurantToTrip saves Restaurant to Trip
 func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newRestaurant tripRestaurant
+	var newRestaurant TripRestaurant
 
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newRestaurant)

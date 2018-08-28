@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service"
-	"github.com/Nastya-Kruglikova/cool_tasks/src/service/events"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/service/restaurants"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,36 +14,36 @@ import (
 
 var router = service.NewRouter()
 
-type EventsTestCase struct {
-	name            string
-	url             string
-	want            int
-	mockedGetEvents []model.Event
-	testDataId      string
-	testDataEv      string
-	mockedEventsErr error
+type RestaurantsTestCase struct {
+	name                 string
+	url                  string
+	want                 int
+	mockedGetRestaurants []model.Restaurant
+	testDataId           string
+	testDataEv           string
+	mockedRestaurantsErr error
 }
 
 func TestGetByRequestHandler(t *testing.T) {
-	tests := []EventsTestCase{
+	tests := []RestaurantsTestCase{
 		{
-			name:            "Get_Events_200",
-			url:             "/v1/events",
-			want:            200,
-			mockedGetEvents: []model.Event{},
-			mockedEventsErr: nil,
+			name:                 "Get_Restaurants_200",
+			url:                  "/v1/restaurants",
+			want:                 200,
+			mockedGetRestaurants: []model.Restaurant{},
+			mockedRestaurantsErr: nil,
 		},
 		{
-			name:            "Get_Events_404",
-			url:             "/v1/events?mock=890",
-			want:            404,
-			mockedGetEvents: []model.Event{},
-			mockedEventsErr: http.ErrBodyNotAllowed,
+			name:                 "Get_Restaurant_404",
+			url:                  "/v1/restaurants?mock=890",
+			want:                 404,
+			mockedGetRestaurants: []model.Restaurant{},
+			mockedRestaurantsErr: http.ErrBodyNotAllowed,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetEvents(tc.mockedGetEvents, tc.mockedEventsErr)
+			model.MockedGetRestaurants(tc.mockedGetRestaurants, tc.mockedRestaurantsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 			router.ServeHTTP(rec, req)
@@ -55,49 +55,49 @@ func TestGetByRequestHandler(t *testing.T) {
 }
 
 func TestAddToTripHandler(t *testing.T) {
-	tests := []EventsTestCase{
+	tests := []RestaurantsTestCase{
 		{
-			name:            "Add_Events_201",
-			url:             "/v1/events",
-			want:            201,
-			testDataId:      "00000000-0000-0000-0000-000000000001",
-			testDataEv:      "00000000-0000-0000-0000-000000000001",
-			mockedEventsErr: nil,
+			name:                 "Add_Restaurants_201",
+			url:                  "/v1/restaurants",
+			want:                 201,
+			testDataId:           "00000000-0000-0000-0000-000000000001",
+			testDataEv:           "00000000-0000-0000-0000-000000000001",
+			mockedRestaurantsErr: nil,
 		},
 		{
-			name:            "Add_Events_400",
-			url:             "/v1/events",
-			want:            400,
-			testDataId:      "00000000-0000-0000-0000-000000000001",
-			testDataEv:      "asdsad",
-			mockedEventsErr: nil,
+			name:                 "Add_Restaurants_400",
+			url:                  "/v1/restaurants",
+			want:                 400,
+			testDataId:           "00000000-0000-0000-0000-000000000001",
+			testDataEv:           "asdsad",
+			mockedRestaurantsErr: nil,
 		},
 		{
-			name:            "Add_Events_400_2",
-			url:             "/v1/events",
-			want:            400,
-			testDataId:      "asdasd",
-			testDataEv:      "00000000-0000-0000-0000-000000000001",
-			mockedEventsErr: nil,
+			name:                 "Add_Restaurants_400_2",
+			url:                  "/v1/restaurants",
+			want:                 400,
+			testDataId:           "asdasd",
+			testDataEv:           "00000000-0000-0000-0000-000000000001",
+			mockedRestaurantsErr: nil,
 		},
 		{
-			name:            "Add_Events_400_3",
-			url:             "/v1/events",
-			want:            400,
-			testDataId:      "00000000-0000-0000-0000-000000000001",
-			testDataEv:      "00000000-0000-0000-0000-000000000001",
-			mockedEventsErr: error(new(http.ProtocolError)),
+			name:                 "Add_Restaurants_400_3",
+			url:                  "/v1/restaurants",
+			want:                 400,
+			testDataId:           "00000000-0000-0000-0000-000000000001",
+			testDataEv:           "00000000-0000-0000-0000-000000000001",
+			mockedRestaurantsErr: error(new(http.ProtocolError)),
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			var data events.TripEvent
-			data.EventID = tc.testDataEv
+			var data restaurants.TripRestaurant
+			data.RestaurantID = tc.testDataEv
 			data.TripID = tc.testDataId
 			body, _ := json.Marshal(data)
 
-			model.MockedAddEventToTrip(tc.mockedEventsErr)
+			model.MockedAddRestaurants(tc.mockedRestaurantsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, tc.url, bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
@@ -111,32 +111,32 @@ func TestAddToTripHandler(t *testing.T) {
 }
 
 func TestGetByTripHandler(t *testing.T) {
-	tests := []EventsTestCase{
+	tests := []RestaurantsTestCase{
 		{
-			name:            "Get_Events_200",
-			url:             "/v1/events/trip/00000000-0000-0000-0000-000000000001",
-			want:            200,
-			mockedGetEvents: []model.Event{},
-			mockedEventsErr: nil,
+			name:                 "Get_Restaurants_200",
+			url:                  "/v1/restaurants/trip/00000000-0000-0000-0000-000000000001",
+			want:                 200,
+			mockedGetRestaurants: []model.Restaurant{},
+			mockedRestaurantsErr: nil,
 		},
 		{
-			name:            "Get_Events_400",
-			url:             "/v1/events/trip/sadsad",
-			want:            400,
-			mockedGetEvents: []model.Event{},
-			mockedEventsErr: nil,
+			name:                 "Get_Restaurants_400",
+			url:                  "/v1/restaurants/trip/sadsad",
+			want:                 400,
+			mockedGetRestaurants: []model.Restaurant{},
+			mockedRestaurantsErr: nil,
 		},
 		{
-			name:            "Get_Events_404",
-			url:             "/v1/events/trip/00000000-0000-0000-0000-000000000009",
-			want:            404,
-			mockedGetEvents: []model.Event{},
-			mockedEventsErr: http.ErrLineTooLong,
+			name:                 "Get_Restaurants_404",
+			url:                  "/v1/restaurants/trip/00000000-0000-0000-0000-000000000009",
+			want:                 404,
+			mockedGetRestaurants: []model.Restaurant{},
+			mockedRestaurantsErr: http.ErrLineTooLong,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			model.MockedGetEventsByTrip(tc.mockedGetEvents, tc.mockedEventsErr)
+			model.MockedGetRestaurantsByTrip(tc.mockedGetRestaurants, tc.mockedRestaurantsErr)
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodGet, tc.url, nil)
 
