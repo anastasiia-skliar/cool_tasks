@@ -2,19 +2,21 @@
 package restaurants
 
 import (
+	"encoding/json"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/model"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
 	"net/http"
-	"encoding/json"
 )
 
 type successAdd struct {
 	Status string `json:"message"`
 }
-
-type tripRestaurant struct {
+type successDelete struct {
+	Status string `json:"message"`
+}
+type TripRestaurant struct {
 	RestaurantID string `json:"restaurant_id"`
 	TripID       string `json:"trip_id"`
 }
@@ -49,7 +51,7 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 
 //AddRestaurantToTrip saves Restaurant to Trip
 func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
-	var newRestaurant tripRestaurant
+	var newRestaurant TripRestaurant
 
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newRestaurant)
@@ -71,7 +73,7 @@ func AddRestaurantToTripHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.AddToTrip(restaurantID, tripID,model.Restaurant{})
+	err = model.AddToTrip(restaurantID, tripID, model.Restaurant{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't add new restaurant to trip", err)
 		return
