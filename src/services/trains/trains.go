@@ -69,7 +69,7 @@ func GetTrainsFromTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetTrainsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	trains, err := models.GetData(params, models.Train{})
+	trains, err := models.GetFromTripWithParams(params, models.Train{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find any trains", err)
 		return

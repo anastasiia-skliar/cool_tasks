@@ -5,8 +5,8 @@ import (
 	"net/url"
 )
 
-func MockedGetData(dataSource interface{}, err error) {
-	GetData = func(values url.Values, dataSource interface{}) (interface{}, error) {
+func MockedGetData(obj interface{}, err error) {
+	GetFromTripWithParams = func(values url.Values, dataSource interface{}) (interface{}, error) {
 		return dataSource, err
 	}
 }
@@ -18,7 +18,7 @@ func MockedAddToTrip(err error) {
 }
 
 //MockedGetByTrip is mocked GetByTrip func
-func MockedGetByTrip(dataSource interface{}, err error) {
+func MockedGetByTrip(obj interface{}, err error) {
 	GetFromTrip = func(tripID uuid.UUID, dataSource interface{}) (interface{}, error) {
 		return dataSource, err
 	}

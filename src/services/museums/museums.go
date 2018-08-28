@@ -59,7 +59,7 @@ func GetMuseumsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetMuseumsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	museums, err := models.GetData(params, models.Museum{})
+	museums, err := models.GetFromTripWithParams(params, models.Museum{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find museums with such parameters", err)
 		return

@@ -22,7 +22,7 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 			common.SendNotFound(w, r, "ERROR: Invalid ID", err)
 			return
 		}
-		restaurants, err := models.GetData(query, models.Restaurant{})
+		restaurants, err := models.GetFromTripWithParams(query, models.Restaurant{})
 
 		if err != nil {
 			common.SendNotFound(w, r, "ERROR: Can't get restaurant", err)
@@ -31,7 +31,7 @@ func GetRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 		common.RenderJSON(w, r, restaurants)
 	}
 
-	restaurants, err := models.GetData(query, models.Restaurant{})
+	restaurants, err := models.GetFromTripWithParams(query, models.Restaurant{})
 
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't get restaurants", err)

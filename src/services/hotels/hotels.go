@@ -63,7 +63,7 @@ func GetHotelsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetHotelsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	hotels, err := models.GetData(params, models.Hotel{})
+	hotels, err := models.GetFromTripWithParams(params, models.Hotel{})
 	if err != nil {
 		common.SendNotFound(w, r, "ERROR: Can't find hotels with such parameters", err)
 		return

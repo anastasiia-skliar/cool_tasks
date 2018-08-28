@@ -63,7 +63,7 @@ func GetFlightsByTripHandler(w http.ResponseWriter, r *http.Request) {
 func GetFlightsHandler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 
-	flights, err := models.GetData(params, models.Flight{})
+	flights, err := models.GetFromTripWithParams(params, models.Flight{})
 	if err != nil {
 		common.SendBadRequest(w, r, "ERROR: Can't find flights with such parameters", err)
 		return

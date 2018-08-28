@@ -136,7 +136,7 @@ var GetFromTrip = func(tripID uuid.UUID, obj interface{}) (interface{}, error) {
 	return sliceVal.Interface(), nil
 }
 
-var GetData = func(params url.Values, obj interface{}) (interface{}, error) {
+var GetFromTripWithParams = func(params url.Values, obj interface{}) (interface{}, error) {
 	objType := reflect.TypeOf(obj)
 	name := strings.ToLower(objType.Name())
 	pluralName := name + "s"
@@ -144,28 +144,28 @@ var GetData = func(params url.Values, obj interface{}) (interface{}, error) {
 	var stringArgs []string
 	var numberArgs []string
 
-	switch objType.Name() {
+	switch obj.(type) {
 
-	case "Event":
+	case Event:
 		stringArgs = []string{"title", "category", "town"}
 		numberArgs = []string{"price", "date"}
 
-	case "Flight":
+	case Flight:
 		stringArgs = []string{"departure_city", "arrival_city"}
 		numberArgs = []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
-	case "Museum":
+	case Museum:
 		stringArgs = []string{"name", "location", "museum_type"}
 		numberArgs = []string{"price", "opened_at", "closed_at"}
 
-	case "Train":
+	case Train:
 		stringArgs = []string{"departure_city", "arrival_city"}
 		numberArgs = []string{"price", "departure_time", "arrival_time", "departure_date", "arrival_date"}
 
-	case "Restaurant":
+	case Restaurant:
 		stringArgs = []string{"id", "name", "location"}
 		numberArgs = []string{"stars", "prices"}
 
-	case "Hotel":
+	case Hotel:
 		stringArgs = []string{"name", "city_name", "address"}
 		numberArgs = []string{"class", "capacity", "rooms_left", "floors", "max_price"}
 	}
