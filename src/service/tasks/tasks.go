@@ -2,6 +2,8 @@
 package tasks
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -17,6 +19,14 @@ import (
 type successCreate struct {
 	Status string     `json:"message"`
 	Result model.Task `json:"result"`
+}
+
+type successChanged struct {
+	Status string `json:"message"`
+}
+
+type JsonTask struct {
+	ID string `json:"id"`
 }
 
 //GetTasksHandler gets Tasks from DB
@@ -70,6 +80,58 @@ func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	common.RenderJSON(w, r, task)
+}
+
+//GetTaskHandler gets Task from DB by taskID
+func ChangeStatusHandler(w http.ResponseWriter, r *http.Request) {
+	var newTask JsonTask
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newTask)
+	if err != nil {
+		common.SendBadRequest(w, r, "ERROR: Wrong newTask ID (can't convert string to uuid)", err)
+		return
+	}
+
+	ID, err := uuid.FromString(newTask.ID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = model.ChangeStatus(ID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't change status of this newTask", err)
+		return
+	}
+
+	task, err := model.GetTask(ID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get task", err)
+		return
+	}
+
+	itemOwner, err := model.GetUserByID(task.UserID)
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't get user", err)
+		return
+	}
+	sessionID, err := auth.GetSessionIDFromRequest(w, r)
+	if err != nil {
+		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)
+		return
+	}
+
+	if auth.CheckPermission(sessionID, auth.Owner, itemOwner.Login) == false {
+		common.SendError(w, r, http.StatusForbidden, auth.NotOwnerResponse, nil)
+		return
+	}
+	if err != nil {
+		common.SendNotFound(w, r, "ERROR: Can't change status of this newTask", err)
+		return
+	}
+
+	common.RenderJSON(w, r, successChanged{Status: "201 Created"})
 }
 
 //AddTaskHandler creates and saves Task in DB

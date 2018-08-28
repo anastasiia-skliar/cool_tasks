@@ -8,6 +8,7 @@ time TIMESTAMP,
 created_at TIMESTAMP,
 updated_at TIMESTAMP,
 description TEXT,
+completed BOOLEAN DEFAULT false,
 PRIMARY KEY(id)
 );
 -- +goose Down

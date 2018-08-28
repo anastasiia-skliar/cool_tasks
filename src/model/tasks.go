@@ -12,6 +12,7 @@ const (
 	deleteTask   = "DELETE FROM tasks WHERE id = $1"
 	getTasks     = "SELECT * FROM tasks"
 	getUserTasks = "SELECT * FROM tasks where user_id = $1"
+	changeStatus = "UPDATE tasks SET completed = true WHERE id = $1"
 )
 
 //Task representation in DB
@@ -23,6 +24,7 @@ type Task struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Desc      string
+	Completed bool
 }
 
 //AddTask used for creation task in DB
@@ -32,10 +34,16 @@ var AddTask = func(task Task) (Task, error) {
 	return task, err
 }
 
+var ChangeStatus = func(id uuid.UUID) error {
+	_, err := database.DB.Exec(changeStatus, id)
+
+	return err
+}
+
 //GetTask used for getting task from DB
 var GetTask = func(id uuid.UUID) (Task, error) {
 	var task Task
-	err := database.DB.QueryRow(getTask, id).Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
+	err := database.DB.QueryRow(getTask, id).Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc, &task.Completed)
 
 	return task, err
 }
@@ -58,7 +66,7 @@ var GetTasks = func() ([]Task, error) {
 
 	for rows.Next() {
 		var t Task
-		if err := rows.Scan(&t.ID, &t.UserID, &t.Name, &t.Time, &t.CreatedAt, &t.UpdatedAt, &t.Desc); err != nil {
+		if err := rows.Scan(&t.ID, &t.UserID, &t.Name, &t.Time, &t.CreatedAt, &t.UpdatedAt, &t.Desc, &t.Completed); err != nil {
 			return nil, err
 		}
 		tasks = append(tasks, t)
@@ -77,7 +85,7 @@ var GetUserTasks = func(id uuid.UUID) ([]Task, error) {
 
 	for rows.Next() {
 		task := Task{}
-		scanErr := rows.Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc)
+		scanErr := rows.Scan(&task.ID, &task.UserID, &task.Name, &task.Time, &task.CreatedAt, &task.UpdatedAt, &task.Desc, &task.Completed)
 		if scanErr != nil {
 			return nil, scanErr
 		}
