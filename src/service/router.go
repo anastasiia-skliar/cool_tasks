@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/auth"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
+	"github.com/Nastya-Kruglikova/cool_tasks/src/service/weather"
 
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/events"
 	"github.com/Nastya-Kruglikova/cool_tasks/src/service/flights"
@@ -119,6 +120,12 @@ func NewRouter() *mux.Router {
 	}))
 	apiV1.Handle("/trips/{id}", common.MethodHandler(map[string]http.Handler{
 		http.MethodGet: http.HandlerFunc(trips.GetTripHandler),
+	}))
+	apiV1.Handle("/train/weather/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(weather.GetWeatherByTrainIdHandler),
+	}))
+	apiV1.Handle("/flight/weather/{id}", common.MethodHandler(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(weather.GetWeatherByFlightIdHandler),
 	}))
 
 	return router
