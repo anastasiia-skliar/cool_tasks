@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"github.com/Nastya-Kruglikova/cool_tasks/src/service/common"
 	"log"
 	"net/http"
 )
@@ -10,7 +9,6 @@ var GetSessionIDFromRequest = func(w http.ResponseWriter, r *http.Request) (stri
 	session, err := r.Cookie("user_session")
 	if err != nil {
 		log.Println(err, "ERROR: Can't get cookies")
-		common.SendError(w, r, 400, "ERROR: Can't get cookies", err)
 		return "", err
 	}
 	return session.Value, err
