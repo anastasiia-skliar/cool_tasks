@@ -3,17 +3,21 @@
   "APIVersion": "/v1",
   "LogFilePath": "log_file.log",
   "Database": {
-    "Type": ["PostgreSQL","Redis"],
+    "Type": [
+      "PostgreSQL",
+      "Redis"
+    ],
     "PostgreSQL": {
-      "Username": "postgres",
-      "Password": "postgres",
-      "DatabaseName": "cool_tasks",
-      "Hostname": "postgres",
+      "Username": "rkaillncwvmdfm",
+      "Password": "e91abd74cbc3c335f43afcbb6a5907d073d977bc43fe62f5cb5276bb4734f2a3",
+      "DatabaseName": "d23vu943n7c848",
+      "Hostname": "ec2-54-247-101-202.eu-west-1.compute.amazonaws.com",
       "Port": 5432
     },
-    "Redis":{
-      "URL":"redis",
-      "Port":6379
+    "Redis": {
+      "URL": "ec2-34-241-52-76.eu-west-1.compute.amazonaws.com",
+      "Port": 24199,
+      "Password": "p1a80ef5a41fae2225bd5f6a8c0a885016e5aadac4407e27b091efd6afe6f48dd"
     }
   }
 }

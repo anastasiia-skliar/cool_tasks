@@ -73,10 +73,13 @@ func TestDSNRedis(t *testing.T) {
 		database.RedisInfo{
 			"127.0.0.1",
 			1234,
+			"pass",
 		},
+
 		database.RedisInfo{
 			"1.1.0.3",
 			6379,
+			"pass",
 		},
 	}
 
@@ -106,10 +109,12 @@ func TestSetupRedis(t *testing.T) {
 	url := database.RedisInfo{
 		"127.0.0.1",
 		1234,
+		"pass",
 	}
 	mockUrl := database.RedisInfo{
 		"0.0.0.0",
 		0,
+		"",
 	}
 
 	for _, tc := range tests {

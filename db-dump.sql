@@ -15,12 +15,10 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-CREATE DATABASE cool_tasks WITH TEMPLATE = template0 ENCODING = 'SQL_ASCII' LC_COLLATE = 'C' LC_CTYPE = 'C';
 
+ALTER DATABASE d23vu943n7c848 OWNER TO postgres;
 
-ALTER DATABASE cool_tasks OWNER TO postgres;
-
-\connect cool_tasks
+\connect d23vu943n7c848
 
 
 -- Dumped from database version 10.4 (Ubuntu 10.4-0ubuntu0.18.04)

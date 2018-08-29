@@ -48,8 +48,7 @@ dc-up:
 	docker-compose up &
 
 migrate-down:
-	echo $(GOPATH)
-	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.18.0.2 dbname=cool_tasks sslmode=disable" down-to 0
+	goose -dir ./migrations postgres "user=rkaillncwvmdfm password=e91abd74cbc3c335f43afcbb6a5907d073d977bc43fe62f5cb5276bb4734f2a3 host=ec2-54-247-101-202.eu-west-1.compute.amazonaws.com dbname=d23vu943n7c848 sslmode=require" down-to 0
+
 migrate-up:
-	echo $(GOPATH)
-	$(GOPATH)/bin/goose -dir ./migrations postgres "user=postgres password=postgres host=172.18.0.2 dbname=cool_tasks sslmode=disable" up
+	goose -dir ./migrations postgres "user=rkaillncwvmdfm password=e91abd74cbc3c335f43afcbb6a5907d073d977bc43fe62f5cb5276bb4734f2a3 host=ec2-54-247-101-202.eu-west-1.compute.amazonaws.com dbname=d23vu943n7c848 sslmode=require" up

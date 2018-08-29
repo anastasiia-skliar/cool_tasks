@@ -44,14 +44,15 @@ type PostgreSQLInfo struct {
 
 //RedisInfo shows redis information
 type RedisInfo struct {
-	URL  string
-	Port int
+	URL      string
+	Port     int
+	Password string
 }
 
 //DSN returns the Data Source Name
 func DSN(ci PostgreSQLInfo) string {
 	return fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
+		"password=%s dbname=%s sslmode=require",
 		ci.Hostname, ci.Port, ci.Username, ci.Password, ci.DatabaseName)
 }
 
@@ -85,8 +86,8 @@ func SetupRedis(d Info) (*redis.Client, error) {
 	}
 	client := redis.NewClient(&redis.Options{
 		Addr:     DSNRedis(d.Redis),
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Password: d.Redis.Password, // heroku password set
+		DB:       0,                // use default DB
 	})
 	_, err := client.Ping().Result()
 	if err != nil {
