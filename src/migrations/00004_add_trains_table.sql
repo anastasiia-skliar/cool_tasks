@@ -14,19 +14,19 @@ CREATE TABLE trains (
 
 INSERT INTO trains
   (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '2018-08-23 12:20:00', '2018-08-25 13:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 200);
+  VALUES ( uuid_generate_v1(), '2018-08-30 12:20:00', '2018-08-31 13:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 200);
 INSERT INTO trains
   (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '2018-08-24 13:20:00', '2018-08-25 16:55:00', 'Lviv', 'Kyiv', 'electric', 'coupe', 250);
+  VALUES ( uuid_generate_v1(), '2018-08-30 13:20:00', '2018-08-30 16:55:00', 'Lviv', 'Kyiv', 'electric', 'coupe', 250);
 INSERT INTO trains
   (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '2018-08-24 12:50:00', '2018-08-26 13:55:00', 'Lviv', 'Moscow', 'electric', 'coupe', 320);
+  VALUES ( uuid_generate_v1(), '2018-08-31 12:50:00', '2018-09-01 13:55:00', 'Lviv', 'Moscow', 'electric', 'coupe', 320);
 INSERT INTO trains
   (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '2018-08-23 13:20:00', '2018-08-23 14:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 190);
+  VALUES ( uuid_generate_v1(), '2018-08-30 13:20:00', '2018-08-30 14:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 190);
 INSERT INTO trains
   (id,  departure, arrival, departure_city, arrival_city, train_type, car_type, price)
-  VALUES ( uuid_generate_v1(), '2018-08-24 17:20:00', '2018-08-25 20:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 230);
+  VALUES ( uuid_generate_v1(), '2018-08-31 17:20:00', '2018-08-31 20:55:00', 'Lviv', 'Odessa', 'electric', 'coupe', 230);
 -- +goose Up
 -- SQL in this section is executed when the migration is applied.
 CREATE TABLE trips_trains(

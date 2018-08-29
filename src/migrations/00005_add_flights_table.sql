@@ -11,13 +11,13 @@ PRIMARY KEY (id)
 );
 
 INSERT INTO flights(id,  departure_city, departure, arrival_city, arrival, price)
-  VALUES (uuid_generate_v1(),'Lviv', '2018-06-16 10:11:26', 'Kyiv', '2018-07-19 10:12:22', 300);
+  VALUES (uuid_generate_v1(),'Lviv', '2018-08-31 17:20:00', 'Odessa',  '2018-08-31 18:55:00', 300);
 INSERT INTO flights(id,  departure_city, departure, arrival_city, arrival, price)
-  VALUES (uuid_generate_v1(),'Sokal', '2018-05-12 11:11:16', 'Lviv', '2018-05-13 09:10:16', 150);
+  VALUES (uuid_generate_v1(),'Odessa', '2018-09-01 11:11:16', 'Lviv', '2018-09-01 09:10:16', 150);
 INSERT INTO flights(id,  departure_city, departure, arrival_city, arrival, price)
-  VALUES (uuid_generate_v1(),'Kovel', '2018-06-01 09:08:10', 'Germany', '2018-06-02 08:11:12', 700);
+  VALUES (uuid_generate_v1(),'Lviv', '2018-08-30 09:08:10', 'Moscow', '2018-08-30 15:11:12', 700);
 INSERT INTO flights(id,  departure_city, departure, arrival_city, arrival, price)
-  VALUES (uuid_generate_v1(),'Tokyo', '2018-06-03 06:02:18', 'Kyiv', '2018-06-04 08:10:10', 1200);
+  VALUES (uuid_generate_v1(),'Tokyo', '2018-08-30 06:02:18', 'Kyiv', '2018-08-30 08:10:10', 1200);
 
 -- +goose Up
 -- SQL in this section is executed when the migration is applied.
